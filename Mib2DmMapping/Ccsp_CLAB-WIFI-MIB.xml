@@ -1,0 +1,2696 @@
+<?xml version="1.0"  encoding="UTF-8" ?>
+
+<!--
+   Copyright [2014] [Cisco Systems, Inc.]
+
+   Licensed under the Apache License, Version 2.0 (the \"License\");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an \"AS IS\" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+
+<mib2DM xml="http://www.w3.org/XML/1998/namespace">
+    <version>1</version>
+    <name>CLAB-WIFI-MIB</name>
+    <lastUpdate>04/26/2012 16:15</lastUpdate>
+    <author>CcspMibHelper Mapping File Generator</author>
+    <!-- Add the library name if callbacks are needed. -->
+    <!--	<library>libMibSample.o</library> -->
+    <scalarGroups>
+        <scalarGroup>
+            <name>clabWIFIWiFi</name>
+            <baseOid>1.3.6.1.4.1.4491.5.1.1.1</baseOid>
+            <!--  'enabled' can be set to 'false' if this set of mibs are not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- <mapToEntry>Wifi.Radio.%d.Frequency=2.4</mapToEntry> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <mapping>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>clabWIFIWiFiRadioNumberOfEntries</name>
+                    <access>ReadOnly</access>
+                    <dataType>Unsigned32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.RadioNumberOfEntries</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>clabWIFIWiFiSSIDNumberOfEntries</name>
+                    <access>ReadOnly</access>
+                    <dataType>Unsigned32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.SSIDNumberOfEntries</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>clabWIFIWiFiAccessPointNumberOfEntries</name>
+                    <access>ReadOnly</access>
+                    <dataType>Unsigned32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPointNumberOfEntries</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <!--
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>clabWIFIWiFiEndPointNumberOfEntries</name>
+                    <access>ReadOnly</access>
+                    <dataType>Unsigned32</dataType>
+                </mib>
+                <dm>
+                    <paramName>Device.abcd.xyz</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            -->
+        </scalarGroup>
+
+    </scalarGroups>
+    <mibTables>
+        <mibTable>
+            <name>clabWIFIRadioTable</name>
+            <tableOid>1.3.6.1.4.1.4491.5.1.1.2</tableOid>
+            <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <writable>false</writable>
+            <maxEntries>16</maxEntries>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- Add filters in the table -->
+            <!-- <mapToEntries>Device.RoutingTable.%d.type=static</mapToEntries> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <index>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>clabWIFIRadioId</name>
+                    <access>NoAccess</access>
+                    <dataType>InterfaceIndex</dataType>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.WiFi.Radio.</tableObj>
+                </mapToInsNumber>
+            </index>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>clabWIFIRadioEnable</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.Enable</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>clabWIFIRadioStatus</name>
+                    <access>ReadOnly</access>
+                    <dataType>INTEGER</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.Status</paramName>
+                    <dataType>string</dataType>
+                    <enumeration>Up(1),Down(2),Unknown(4),Dormant(5),NotPresent(6),LowerLayerDown(7),Error(8)</enumeration>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>clabWIFIRadioAlias</name>
+                    <access>ReadWrite</access>
+                    <dataType>SnmpAdminString</dataType>
+                    <range>
+                        <min>0</min><max>64</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.Alias</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>clabWIFIRadioName</name>
+                    <access>ReadOnly</access>
+                    <dataType>SnmpAdminString</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.Name</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>6</lastOid>
+                    <name>clabWIFIRadioLastChange</name>
+                    <access>ReadOnly</access>
+                    <dataType>Unsigned32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.LastChange</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>7</lastOid>
+                    <name>clabWIFIRadioLowerLayers</name>
+                    <access>ReadWrite</access>
+                    <dataType>SnmpAdminString</dataType>
+                    <range>
+                        <min>0</min><max>1024</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.LowerLayers</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>8</lastOid>
+                    <name>clabWIFIRadioUpstream</name>
+                    <access>ReadOnly</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.Upstream</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>9</lastOid>
+                    <name>clabWIFIRadioMaxBitRate</name>
+                    <access>ReadOnly</access>
+                    <dataType>Unsigned32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.MaxBitRate</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>10</lastOid>
+                    <name>clabWIFIRadioSupportedFrequencyBands</name>
+                    <access>ReadOnly</access>
+                    <dataType>SnmpAdminString</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.SupportedFrequencyBands</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>11</lastOid>
+                    <name>clabWIFIRadioOperatingFrequencyBand</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.OperatingFrequencyBand</paramName>
+                    <dataType>string</dataType>
+                    <enumeration>2.4GHz(1),5GHz(2)</enumeration>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>12</lastOid>
+                    <name>clabWIFIRadioSupportedStandards</name>
+                    <access>ReadOnly</access>
+                    <dataType>SnmpAdminString</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.SupportedStandards</paramName>
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>13</lastOid>
+                    <name>clabWIFIRadioOperatingStandards</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>1</min><max>5</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.OperatingStandards</paramName>
+                    <dataType>string</dataType>
+                    <enumeration>a(1),b(2),g(3),n(5)</enumeration>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>14</lastOid>
+                    <name>clabWIFIRadioPossibleChannels</name>
+                    <access>ReadOnly</access>
+                    <dataType>SnmpAdminString</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.PossibleChannels</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>15</lastOid>
+                    <name>clabWIFIRadioChannelsInUse</name>
+                    <access>ReadOnly</access>
+                    <dataType>SnmpAdminString</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.ChannelsInUse</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>16</lastOid>
+                    <name>clabWIFIRadioChannel</name>
+                    <access>ReadWrite</access>
+                    <dataType>Unsigned32</dataType>
+                    <range>
+                        <min>1</min><max>255</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.Channel</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>17</lastOid>
+                    <name>clabWIFIRadioAutoChannelSupported</name>
+                    <access>ReadOnly</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.AutoChannelSupported</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>18</lastOid>
+                    <name>clabWIFIRadioAutoChannelEnable</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.AutoChannelEnable</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>19</lastOid>
+                    <name>clabWIFIRadioAutoChannelRefreshPeriod</name>
+                    <access>ReadWrite</access>
+                    <dataType>Unsigned32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.AutoChannelRefreshPeriod</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>20</lastOid>
+                    <name>clabWIFIRadioOperatingChannelBandwidth</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>1</min><max>3</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.OperatingChannelBandwidth</paramName>
+                    <dataType>string</dataType>
+                    <enumeration>20MHz(1),40MHz(2),Auto(3)</enumeration>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>21</lastOid>
+                    <name>clabWIFIRadioExtensionChannel</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>1</min><max>3</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.ExtensionChannel</paramName>
+                    <dataType>string</dataType>
+                    <enumeration>AboveControlChannel(1),BelowControlChannel(2),Auto(3)</enumeration>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>22</lastOid>
+                    <name>clabWIFIRadioGuardInterval</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>1</min><max>3</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.GuardInterval</paramName>
+                    <dataType>string</dataType>
+                    <enumeration>400nsec(1),800nsec(2),Auto(3)</enumeration>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>23</lastOid>
+                    <name>clabWIFIRadioMCS</name>
+                    <access>ReadWrite</access>
+                    <dataType>Integer32</dataType>
+                    <range>
+                        <min>-1</min><max>31</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.MCS</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>24</lastOid>
+                    <name>clabWIFIRadioTransmitPowerSupported</name>
+                    <access>ReadOnly</access>
+                    <dataType>SnmpAdminString</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.TransmitPowerSupported</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>25</lastOid>
+                    <name>clabWIFIRadioTransmitPower</name>
+                    <access>ReadWrite</access>
+                    <dataType>Unsigned32</dataType>
+                    <range>
+                        <min>1</min><max>100</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.TransmitPower</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>26</lastOid>
+                    <name>clabWIFIRadioIEEE80211hSupported</name>
+                    <access>ReadOnly</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.IEEE80211hSupported</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>27</lastOid>
+                    <name>clabWIFIRadioIEEE80211hEnabled</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.IEEE80211hEnabled</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>28</lastOid>
+                    <name>clabWIFIRadioRegulatoryDomain</name>
+                    <access>ReadWrite</access>
+                    <dataType>SnmpAdminString</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.RegulatoryDomain</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+        </mibTable>
+        <mibTable>
+            <name>clabWIFIRadioStatsTable</name>
+            <tableOid>1.3.6.1.4.1.4491.5.1.1.3</tableOid>
+            <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <writable>false</writable>
+            <maxEntries>16</maxEntries>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- Add filters in the table -->
+            <!-- <mapToEntries>Device.RoutingTable.%d.type=static</mapToEntries> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <index>
+                <mib>
+                    <lastOid>0</lastOid><!-- It's no in the table -->
+                    <name>clabWIFIRadioId</name>
+                    <access>NoAccess</access>
+                    <dataType>unsigned32</dataType>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.WiFi.Radio.</tableObj>
+                </mapToInsNumber>
+            </index>
+            <mapping>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>clabWIFIRadioStatsBytesSent</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter64</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.Stats.BytesSent</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>clabWIFIRadioStatsBytesReceived</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter64</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.Stats.BytesReceived</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>clabWIFIRadioStatsPacketsSent</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter64</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.Stats.PacketsSent</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>clabWIFIRadioStatsPacketsReceived</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter64</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.Stats.PacketsReceived</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>clabWIFIRadioStatsErrorsSent</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.Stats.ErrorsSent</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>6</lastOid>
+                    <name>clabWIFIRadioStatsErrorsReceived</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.Stats.ErrorsReceived</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>7</lastOid>
+                    <name>clabWIFIRadioStatsDiscardPacketsSent</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.Stats.DiscardPacketsSent</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>8</lastOid>
+                    <name>clabWIFIRadioStatsDiscardPacketsReceived</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.Stats.DiscardPacketsReceived</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+        </mibTable>
+        <mibTable>
+            <name>clabWIFISSIDTable</name>
+            <tableOid>1.3.6.1.4.1.4491.5.1.1.4</tableOid>
+            <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <writable>true</writable>
+            <maxEntries>16</maxEntries>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- Add filters in the table -->
+            <!-- <mapToEntries>Device.RoutingTable.%d.type=static</mapToEntries> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <index>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>clabWIFISSIDId</name>
+                    <access>NoAccess</access>
+                    <dataType>InterfaceIndex</dataType>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.WiFi.SSID.</tableObj>
+                </mapToInsNumber>
+            </index>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>clabWIFISSIDEnable</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.SSID.%d.Enable</paramName>
+                    <dataType>boolean</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>clabWIFISSIDStatus</name>
+                    <access>ReadOnly</access>
+                    <dataType>INTEGER</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.SSID.%d.Status</paramName>
+                    <dataType>string</dataType>
+                    <enumeration>Up(1),Down(2),Unknown(4),Dormant(5),NotPresent(6),LowerLayerDown(7),Error(8)</enumeration>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>clabWIFISSIDAlias</name>
+                    <access>ReadWrite</access>
+                    <dataType>SnmpAdminString</dataType>
+                    <range>
+                        <min>0</min><max>64</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.SSID.%d.Alias</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>clabWIFISSIDName</name>
+                    <access>ReadOnly</access>
+                    <dataType>SnmpAdminString</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.SSID.%d.Name</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>6</lastOid>
+                    <name>clabWIFISSIDLastChange</name>
+                    <access>ReadOnly</access>
+                    <dataType>Unsigned32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.SSID.%d.LastChange</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>7</lastOid>
+                    <name>clabWIFISSIDLowerLayers</name>
+                    <access>ReadWrite</access>
+                    <dataType>SnmpAdminString</dataType>
+                    <range>
+                        <min>0</min><max>1024</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.SSID.%d.LowerLayers</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>8</lastOid>
+                    <name>clabWIFISSIDBSSID</name>
+                    <access>ReadOnly</access>
+                    <dataType>MacAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.SSID.%d.BSSID</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>9</lastOid>
+                    <name>clabWIFISSIDMACAddress</name>
+                    <access>ReadOnly</access>
+                    <dataType>MacAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.SSID.%d.MACAddress</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>10</lastOid>
+                    <name>clabWIFISSIDSSID</name>
+                    <access>ReadWrite</access>
+                    <dataType>SnmpAdminString</dataType>
+                    <range>
+                        <min>0</min><max>32</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.SSID.%d.SSID</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>11</lastOid>
+                    <name>clabWIFISSIDRowStatus</name>
+                    <access>WriteOnly</access>
+                    <dataType>RowStatus</dataType>
+                </mib>
+                <!-- It's Rowstatus and has no mapping. -->
+            </mapping>
+        </mibTable>
+        <mibTable>
+            <name>clabWIFISSIDStatsTable</name>
+            <tableOid>1.3.6.1.4.1.4491.5.1.1.5</tableOid>
+            <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <writable>false</writable>
+            <maxEntries>16</maxEntries>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- Add filters in the table -->
+            <!-- <mapToEntries>Device.RoutingTable.%d.type=static</mapToEntries> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <index>
+                <mib>
+                    <lastOid>0</lastOid><!-- It's no in the table -->
+                    <name>clabWIFISSIDId</name>
+                    <access>NoAccess</access>
+                    <dataType>unsigned32</dataType>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.WiFi.SSID.</tableObj>
+                </mapToInsNumber>
+            </index>
+            <mapping>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>clabWIFISSIDStatsBytesSent</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter64</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.SSID.%d.Stats.BytesSent</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>clabWIFISSIDStatsBytesReceived</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter64</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.SSID.%d.Stats.BytesReceived</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>clabWIFISSIDStatsPacketsSent</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter64</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.SSID.%d.Stats.PacketsSent</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>clabWIFISSIDStatsPacketsReceived</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter64</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.SSID.%d.Stats.PacketsReceived</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>clabWIFISSIDStatsErrorsSent</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.SSID.%d.Stats.ErrorsSent</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>6</lastOid>
+                    <name>clabWIFISSIDStatsErrorsReceived</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.SSID.%d.Stats.ErrorsReceived</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>7</lastOid>
+                    <name>clabWIFISSIDStatsUnicastPacketsSent</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter64</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.SSID.%d.Stats.UnicastPacketsSent</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>8</lastOid>
+                    <name>clabWIFISSIDStatsUnicastPacketsReceived</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter64</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.SSID.%d.Stats.UnicastPacketsReceived</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>9</lastOid>
+                    <name>clabWIFISSIDStatsDiscardPacketsSent</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.SSID.%d.Stats.DiscardPacketsSent</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>10</lastOid>
+                    <name>clabWIFISSIDStatsDiscardPacketsReceived</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.SSID.%d.Stats.DiscardPacketsReceived</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>11</lastOid>
+                    <name>clabWIFISSIDStatsMulticastPacketsSent</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter64</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.SSID.%d.Stats.MulticastPacketsSent</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>12</lastOid>
+                    <name>clabWIFISSIDStatsMulticastPacketsReceived</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter64</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.SSID.%d.Stats.MulticastPacketsReceived</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>13</lastOid>
+                    <name>clabWIFISSIDStatsBroadcastPacketsSent</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter64</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.SSID.%d.Stats.BroadcastPacketsSent</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>14</lastOid>
+                    <name>clabWIFISSIDStatsBroadcastPacketsReceived</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter64</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.SSID.%d.Stats.BroadcastPacketsReceived</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>15</lastOid>
+                    <name>clabWIFISSIDStatsUnknownProtoPacketsReceived</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.SSID.%d.Stats.UnknownProtoPacketsReceived</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+        </mibTable>
+        <mibTable>
+            <name>clabWIFIAccessPointTable</name>
+            <tableOid>1.3.6.1.4.1.4491.5.1.1.6</tableOid>
+            <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <writable>true</writable>
+            <maxEntries>16</maxEntries>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- Add filters in the table -->
+            <!-- <mapToEntries>Device.RoutingTable.%d.type=static</mapToEntries> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <index>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>clabWIFIAccessPointId</name>
+                    <access>NoAccess</access>
+                    <dataType>Unsigned32</dataType>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.WiFi.AccessPoint.</tableObj>
+                </mapToInsNumber>
+            </index>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>clabWIFIAccessPointEnable</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.Enable</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>clabWIFIAccessPointStatus</name>
+                    <access>ReadOnly</access>
+                    <dataType>INTEGER</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.Status</paramName>
+                    <dataType>string</dataType>
+                    <enumeration>Disabled(1),Enabled(2),Error_Misconfigured(3),Error(4)</enumeration>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>clabWIFIAccessPointAlias</name>
+                    <access>ReadWrite</access>
+                    <dataType>SnmpAdminString</dataType>
+                    <range>
+                        <min>0</min><max>64</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.Alias</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>clabWIFIAccessPointSSIDReference</name>
+                    <access>ReadWrite</access>
+                    <dataType>SnmpAdminString</dataType>
+                    <range>
+                        <min>0</min><max>64</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.SSIDReference</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>6</lastOid>
+                    <name>clabWIFIAccessPointSSIDAdvertisementEnabled</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.SSIDAdvertisementEnabled</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>7</lastOid>
+                    <name>clabWIFIAccessPointRetryLimit</name>
+                    <access>ReadWrite</access>
+                    <dataType>Unsigned32</dataType>
+                    <range>
+                        <min>0</min><max>7</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.RetryLimit</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>8</lastOid>
+                    <name>clabWIFIAccessPointWMMCapability</name>
+                    <access>ReadOnly</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.WMMCapability</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>9</lastOid>
+                    <name>clabWIFIAccessPointUAPSDCapability</name>
+                    <access>ReadOnly</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.UAPSDCapability</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>10</lastOid>
+                    <name>clabWIFIAccessPointWMMEnable</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.WMMEnable</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>11</lastOid>
+                    <name>clabWIFIAccessPointUAPSDEnable</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.UAPSDEnable</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>12</lastOid>
+                    <name>clabWIFIAccessPointAssociatedDeviceNumberOfEntries</name>
+                    <access>ReadOnly</access>
+                    <dataType>Unsigned32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.AssociatedDeviceNumberOfEntries</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>13</lastOid>
+                    <name>clabWIFIAccessPointAssociatedDeviceRowStatus</name>
+                    <access>WriteOnly</access>
+                    <dataType>RowStatus</dataType>
+                </mib>
+                <!-- It's Rowstatus and has no mapping. -->
+            </mapping>
+        </mibTable>
+        <mibTable>
+            <name>clabWIFIAccessPointSecurityTable</name>
+            <tableOid>1.3.6.1.4.1.4491.5.1.1.7</tableOid>
+            <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <writable>true</writable>
+            <maxEntries>16</maxEntries>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- Add filters in the table -->
+            <!-- <mapToEntries>Device.RoutingTable.%d.type=static</mapToEntries> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <index>
+                <mib>
+                    <lastOid>0</lastOid><!-- It's no in the table -->
+                    <name>clabWIFIAccessPointId</name>
+                    <access>NoAccess</access>
+                    <dataType>unsigned32</dataType>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.WiFi.AccessPoint.</tableObj>
+                </mapToInsNumber>
+            </index>
+            <mapping>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>clabWIFIAccessPointSecurityModesSupported</name>
+                    <access>ReadOnly</access>
+                    <dataType>SnmpAdminString</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.Security.ModesSupported</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>clabWIFIAccessPointSecurityModeEnabled</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>1</min><max>9</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.Security.ModeEnabled</paramName>
+                    <dataType>string</dataType>
+                    <enumeration>None(1),WEP-64(2),WEP-128(3),WPA-Personal(4),WPA2-Personal(5),WPA-WPA2-Personal(6),WPA-Enterprise(7),WPA2-Enterprise(8),WPA-WPA2-Enterprise(9)</enumeration>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>clabWIFIAccessPointSecurityWEPKey</name>
+                    <access>ReadWrite</access>
+                    <dataType>OCTET STRING</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.Security.WEPKey</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>clabWIFIAccessPointSecurityPreSharedKey</name>
+                    <access>ReadWrite</access>
+                    <dataType>OCTET STRING</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.Security.PreSharedKey</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>clabWIFIAccessPointSecurityKeyPassphrase</name>
+                    <access>ReadWrite</access>
+                    <dataType>SnmpAdminString</dataType>
+                    <range>
+                        <min>0</min><max>63</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.Security.KeyPassphrase</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>6</lastOid>
+                    <name>clabWIFIAccessPointSecurityRekeyingInterval</name>
+                    <access>ReadWrite</access>
+                    <dataType>Unsigned32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.Security.RekeyingInterval</paramName>
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>7</lastOid>
+                    <name>clabWIFIAccessPointSecurityRadiusServerIPAddrType</name>
+                    <access>ReadWrite</access>
+                    <dataType>InetAddressType</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.Security.RadiusServerIPAddrType</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>8</lastOid>
+                    <name>clabWIFIAccessPointSecurityRadiusServerIPAddr</name>
+                    <access>ReadWrite</access>
+                    <dataType>InetAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.Security.RadiusServerIPAddr</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>9</lastOid>
+                    <name>clabWIFIAccessPointSecurityRadiusServerPort</name>
+                    <access>ReadWrite</access>
+                    <dataType>InetPortNumber</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.Security.RadiusServerPort</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>10</lastOid>
+                    <name>clabWIFIAccessPointSecurityRadiusSecret</name>
+                    <access>ReadWrite</access>
+                    <dataType>SnmpAdminString</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.Security.RadiusSecret</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>11</lastOid>
+                    <name>clabWIFIAccessPointSecurityRowstatus</name>
+                    <access>WriteOnly</access>
+                    <dataType>RowStatus</dataType>
+                </mib>
+                <!-- It's Rowstatus and has no mapping. -->
+            </mapping>
+        </mibTable>
+        <mibTable>
+            <name>clabWIFIAccessPointWPSTable</name>
+            <tableOid>1.3.6.1.4.1.4491.5.1.1.8</tableOid>
+            <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <writable>true</writable>
+            <maxEntries>16</maxEntries>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- Add filters in the table -->
+            <!-- <mapToEntries>Device.RoutingTable.%d.type=static</mapToEntries> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <index>
+                <mib>
+                    <lastOid>0</lastOid><!-- It's no in the table -->
+                    <name>clabWIFIAccessPointId</name>
+                    <access>NoAccess</access>
+                    <dataType>unsigned32</dataType>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.WiFi.AccessPoint.</tableObj>
+                </mapToInsNumber>
+            </index>
+            <mapping>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>clabWIFIAccessPointWPSEnable</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.WPS.Enable</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>clabWIFIAccessPointWPSConfigMethodsSupported</name>
+                    <access>ReadOnly</access>
+                    <dataType>SnmpAdminString</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.WPS.ConfigMethodsSupported</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>clabWIFIAccessPointWPSConfigMethodsEnabled</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>1</min><max>8</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.WPS.ConfigMethodsEnabled</paramName>
+                    <dataType>string</dataType>
+                    <enumeration>USBFlashDrive(1),Ethernet(2),ExternalNFCToken(3),IntegratedNFCToken(4),NFCInterface(5),PIN(7),PushButton(8)</enumeration>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>clabWIFIAccessPointWPSRowStatus</name>
+                    <access>WriteOnly</access>
+                    <dataType>RowStatus</dataType>
+                </mib>
+                <!-- It's Rowstatus and has no mapping. -->
+            </mapping>
+        </mibTable>
+        <mibTable>
+            <name>clabWIFIAssociatedDeviceTable</name>
+            <tableOid>1.3.6.1.4.1.4491.5.1.1.9</tableOid>
+            <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <writable>false</writable>
+            <maxEntries>16</maxEntries>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- Add filters in the table -->
+            <!-- <mapToEntries>Device.RoutingTable.%d.type=static</mapToEntries> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <index>
+                <mib>
+                    <lastOid>0</lastOid><!-- It's no in the table -->
+                    <name>clabWIFIAccessPointId</name>
+                    <access>NoAccess</access>
+                    <dataType>unsigned32</dataType>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.WiFi.AccessPoint.</tableObj>
+                </mapToInsNumber>
+            </index>
+            <index>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>clabWIFIAssociatedDeviceId</name>
+                    <access>NoAccess</access>
+                    <dataType>Unsigned32</dataType>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.WiFi.AccessPoint.%d.AssociatedDevice.</tableObj>
+                </mapToInsNumber>
+            </index>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>clabWIFIAssociatedDeviceMACAddress</name>
+                    <access>ReadOnly</access>
+                    <dataType>MacAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.AssociatedDevice.%d.MACAddress</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>clabWIFIAssociatedDeviceAuthenticationState</name>
+                    <access>ReadOnly</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.AssociatedDevice.%d.AuthenticationState</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>clabWIFIAssociatedDeviceLastDataDownlinkRate</name>
+                    <access>ReadOnly</access>
+                    <dataType>Unsigned32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.AssociatedDevice.%d.LastDataDownlinkRate</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>clabWIFIAssociatedDeviceLastDataUplinkRate</name>
+                    <access>ReadOnly</access>
+                    <dataType>Unsigned32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.AssociatedDevice.%d.LastDataUplinkRate</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>6</lastOid>
+                    <name>clabWIFIAssociatedDeviceSignalStrength</name>
+                    <access>ReadOnly</access>
+                    <dataType>Integer32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.AssociatedDevice.%d.SignalStrength</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>7</lastOid>
+                    <name>clabWIFIAssociatedDeviceRetransmissions</name>
+                    <access>ReadOnly</access>
+                    <dataType>Unsigned32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.AssociatedDevice.%d.Retransmissions</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>8</lastOid>
+                    <name>clabWIFIAssociatedDeviceActive</name>
+                    <access>ReadOnly</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.AssociatedDevice.%d.Active</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+        </mibTable>
+
+        <mibTable>
+            <name>clabWIFIDataRateStatsTable</name>
+            <tableOid>1.3.6.1.4.1.4491.5.1.1.10</tableOid>
+            <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+            <enabled>false</enabled>
+            <writable>false</writable>
+            <maxEntries>16</maxEntries>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- Add filters in the table -->
+            <!-- <mapToEntries>Device.RoutingTable.%d.type=static</mapToEntries> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <index>
+                <mib>
+                    <lastOid>0</lastOid><!-- It's no in the table -->
+                    <name>clabWIFIRadioId</name>
+                    <access>NoAccess</access>
+                    <dataType>unsigned32</dataType>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.abcTable.</tableObj>
+                    <!-- If index maps to a different value, use <map> to add the mapping below. -->
+                </mapToInsNumber>
+            </index>
+            <index>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>clabWIFIDataRateStatsRate</name>
+                    <access>NoAccess</access>
+                    <dataType>Unsigned32</dataType>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.xxxTable.</tableObj>
+                    <!-- If index maps to a different value, use <map> to add the mapping below. -->
+                </mapToInsNumber>
+            </index>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>clabWIFIDataRateStatsFramesSent</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter64</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>clabWIFIDataRateStatsFramesRetransmissionsSent</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter64</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>clabWIFIDataRateStatsFramesReceived</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter64</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>clabWIFIDataRateStatsFramesDuplicatedReceived</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter64</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+        </mibTable>
+        <mibTable>
+            <name>clabWIFIPeriodicStatsTable</name>
+            <tableOid>1.3.6.1.4.1.4491.5.1.1.11</tableOid>
+            <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+            <enabled>false</enabled>
+            <writable>false</writable>
+            <maxEntries>16</maxEntries>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- Add filters in the table -->
+            <!-- <mapToEntries>Device.RoutingTable.%d.type=static</mapToEntries> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <index>
+                <mib>
+                    <lastOid>0</lastOid><!-- It's no in the table -->
+                    <name>clabWIFISSIDId</name>
+                    <access>NoAccess</access>
+                    <dataType>unsigned32</dataType>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.abcTable.</tableObj>
+                    <!-- If index maps to a different value, use <map> to add the mapping below. -->
+                </mapToInsNumber>
+            </index>
+            <index>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>clabWIFIPeriodicStatsInterval</name>
+                    <access>NoAccess</access>
+                    <dataType>Unsigned32</dataType>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.xxxTable.</tableObj>
+                    <!-- If index maps to a different value, use <map> to add the mapping below. -->
+                </mapToInsNumber>
+            </index>
+            <index>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>clabWIFIPeriodicStatsId</name>
+                    <access>NoAccess</access>
+                    <dataType>Unsigned32</dataType>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.xxxTable.</tableObj>
+                    <!-- If index maps to a different value, use <map> to add the mapping below. -->
+                </mapToInsNumber>
+            </index>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>clabWIFIPeriodicStatsDeviceMACAddress</name>
+                    <access>ReadOnly</access>
+                    <dataType>MacAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>clabWIFIPeriodicStatsFramesSent</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter64</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>clabWIFIPeriodicStatsDataFramesSentAck</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter64</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>6</lastOid>
+                    <name>clabWIFIPeriodicStatsDataFramesSentNoAck</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter64</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>7</lastOid>
+                    <name>clabWIFIPeriodicStatsDataFramesLost</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter64</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>8</lastOid>
+                    <name>clabWIFIPeriodicStatsFramesReceived</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter64</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>9</lastOid>
+                    <name>clabWIFIPeriodicStatsDataFramesReceived</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter64</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>10</lastOid>
+                    <name>clabWIFIPeriodicStatsDataFramesDuplicateReceived</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter64</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>11</lastOid>
+                    <name>clabWIFIPeriodicStatsProbesReceived</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>12</lastOid>
+                    <name>clabWIFIPeriodicStatsProbesRejected</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>13</lastOid>
+                    <name>clabWIFIPeriodicStatsRSSI</name>
+                    <access>ReadOnly</access>
+                    <dataType>Integer32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>14</lastOid>
+                    <name>clabWIFIPeriodicStatsSNR</name>
+                    <access>ReadOnly</access>
+                    <dataType>Integer32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>15</lastOid>
+                    <name>clabWIFIPeriodicStatsDisassociations</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>16</lastOid>
+                    <name>clabWIFIPeriodicStatsAuthenticationFailures</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>17</lastOid>
+                    <name>clabWIFIPeriodicStatsLastTimeAssociation</name>
+                    <access>ReadOnly</access>
+                    <dataType>DateAndTime</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>18</lastOid>
+                    <name>clabWIFIPeriodicStatsLastTimeDisassociation</name>
+                    <access>ReadOnly</access>
+                    <dataType>DateAndTime</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+        </mibTable>
+        <mibTable>
+            <name>clabWIFISSIDPolicyTable</name>
+            <tableOid>1.3.6.1.4.1.4491.5.1.1.12</tableOid>
+            <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+            <enabled>false</enabled>
+            <writable>true</writable>
+            <maxEntries>16</maxEntries>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- Add filters in the table -->
+            <!-- <mapToEntries>Device.RoutingTable.%d.type=static</mapToEntries> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <index>
+                <mib>
+                    <lastOid>0</lastOid><!-- It's no in the table -->
+                    <name>clabWIFISSIDId</name>
+                    <access>NoAccess</access>
+                    <dataType>unsigned32</dataType>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.abcTable.</tableObj>
+                    <!-- If index maps to a different value, use <map> to add the mapping below. -->
+                </mapToInsNumber>
+            </index>
+            <mapping>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>clabWIFISSIDPolicyBlockAfterAttempts</name>
+                    <access>ReadWrite</access>
+                    <dataType>Unsigned32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>clabWIFISSIDPolicyAllocatedBandwidth</name>
+                    <access>ReadWrite</access>
+                    <dataType>Unsigned32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>clabWIFISSIDPolicyAuthenticationFailures</name>
+                    <access>ReadWrite</access>
+                    <dataType>Unsigned32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>clabWIFISSIDPolicyNonAuthenticatedTraffic</name>
+                    <access>ReadWrite</access>
+                    <dataType>Unsigned32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>clabWIFISSIDPolicyAssociationFailures</name>
+                    <access>ReadWrite</access>
+                    <dataType>Unsigned32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>6</lastOid>
+                    <name>clabWIFISSIDPolicyStatsInterval</name>
+                    <access>ReadWrite</access>
+                    <dataType>Unsigned32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>7</lastOid>
+                    <name>clabWIFISSIDPolicySNRThreshold</name>
+                    <access>ReadWrite</access>
+                    <dataType>Integer32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>8</lastOid>
+                    <name>clabWIFISSIDPolicyANPIThreshold</name>
+                    <access>ReadWrite</access>
+                    <dataType>Integer32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>9</lastOid>
+                    <name>clabWIFISSIDPolicyLowReceivedPowerThreshold</name>
+                    <access>ReadWrite</access>
+                    <dataType>Integer32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>10</lastOid>
+                    <name>clabWIFISSIDPolicyLowPowerDeniedAccessThreshold</name>
+                    <access>ReadWrite</access>
+                    <dataType>Integer32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>11</lastOid>
+                    <name>clabWIFISSIDPolicyLowPowerDissasociationThreshold</name>
+                    <access>ReadWrite</access>
+                    <dataType>Integer32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>12</lastOid>
+                    <name>clabWIFISSIDPolicyRowStatus</name>
+                    <access>WriteOnly</access>
+                    <dataType>RowStatus</dataType>
+                </mib>
+                <!-- It's Rowstatus and has no mapping. -->
+            </mapping>
+        </mibTable>
+        <mibTable>
+            <name>clabWIFIClientSessionsTable</name>
+            <tableOid>1.3.6.1.4.1.4491.5.1.1.13</tableOid>
+            <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+            <enabled>false</enabled>
+            <writable>false</writable>
+            <maxEntries>16</maxEntries>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- Add filters in the table -->
+            <!-- <mapToEntries>Device.RoutingTable.%d.type=static</mapToEntries> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <index>
+                <mib>
+                    <lastOid>0</lastOid><!-- It's no in the table -->
+                    <name>clabWIFIAccessPointId</name>
+                    <access>NoAccess</access>
+                    <dataType>unsigned32</dataType>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.abcTable.</tableObj>
+                    <!-- If index maps to a different value, use <map> to add the mapping below. -->
+                </mapToInsNumber>
+            </index>
+            <index>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>clabWIFIClientSessionsId</name>
+                    <access>NoAccess</access>
+                    <dataType>Unsigned32</dataType>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.xxxTable.</tableObj>
+                    <!-- If index maps to a different value, use <map> to add the mapping below. -->
+                </mapToInsNumber>
+            </index>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>clabWIFIClientSessionsDeviceMACAddress</name>
+                    <access>ReadOnly</access>
+                    <dataType>MacAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>clabWIFIClientSessionsStart</name>
+                    <access>ReadOnly</access>
+                    <dataType>DateAndTime</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>clabWIFIClientSessionsStop</name>
+                    <access>ReadOnly</access>
+                    <dataType>DateAndTime</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>clabWIFIClientSessionsTerminationCode</name>
+                    <access>ReadOnly</access>
+                    <dataType>Unsigned32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>6</lastOid>
+                    <name>clabWIFIClientSessionsTerminationMeaning</name>
+                    <access>ReadOnly</access>
+                    <dataType>SnmpAdminString</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+        </mibTable>
+        <mibTable>
+            <name>clabWIFIClientStatsTable</name>
+            <tableOid>1.3.6.1.4.1.4491.5.1.1.14</tableOid>
+            <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+            <enabled>false</enabled>
+            <writable>false</writable>
+            <maxEntries>16</maxEntries>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- Add filters in the table -->
+            <!-- <mapToEntries>Device.RoutingTable.%d.type=static</mapToEntries> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <index>
+                <mib>
+                    <lastOid>0</lastOid><!-- It's no in the table -->
+                    <name>clabWIFIAccessPointId</name>
+                    <access>NoAccess</access>
+                    <dataType>unsigned32</dataType>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.abcTable.</tableObj>
+                    <!-- If index maps to a different value, use <map> to add the mapping below. -->
+                </mapToInsNumber>
+            </index>
+            <index>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>clabWIFIClientStatsInterval</name>
+                    <access>NoAccess</access>
+                    <dataType>Unsigned32</dataType>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.xxxTable.</tableObj>
+                    <!-- If index maps to a different value, use <map> to add the mapping below. -->
+                </mapToInsNumber>
+            </index>
+            <index>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>clabWIFIClientStatsId</name>
+                    <access>NoAccess</access>
+                    <dataType>Unsigned32</dataType>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.xxxTable.</tableObj>
+                    <!-- If index maps to a different value, use <map> to add the mapping below. -->
+                </mapToInsNumber>
+            </index>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>clabWIFIClientStatsDeviceMACAddress</name>
+                    <access>ReadOnly</access>
+                    <dataType>MacAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>clabWIFIClientStatsFramesSent</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter64</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>clabWIFIClientStatsDataFramesSentAck</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter64</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>6</lastOid>
+                    <name>clabWIFIClientStatsDataFramesSentNoAck</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter64</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>7</lastOid>
+                    <name>clabWIFIClientStatsDataFramesLost</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter64</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>8</lastOid>
+                    <name>clabWIFIClientStatsFramesReceived</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter64</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>9</lastOid>
+                    <name>clabWIFIClientStatsDataFramesReceived</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter64</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>10</lastOid>
+                    <name>clabWIFIClientStatsDataFramesDuplicateReceived</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter64</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>11</lastOid>
+                    <name>clabWIFIClientStatsProbesReceived</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>12</lastOid>
+                    <name>clabWIFIClientStatsProbesRejected</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>13</lastOid>
+                    <name>clabWIFIClientStatsRSSI</name>
+                    <access>ReadOnly</access>
+                    <dataType>Integer32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>14</lastOid>
+                    <name>clabWIFIClientStatsSNR</name>
+                    <access>ReadOnly</access>
+                    <dataType>Integer32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>15</lastOid>
+                    <name>clabWIFIClientStatsDisassociations</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>16</lastOid>
+                    <name>clabWIFIClientStatsAuthenticationFailures</name>
+                    <access>ReadOnly</access>
+                    <dataType>Counter32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>17</lastOid>
+                    <name>clabWIFIClientStatsLastTimeAssociation</name>
+                    <access>ReadOnly</access>
+                    <dataType>DateAndTime</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>18</lastOid>
+                    <name>clabWIFIClientStatsLastTimeDisassociation</name>
+                    <access>ReadOnly</access>
+                    <dataType>DateAndTime</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+        </mibTable>
+        <mibTable>
+            <name>clabWIFIRadiusClientTable</name>
+            <tableOid>1.3.6.1.4.1.4491.5.1.1.15</tableOid>
+            <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+            <enabled>false</enabled>
+            <writable>true</writable>
+            <maxEntries>16</maxEntries>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- Add filters in the table -->
+            <!-- <mapToEntries>Device.RoutingTable.%d.type=static</mapToEntries> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <index>
+                <mib>
+                    <lastOid>0</lastOid><!-- It's no in the table -->
+                    <name>clabWIFIAccessPointId</name>
+                    <access>NoAccess</access>
+                    <dataType>unsigned32</dataType>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.abcTable.</tableObj>
+                    <!-- If index maps to a different value, use <map> to add the mapping below. -->
+                </mapToInsNumber>
+            </index>
+            <mapping>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>clabWIFIRadiusClientNAS-Identifier</name>
+                    <access>ReadWrite</access>
+                    <dataType>SnmpAdminString</dataType>
+                    <range>
+                        <min>0</min><max>255</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>clabWIFIRadiusClientLocationPolicy</name>
+                    <access>ReadWrite</access>
+                    <dataType>OCTET STRING</dataType>
+                    <range>
+                        <min>0</min><max>64</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>clabWIFIRadiusClientOperatorName</name>
+                    <access>ReadWrite</access>
+                    <dataType>SnmpAdminString</dataType>
+                    <range>
+                        <min>0</min><max>32</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>clabWIFIRadiusClientLocationInformation</name>
+                    <access>ReadWrite</access>
+                    <dataType>OCTET STRING</dataType>
+                    <range>
+                        <min>0</min><max>253</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>clabWIFIRadiusClientLocationData</name>
+                    <access>ReadWrite</access>
+                    <dataType>OCTET STRING</dataType>
+                    <range>
+                        <min>0</min><max>253</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>6</lastOid>
+                    <name>clabWIFIRadiusClientUsageReports</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>7</lastOid>
+                    <name>clabWIFIRadiusClientIntervalInterimReport</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>8</lastOid>
+                    <name>clabWIFIRadiusClientAPTransitionReport</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>9</lastOid>
+                    <name>clabWIFIRadiusClientGigawordReport</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>10</lastOid>
+                    <name>clabWIFIRadiusClientRowStatus</name>
+                    <access>WriteOnly</access>
+                    <dataType>RowStatus</dataType>
+                </mib>
+                <!-- It's Rowstatus and has no mapping. -->
+            </mapping>
+        </mibTable>
+    </mibTables>
+</mib2DM>

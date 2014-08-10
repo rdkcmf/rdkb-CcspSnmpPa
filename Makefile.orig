@@ -1,0 +1,118 @@
+#######################################################################
+#   Copyright [2014] [Cisco Systems, Inc.]
+# 
+#   Licensed under the Apache License, Version 2.0 (the \"License\");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+# 
+#       http://www.apache.org/licenses/LICENSE-2.0
+# 
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an \"AS IS\" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+#######################################################################
+
+# Makefile for CCSP snmp-plugin / sub-agent
+# ccsp extension codes and config file for open-source NET-SNMP agent
+
+include $(CCSP_ROOT_DIR)/arch/ccsp_common.mk
+
+SNMP_PLUGIN = snmp_plugin
+PLUGIN	= $(ComponentBuildDir)/lib$(SNMP_PLUGIN).so
+SUBAGNT = $(ComponentBuildDir)/snmp_subagnet
+CUSTOM = $(ComponentBuildDir)/snmp_custom.so
+
+SNMP_INSDIR = $(CCSP_OUT_DIR)/snmp
+SNMP_LIBDIR = $(SNMP_INSDIR)/libs
+SRCDIR  = source
+MIBMAP_DIR = Mib2DmMapping
+CUSTOM_DIR = $(SRCDIR)/custom
+PLUGIN_SRC_DIR = $(SRCDIR)/SnmpPlugin
+CONFIG_DIR = config
+SCRIPTS_DIR = scripts
+
+# source files for plugin
+PLUGIN_SRCS = $(shell cd $(PLUGIN_SRC_DIR) && find -name '*.c' -type f | grep -v 'subagent' )
+PLUGIN_OBJS = $(subst .c,.o,$(PLUGIN_SRCS))
+PLUGIN_OBJS := $(patsubst .%,$(ComponentBuildDir)%, $(PLUGIN_OBJS))
+
+# source files for subagent
+SUBAGNT_SRCS = $(shell cd $(PLUGIN_SRC_DIR) && find -name '*.c' -type f )
+SUBAGNT_OBJS = $(subst .c,.o,$(SUBAGNT_SRCS))
+SUBAGNT_OBJS := $(patsubst .%,$(ComponentBuildDir)%, $(SUBAGNT_OBJS))
+
+#source files for custom logic
+CUSTOM_SRCS = $(shell cd $(CUSTOM_DIR) && find -name '*.c' -type f)
+CUSTOM_OBJS = $(subst .c,.o,$(CUSTOM_SRCS))
+CUSTOM_OBJS := $(patsubst .%,$(ComponentBuildDir)%, $(CUSTOM_OBJS))
+
+CUSTOM_MIB_FILES = $(shell find -iname '*.xml' -type f | grep $(CcspArch) | grep $(CcspBoard) | grep $(CcspCustomer))
+
+INCPATH += $(SRCDIR)/include
+INCPATH += $(PLUGIN_SRC_DIR)
+
+INCFLAGS := $(patsubst %,-I%, $(INCPATH))
+
+LDFLAGS += -lccsp_common
+
+
+CFLAGS  += -rdynamic
+
+CFLAGS  += $(INCFLAGS) $(LDFLAGS)
+
+ifeq ($(CcspBoard), "pc")
+	CFLAGS += -D_COSA_SIM_
+endif
+
+vpath %.c $(PLUGIN_SRC_DIR)
+vpath %.c $(CUSTOM_DIR)
+
+# 
+# start build here
+#
+all: $(PLUGIN) $(SUBAGNT) $(CUSTOM)
+
+$(PLUGIN): $(PLUGIN_OBJS)
+	@$(CC) -shared -o $(PLUGIN) $(PLUGIN_OBJS) $(CFLAGS)
+
+$(SUBAGNT): $(SUBAGNT_OBJS)
+	@$(CC) -o $(SUBAGNT) $(SUBAGNT_OBJS) $(CFLAGS) \
+		-lnetsnmpmibs -ldl -lnetsnmpagent -lnetsnmp -lcrypto -lm
+
+$(CUSTOM): $(CUSTOM_OBJS)
+	@$(CC) -shared -o $(CUSTOM) $(CUSTOM_OBJS) $(CFLAGS) \
+		  -L$(CURDIR) -L$(ComponentBuildDir) -l$(SNMP_PLUGIN) -pthread
+
+clean:
+	rm -rf $(ComponentBuildDir)
+
+install: create_dirs install_xml install_scripts
+	@install -m 0755 $(PLUGIN) $(SNMP_LIBDIR)
+	@install -m 0755 $(SUBAGNT) $(SNMP_INSDIR)
+	@install -m 0755 $(CUSTOM) $(SNMP_LIBDIR)
+	@install -m 0644 $(CONFIG_DIR)/*.conf $(SNMP_INSDIR)
+#cp ./mibs/*.txt $(SNMP_MIBDIR)
+
+create_dirs:
+	@install -d -m 0755 $(SNMP_INSDIR)
+	@install -d -m 0755 $(SNMP_LIBDIR)
+
+install_scripts:
+	echo "Copying Custom Files [$(CUSTOM_MIB_FILES)] -> $(SNMP_INSDIR)"
+	@install -m 0755 $(SCRIPTS_DIR)/run_snmpd.sh $(SNMP_INSDIR)
+	@install -m 0755 $(SCRIPTS_DIR)/run_subagent.sh $(SNMP_INSDIR)
+
+install_xml: 
+	@install -m 0644 $(MIBMAP_DIR)/*.[xX][mM][lL] $(SNMP_INSDIR)
+ifneq ($($CUSTOM_MIB_FILES),)
+	@echo "Copying Custom Files [$(CUSTOM_MIB_FILES)] -> $(SNMP_INSDIR)"
+	@install -m 0644 $(CUSTOM_MIB_FILES) $(SNMP_INSDIR)
+else
+	@echo "No Custom Files [$(CUSTOM_MIB_FILES)]"
+endif
+ifneq ($(CONFIG_CISCO_WECB),y)
+	@rm -f $(SNMP_INSDIR)/Ccsp_SA-RG-MIB-WECB.xml
+endif
+	

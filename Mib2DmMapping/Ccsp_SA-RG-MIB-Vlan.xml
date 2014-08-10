@@ -1,0 +1,389 @@
+<?xml version="1.0"  encoding="UTF-8" ?>
+
+<!--
+   Copyright [2014] [Cisco Systems, Inc.]
+
+   Licensed under the Apache License, Version 2.0 (the \"License\");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an \"AS IS\" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+
+<mib2DM xml="http://www.w3.org/XML/1998/namespace">
+    <version>1</version>
+    <name>SA-RG-MIB</name>
+    <lastUpdate>07/02/2012 16:16</lastUpdate>
+    <author>CcspMibHelper Mapping File Generator</author>
+    <!-- Add the library name if callbacks are needed. -->
+    <!--	<library>libMibSample.o</library> -->
+    <scalarGroups>
+        <scalarGroup>
+            <name>saRgVlan</name>
+            <baseOid>1.3.6.1.4.1.1429.79.2.11</baseOid>
+            <!--  'enabled' can be set to 'false' if this set of mibs are not ready at back-end yet or deprecated -->
+            <enabled>false</enabled>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- <mapToEntry>Wifi.Radio.%d.Frequency=2.4</mapToEntry> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <mapping>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>saRgVlanStripTagsWan</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcd.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>saRgVlanStripTagsLan</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcd.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>saRgVlanApplySettings</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcd.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+        </scalarGroup>
+    </scalarGroups>
+    <mibTables>
+        <mibTable>
+            <name>saRgVlanTable</name>
+            <tableOid>1.3.6.1.4.1.1429.79.2.11.3</tableOid>
+            <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+            <enabled>false</enabled>
+            <writable>true</writable>
+            <maxEntries>16</maxEntries>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- Add filters in the table -->
+            <!-- <mapToEntries>Device.RoutingTable.%d.type=static</mapToEntries> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <index>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>saRgVlanID</name>
+                    <access>NoAccess</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>2</min><max>1005</max>
+                    </range>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.xxxTable.</tableObj>
+                    <!-- If index maps to a different value, use <map> to add the mapping below. -->
+                </mapToInsNumber>
+            </index>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>saRgVlanDesc</name>
+                    <access>ReadWrite</access>
+                    <dataType>OCTET STRING</dataType>
+                    <range>
+                        <min>0</min><max>20</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>saRgVlanEthernet</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>0</min><max>15</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>saRgVlanWiFi</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>0</min><max>15</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>saRgVlanMoca</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>0</min><max>1</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>6</lastOid>
+                    <name>saRgVlanUSB</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>0</min><max>1</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>7</lastOid>
+                    <name>saRgVlanStartAddrType</name>
+                    <access>ReadWrite</access>
+                    <dataType>InetAddressType</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>8</lastOid>
+                    <name>saRgVlanStartAddr</name>
+                    <access>ReadWrite</access>
+                    <dataType>InetAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>9</lastOid>
+                    <name>saRgVlanEndAddrType</name>
+                    <access>ReadWrite</access>
+                    <dataType>InetAddressType</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>10</lastOid>
+                    <name>saRgVlanEndAddr</name>
+                    <access>ReadWrite</access>
+                    <dataType>InetAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>11</lastOid>
+                    <name>saRgVlanSubnetMaskType</name>
+                    <access>ReadWrite</access>
+                    <dataType>InetAddressType</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>12</lastOid>
+                    <name>saRgVlanSubnetMask</name>
+                    <access>ReadWrite</access>
+                    <dataType>InetAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>13</lastOid>
+                    <name>saRgVlanRouterIpType</name>
+                    <access>ReadWrite</access>
+                    <dataType>InetAddressType</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>14</lastOid>
+                    <name>saRgVlanRouterIp</name>
+                    <access>ReadWrite</access>
+                    <dataType>InetAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>15</lastOid>
+                    <name>saRgVlanLeaseTime</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>16</lastOid>
+                    <name>saRgVlanRouteMode</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>1</min><max>3</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                    <enumeration>napt(1),bridged(2),routeddhcp(3)</enumeration>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>17</lastOid>
+                    <name>saRgVlanTOS</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>0</min><max>255</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>18</lastOid>
+                    <name>saRgVlanFirewall</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>19</lastOid>
+                    <name>saRgVlanUpnp</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>20</lastOid>
+                    <name>saRgVlanRowStatus</name>
+                    <access>WriteOnly</access>
+                    <dataType>RowStatus</dataType>
+                </mib>
+                <!-- It's Rowstatus and has no mapping. -->
+            </mapping>
+        </mibTable>
+    </mibTables>
+</mib2DM>
