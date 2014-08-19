@@ -7,7 +7,7 @@ AM_LDFLAGS += -lnetsnmpmibs
 AM_LDFLAGS += -ldl
 AM_LDFLAGS += -lnetsnmpagent
 AM_LDFLAGS += -lnetsnmp
-AM_LDFLAGS += -lcrypto
+AM_LDFLAGS +=
 AM_LDFLAGS += -lm
 
 AM_CPPFLAGS = -Wall -Werror
@@ -16,4 +16,4 @@ hardware_platform = i686-linux-gnu
 bin_PROGRAMS = snmp_subagent
 snmp_subagent_CPPFLAGS = -I$(top_srcdir)/source/SnmpPlugin -I$(top_srcdir)/source/include $(CPPFLAGS)
 snmp_subagent_SOURCES = netSnmpTutorialMIB.c ccsp_mib_utilities.c ccsp_table_helper.c cosa_api.c ccsp_scalar_helper_access.c ccsp_table_helper_control.c ccsp_table_helper_access.c ccsp_mib_helper.c ccsp_scalar_helper_control.c ccsp_scalar_helper.c ccsp_snmp_subagent.c CcspSnmpPlugin.c
-snmp_subagent_LDFLAGS = -lccsp_common -lnetsnmpmibs -ldl -lnetsnmpagent -lnetsnmp -lcrypto -lm
+snmp_subagent_LDFLAGS = -lccsp_common -lnetsnmpmibs -ldl -lnetsnmpagent -lnetsnmp -lm
