@@ -26,16 +26,16 @@
    3. Mapping: 
        (last oid)  (mib name)                              (mib type)          (dm name)                       (dm type)
        1           saTR069ClientMode                       INTEGER             EnableCWMP                      boolean
-       2           saTR069ClientAcsUrl                     OCTET STRING        URL                             string
-       3           saTR069ClientAcsUsername                OCTET STRING        Username                        string
-       4           saTR069ClientAcsPassword                OCTET STRING        Password                        string
-       5           saTR069ClientCrUsername                 OCTET STRING        ConnectionRequestUsername       string
-       6           saTR069ClientCrPassword                 OCTET STRING        ConnectionRequestPassword       string
+       2           saTR069ClientAcsUrl                     SnmpAdminString        URL                             string
+       3           saTR069ClientAcsUsername                SnmpAdminString        Username                        string
+       4           saTR069ClientAcsPassword                SnmpAdminString        Password                        string
+       5           saTR069ClientCrUsername                 SnmpAdminString        ConnectionRequestUsername       string
+       6           saTR069ClientCrPassword                 SnmpAdminString        ConnectionRequestPassword       string
        7           saTR069ClientPeriodicInform             INTEGER             PeriodicInformEnable            boolean
        8           saTR069ClientPeriodicInformInterval     INTEGER             PeriodicInformInterval          uint
-       9           saTR069ClientAllowDocsisConfig          INTEGER             _NOT_IMPELEMENTED_YET_          string/enum
-       10          saTR069ClientConnReqUrl                 OCTET STRING        ConnectionRequestURL            string
-       11          saTR069ClientAcsControlPanelUrl         OCTET STRING        _NOT_IMPELEMENTED_YET_          string
+       9           saTR069ClientAllowDocsisConfig          INTEGER             ACSOverride                     boolean
+       10          saTR069ClientConnReqUrl                 SnmpAdminString        ConnectionRequestURL            string
+       11          saTR069ClientAcsControlPanelUrl         SnmpAdminString        _NOT_IMPELEMENTED_YET_          string
        12          saTR069ClientDeviceIdentifier           INTEGER             _NOT_IMPELEMENTED_YET_          string/enum
 -->
 <mib2DM xml="http://www.w3.org/XML/1998/namespace">
@@ -79,7 +79,7 @@
                     <lastOid>2</lastOid>
                     <name>saTR069ClientAcsUrl</name>
                     <access>ReadWrite</access>
-                    <dataType>OCTET STRING</dataType>
+                    <dataType>SnmpAdminString</dataType>
                     <range>
                         <min>0</min>
                         <max>255</max>
@@ -95,7 +95,7 @@
                     <lastOid>3</lastOid>
                     <name>saTR069ClientAcsUsername</name>
                     <access>ReadWrite</access>
-                    <dataType>OCTET STRING</dataType>
+                    <dataType>SnmpAdminString</dataType>
                     <range>
                         <min>0</min>
                         <max>255</max>
@@ -111,7 +111,7 @@
                     <lastOid>4</lastOid>
                     <name>saTR069ClientAcsPassword</name>
                     <access>ReadWrite</access>
-                    <dataType>OCTET STRING</dataType>
+                    <dataType>SnmpAdminString</dataType>
                     <range>
                         <min>0</min>
                         <max>255</max>
@@ -127,7 +127,7 @@
                     <lastOid>5</lastOid>
                     <name>saTR069ClientCrUsername</name>
                     <access>ReadWrite</access>
-                    <dataType>OCTET STRING</dataType>
+                    <dataType>SnmpAdminString</dataType>
                     <range>
                         <min>0</min>
                         <max>255</max>
@@ -143,7 +143,7 @@
                     <lastOid>6</lastOid>
                     <name>saTR069ClientCrPassword</name>
                     <access>ReadWrite</access>
-                    <dataType>OCTET STRING</dataType>
+                    <dataType>SnmpAdminString</dataType>
                     <range>
                         <min>0</min>
                         <max>255</max>
@@ -186,8 +186,7 @@
                     <paramName>Device.ManagementServer.PeriodicInformInterval</paramName>
                     <dataType>unsignedInt</dataType>
                 </dm>
-            </mapping>
-<!--            
+            </mapping>            
             <mapping>
                 <mib>
                     <lastOid>9</lastOid>
@@ -200,17 +199,17 @@
                     </range>
                 </mib>
                 <dm>
-                    <paramName>Device.ManagementServer.XXXXX</paramName>
+                    <paramName>Device.ManagementServer.ACSOverride</paramName>
                     <dataType>boolean</dataType>
+                    <enumeration>disable(0), enable(1)</enumeration>
                 </dm>
             </mapping>  
--->
             <mapping>
                 <mib>
                     <lastOid>10</lastOid>
                     <name>saTR069ClientConnReqUrl</name>
                     <access>ReadWrite</access>
-                    <dataType>OCTET STRING</dataType>
+                    <dataType>SnmpAdminString</dataType>
                     <range>
                         <min>0</min>
                         <max>255</max>
@@ -227,7 +226,7 @@
                     <lastOid>11</lastOid>
                     <name>saTR069ClientControlPanelUrl</name>
                     <access>ReadWrite</access>
-                    <dataType>OCTET STRING</dataType>
+                    <dataType>SnmpAdminString</dataType>
                     <range>
                         <min>0</min>
                         <max>255</max>

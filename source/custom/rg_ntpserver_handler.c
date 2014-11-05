@@ -15,6 +15,7 @@
 **********************************************************************/
 
 #include <string.h>
+#include <stdio.h>
 #include "ansc_platform.h"
 #include "cosa_api.h"
 #include "net-snmp/net-snmp-config.h"
@@ -22,9 +23,13 @@
 #include "net-snmp/agent/net-snmp-agent-includes.h"
 
 #define NUM_NTPSERV             3
+#define NUM_ETHPORTS            4
 
 #define NTPSERV_DM_OBJ          "Device.Time."
 #define NTPSERV_DM_PARAM_PAT    "Device.Time.NTPServer%d"
+
+#define PORTMODE_DM_OBJ         "Device.X_CISCO_COM_DeviceControl."
+#define PORTMODE_DM_PARAM_PAT   "Device.X_CISCO_COM_DeviceControl.XHSEthernetPortEnable"
 
 struct NTPServer 
 {
@@ -283,6 +288,296 @@ NtpServer_RefreshCache(netsnmp_tdata *table)
         return -1;
 
     if (!LoadNtpServTable(table))
+        return -1;
+
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+//-----------------------------------------------------------------------------------
+struct PortMode 
+{
+    int     ins;            /* instance number */
+    long    bValue;      /*Value for XHS mode*/
+
+    /* for extension */
+};
+
+static char *PMdstComp, *PMdstPath; /* cache */
+
+static BOOL FindPortModeDestComp(void)
+{
+    if (PMdstComp && PMdstPath)
+        return TRUE;
+
+    if (PMdstComp)
+        AnscFreeMemory(PMdstComp);
+    if (PMdstPath)
+        AnscFreeMemory(PMdstPath);
+    PMdstComp = PMdstPath = NULL;
+
+    if (!Cosa_FindDestComp(PORTMODE_DM_OBJ, &PMdstComp, &PMdstPath)
+            || !PMdstComp || !PMdstPath)
+    {
+        AnscTraceError(("%s: fail to find dest comp\n", __FUNCTION__));
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
+static BOOL GetPortMode(struct PortMode *portMode)
+{
+    parameterValStruct_t **valStr;
+    int nval;
+    char *name[1];
+    
+    if (portMode->ins != 4) {
+        portMode->bValue = 0;
+        return 0;
+    }
+
+    name[0] = PORTMODE_DM_PARAM_PAT;
+    if (!Cosa_GetParamValues(PMdstComp, PMdstPath, name, 1, &nval, &valStr))
+    {
+        AnscTraceError(("%s: fail to get: %s\n", __FUNCTION__, name[0]));
+        return -1;
+    }
+
+    if (nval < 1)
+    {
+        AnscTraceError(("%s: nval < 1 \n", __FUNCTION__));
+        return -1;
+    }
+
+    if (strcmp(valStr[0]->parameterValue, "1") == 0
+                || strcasecmp(valStr[0]->parameterValue, "true") == 0)
+        portMode->bValue = 1;
+    else
+        portMode->bValue = 0;
+    
+    Cosa_FreeParamValues(nval, valStr);
+
+    return 0;
+}
+
+static BOOL SetPortMode(struct PortMode *portMode)
+{
+    parameterValStruct_t valStr;
+    
+    if (portMode->ins != 4) return -1;
+
+    valStr.parameterName = PORTMODE_DM_PARAM_PAT;
+    valStr.parameterValue = portMode->bValue ? "true" : "false";
+    valStr.type = ccsp_boolean;
+
+    if (!Cosa_SetParamValuesNoCommit(PMdstComp, PMdstPath, &valStr, 1))
+    {
+        AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
+        return -1;
+    }
+
+    return 0;
+}
+
+static BOOL CommitPortMode(void)
+{
+    //printf("COMMITTING PORT MODE\n"); fflush(stdout);
+    if (!Cosa_SetCommit(PMdstComp, PMdstPath, TRUE))
+    {
+        //printf("COMMITTING PORT MODE FAILURE\n"); fflush(stdout);
+        AnscTraceError(("%s: fail to commit\n", __FUNCTION__));
+        return FALSE;
+    }
+    //printf("COMMITTING PORT MODE SUCCESS\n"); fflush(stdout);
+
+    return TRUE;
+}
+
+static BOOL RollbackPortMode(void)
+{
+    if (!Cosa_SetCommit(PMdstComp, PMdstPath, FALSE))
+    {
+        AnscTraceError(("%s: fail to rollback\n", __FUNCTION__));
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
+
+int LanPortMode_HandleRequest(netsnmp_mib_handler *handler,
+        netsnmp_handler_registration *reginfo,
+        netsnmp_agent_request_info *reqinfo,
+        netsnmp_request_info *requests)
+{
+    netsnmp_request_info        *req;
+    struct PortMode            *portMode;
+    int                         ret;
+    netsnmp_variable_list *vb = NULL;
+    int subid;
+
+    switch (reqinfo->mode) {
+    case MODE_GET:
+        for (req = requests; req != NULL; req = req->next)
+        {
+            vb = req->requestvb;
+            subid = vb->name[vb->name_length -2];
+            if ((portMode = netsnmp_tdata_extract_entry(req)) == NULL)
+            {
+                netsnmp_set_request_error(reqinfo, req, SNMP_NOSUCHINSTANCE);
+                continue;
+            }
+            
+            if (subid == 1) {
+                snmp_set_var_typed_value(req->requestvb, ASN_INTEGER,
+                    &portMode->ins, sizeof(portMode->ins));
+            } else {
+                if (GetPortMode(portMode))
+                {
+                    netsnmp_set_request_error(reqinfo, req, SNMP_ERR_GENERR);
+                    break;
+                }
+                
+            
+                snmp_set_var_typed_value(req->requestvb, ASN_INTEGER,
+                    &portMode->bValue, sizeof(portMode->bValue));
+            }
+
+            req->processed = 1;
+        }
+        break;
+
+    case MODE_SET_RESERVE1:
+        /* sanity check */
+        for (req = requests; req != NULL; req = req->next)
+        {
+            req->processed = 1;
+            if ((portMode = netsnmp_tdata_extract_entry(req)) == NULL)
+            {
+                netsnmp_set_request_error(reqinfo, req, SNMP_NOSUCHINSTANCE);
+                continue;
+            }
+
+            ret = netsnmp_check_vb_type_and_max_size(req->requestvb, 
+                    ASN_INTEGER, sizeof(portMode->bValue));
+            if (ret != SNMP_ERR_NOERROR)
+            {
+                netsnmp_set_request_error(reqinfo, req, ret);
+                return SNMP_ERR_NOERROR;
+            }
+            
+            ret = netsnmp_check_vb_int_range(req->requestvb, 0, 1);
+            if (ret != SNMP_ERR_NOERROR)
+            {
+                netsnmp_set_request_error(reqinfo, req, ret);
+                return SNMP_ERR_NOERROR;
+            }
+            
+        }
+        break;
+
+    case MODE_SET_RESERVE2:
+        /* set value to backend with no commit */
+        for (req = requests; req != NULL; req = req->next)
+        {
+            if ((portMode = netsnmp_tdata_extract_entry(req)) == NULL)
+            {
+                netsnmp_set_request_error(reqinfo, req, SNMP_NOSUCHINSTANCE);
+                continue;
+            }
+            
+            portMode->bValue = *req->requestvb->val.integer;
+
+            if (SetPortMode(portMode))
+            {
+                netsnmp_set_request_error(reqinfo, req, SNMP_ERR_GENERR);
+                return SNMP_ERR_GENERR;
+            }
+
+            req->processed = 1;
+        }
+ 
+        break;
+
+    case MODE_SET_ACTION:
+        /* commit */
+        if (!CommitPortMode())
+            return SNMP_ERR_GENERR;
+
+        for (req = requests; req != NULL; req = req->next)
+            req->processed = 1;
+
+        break;
+
+    case MODE_SET_FREE:
+        if (!RollbackPortMode())
+            return SNMP_ERR_GENERR;
+        break;
+
+    case MODE_SET_COMMIT:
+    case MODE_SET_UNDO:
+        /* nothing */
+        break;
+
+    default:
+        netsnmp_set_request_error(reqinfo, requests, SNMP_ERR_GENERR);
+        return SNMP_ERR_GENERR;
+    }
+    
+    return SNMP_ERR_NOERROR;
+}
+
+static int LoadPortModeTable(netsnmp_tdata *table)
+{
+    int i;
+    netsnmp_tdata_row *row;
+    struct PortMode *portMode;
+    
+    if (!table)
+        return FALSE;
+
+    for (i = 0; i < NUM_ETHPORTS; i++)
+    {
+        if ((portMode = AnscAllocateMemory(sizeof(struct PortMode))) == NULL)
+            goto errout;
+
+        memset(portMode, 0, sizeof(struct PortMode));
+        portMode->ins = i + 1;
+
+        if ((row = netsnmp_tdata_create_row()) == NULL)
+        {
+            AnscFreeMemory(portMode);
+            goto errout;
+        }
+
+        row->data = portMode;
+        netsnmp_tdata_row_add_index(row, ASN_UNSIGNED, &portMode->ins, sizeof(portMode->ins));
+        netsnmp_tdata_add_row(table, row);
+    }
+
+    return TRUE;
+
+errout:
+    CleanupTableRow(table);
+    return FALSE;
+}
+
+int
+PortMode_RefreshCache(netsnmp_tdata *table)
+{
+    if (!FindPortModeDestComp())
+        return -1;
+
+    if (!LoadPortModeTable(table))
         return -1;
 
     return 0;

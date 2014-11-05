@@ -24,6 +24,7 @@
 
 #include "ccsp_snmp_common.h"
 #include "ccsp_mib_definitions.h"
+#include <time.h>
 
 #define WIFI_DM_OBJ          "Device.WiFi."
 #define WIFI_DM_BSSENABLE    "Device.WiFi.SSID.%d.Enable"
@@ -49,6 +50,8 @@
 #define WIFI_DM_RADIO_ADMINCONTROL "Device.WiFi.Radio.%d.X_CISCO_COM_AdminControl"
 #define WIFI_DM_BSSID         "Device.WiFi.SSID.%d.BSSID"
 #define WIFI_DM_SSID          "Device.WiFi.SSID.%d.SSID"
+#define WIFI_DM_WPS           "Device.WiFi.AccessPoint.%d.WPS.Enable"
+#define WIFI_DM_WPSTIME           "Device.WiFi.AccessPoint.%d.WPS.X_CISCO_COM_WpsPushButton"
 
 #define MAX_APS_PER_RADIO 16
 
@@ -116,7 +119,7 @@ static int getNumAPs( ) {
     
     FindWifiDestComp(); /*TODO: Handle error*/
     
-    return 4;
+    // return 4;
 
     snprintf(name, sizeof(mystring), WIFI_DM_NUMBER_APS);
     printf("%s: DML command %s \n", __FUNCTION__, name);
@@ -168,7 +171,7 @@ static int SetAllAPsonRadio(int radioInst, parameterValStruct_t valStr[], char* 
         valStr[i].parameterValue = value;
         valStr[i].parameterName = &namestrings[offset];
         sprintf(valStr[i].parameterName, dmFormat, radioInst+(i*2));
-        valStr[i].type = ccsp_boolean;
+        valStr[i].type = type;
     }
 
     return 0;
@@ -236,6 +239,177 @@ static void* wifiCommitThread(void* arg) {
         pthread_mutex_unlock(&commitMutex);
         Cosa_SetCommit(dstComp, dstPath, TRUE);
     }
+}
+
+static int getWps(PCCSP_TABLE_ENTRY entry)
+{
+    parameterValStruct_t **valStr;
+    int nval, retval;
+    char str[80];
+    char * name = (char*) str;
+
+    /*Fetching*/
+    FindWifiDestComp(); /*TODO: Handle error*/
+    
+    snprintf(str, sizeof(str),WIFI_DM_WPSTIME,1);
+    if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
+    {
+        AnscTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
+        return -1;
+    }
+
+    if (nval == 0)
+    {
+        AnscTraceError(("%s: nval < 1 \n", __FUNCTION__));
+        return -1;
+    }
+    
+    // if return val is 0 WPS is off on the 2.4 GHz Primary SSID, check the 5 GHz Primary SSID
+    retval = atoi(valStr[0]->parameterValue);
+    if (retval == 0) {
+        snprintf(str, sizeof(str),WIFI_DM_WPSTIME,2);
+        if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
+        {
+            AnscTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));        
+            return -1;
+        }
+        if (nval == 0)
+        {
+            AnscTraceError(("%s: nval < 1 \n", __FUNCTION__));
+            return -1;
+        }
+        retval = atoi(valStr[0]->parameterValue);
+    }
+    
+    Cosa_FreeParamValues(nval, valStr);
+    
+    return retval;
+}
+
+int setWps(PCCSP_TABLE_ENTRY entry, int wpsTime)
+{
+    parameterValStruct_t valStr;
+    char str[2][100];
+    valStr.parameterName=str[0];
+    valStr.parameterValue=str[1];
+    
+    FindWifiDestComp(); /*TODO: Handle error*/
+
+    // Turn off Wps if wpsTime is 0, else enable it
+    sprintf(valStr.parameterName, WIFI_DM_WPS,1);
+    sprintf(valStr.parameterValue, "%s",  (wpsTime == 0) ? "false": "true");
+    valStr.type = ccsp_boolean;
+
+    if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
+    {
+        AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
+        return -1;
+    }
+
+    sprintf(valStr.parameterName, WIFI_DM_WPS,2);
+    sprintf(valStr.parameterValue, "%s",  (wpsTime == 0) ? "false": "true");
+    valStr.type = ccsp_boolean;
+
+    if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
+    {
+        AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
+        return -1;
+    }
+
+    sprintf(valStr.parameterName, WIFI_DM_WPSTIME,1);
+    sprintf(valStr.parameterValue, "%d", wpsTime); 
+    valStr.type = ccsp_int;
+
+    if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
+    {
+        AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
+        return -1;
+    }
+
+    sprintf(valStr.parameterName, WIFI_DM_WPSTIME,2);
+    sprintf(valStr.parameterValue, "%d", wpsTime); 
+    valStr.type = ccsp_int;
+
+    if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
+    {
+        AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
+        return -1;
+    }
+
+    return 0;
+}
+
+int
+handleDot11Wps(
+    netsnmp_mib_handler				*handler,
+    netsnmp_handler_registration	*reginfo,
+    netsnmp_agent_request_info		*reqinfo,
+    netsnmp_request_info		 	*requests
+)
+{
+ int value;
+ int ret;
+netsnmp_request_info* req;
+    PCCSP_TABLE_ENTRY entry = NULL;
+
+ //TODO Check inputs, return proper error codes.
+ switch (reqinfo->mode) {
+    case MODE_GET:
+        for (req = requests; req != NULL; req = req->next)
+        {
+            entry = (PCCSP_TABLE_ENTRY)netsnmp_tdata_extract_entry(req);
+            value = getWps(entry);
+            snmp_set_var_typed_value(req->requestvb, (u_char)ASN_INTEGER, (u_char*)&value, sizeof(value));
+            req->processed = 1;
+        }
+        break;
+
+    case MODE_SET_RESERVE1:
+        /* sanity check */
+        for (req = requests; req != NULL; req = req->next)
+        {
+            ret = netsnmp_check_vb_type(req->requestvb, ASN_INTEGER);
+            if (ret != SNMP_ERR_NOERROR)
+                netsnmp_set_request_error(reqinfo, req, ret);
+            req->processed = 1;     /* request->processed will be reset in every step by netsnmp_call_handlers */
+            break;
+            
+        }
+        break;
+
+    case MODE_SET_RESERVE2:
+        /* set value to backend with no commit */
+        for (req = requests; req != NULL; req = req->next)
+        {
+            setWps(entry, *(req->requestvb->val.integer));
+            req->processed = 1;
+        }
+ 
+        break;
+
+    case MODE_SET_FREE:
+        break;
+    case MODE_SET_ACTION:
+        break;
+    case MODE_SET_COMMIT:
+        /* 
+         * Since cache is skipped, There is no way for plugin framework to know the CcspComp and CcspPath
+         * Custom logic will handle the commit operation.
+         */
+        if(FindWifiDestComp() == TRUE)
+            Cosa_SetCommit(dstComp, dstPath, TRUE);
+        break;
+
+    case MODE_SET_UNDO:
+        break;
+
+    default:
+        netsnmp_set_request_error(reqinfo, requests, SNMP_ERR_GENERR);
+        return SNMP_ERR_GENERR;
+    }
+
+    return SNMP_ERR_NOERROR;
+
 }
 
 int
@@ -909,16 +1083,33 @@ int Dot11BssTableCacheHelper(netsnmp_tdata *table)
     unsigned int *insArray = NULL;
     unsigned int *insCount = 0;
     const char *ssidDm = "Device.WiFi.SSID.";
+    struct timespec ts;
+    int nr_retry = 0;
 
     if(!table){
         status = -1;
         goto ret;
     }
 
-    FindWifiDestComp();
+    ts.tv_sec = 1;
+    ts.tv_nsec = 0;
+find_retry:    
+    if (FindWifiDestComp() == FALSE){
+        nr_retry++;
+        if (nr_retry <= 60){
+            nanosleep(&ts, NULL);
+            goto find_retry;
+        }else{
+            status = -1;
+            goto ret;
+        }
+    }
 
-    if (!Cosa_GetInstanceNums(dstComp, dstPath, ssidDm, &insArray, &insCount))
+
+    if (!Cosa_GetInstanceNums(dstComp, dstPath, ssidDm, &insArray, &insCount)){
+        status = -1;
         goto ret;
+    }
 
     for(i = 0; i < insCount; i++){
 
@@ -1134,11 +1325,17 @@ for (req = requests; req != NULL; req = req->next)
              */
             if(FindWifiDestComp() == TRUE)
                 Cosa_SetCommit(dstComp, dstPath, TRUE);
+            req->processed = 1;
 
             break;
 
         case MODE_SET_FREE:
-            
+            /*
+             * FIXME call Cosa_SetCommit with commitFlag=FALSE
+             */
+            if(FindWifiDestComp() == TRUE)
+                Cosa_SetCommit(dstComp, dstPath, FALSE);
+            req->processed = 1; 
             break;
 
         case MODE_SET_COMMIT:
@@ -1365,7 +1562,7 @@ static int getWmmNoAck(PCCSP_TABLE_ENTRY entry){
         return -1;
     }
     
-    retval = sscanf(valStr[0]->parameterValue, "%d", &retval);
+    sscanf(valStr[0]->parameterValue, "%d", &retval);
     
     Cosa_FreeParamValues(nval, valStr);
     
@@ -1395,7 +1592,7 @@ static int getMcastRate(PCCSP_TABLE_ENTRY entry){
         return -1;
     }
     
-    retval = sscanf(valStr[0]->parameterValue, "%d", &retval);
+    sscanf(valStr[0]->parameterValue, "%d", &retval);
     
     Cosa_FreeParamValues(nval, valStr);
     

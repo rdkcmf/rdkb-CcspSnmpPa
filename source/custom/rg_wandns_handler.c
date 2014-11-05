@@ -100,7 +100,7 @@ static int setRgIpMgmtWanDns(int value, oid lastOid)
         }
     }
     else
-    sprintf(strVal, "%d", value);
+        sprintf(strVal, "%d", value);
 
     if (set_dm_value(dmStr, strVal, sizeof(strVal))){
         return -1;

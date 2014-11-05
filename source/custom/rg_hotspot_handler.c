@@ -543,7 +543,7 @@ handleL2ogreBase(
     int retval=SNMP_ERR_NOERROR;
     PCCSP_TABLE_ENTRY entry = NULL; 
     netsnmp_variable_list *vb = NULL;
-    char ip[16] = {'\0'};
+    char ip[256] = {'\0'};
 
     for (req = requests; req != NULL; req = req->next) {
         vb = req->requestvb;

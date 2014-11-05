@@ -65,7 +65,7 @@
         </mib>
         <dm>
           <!-- fill in DM param and type -->
-          <paramName>Device.DeviceInfo.X_COMCAST_COM_xfinitywifiCapable</paramName>
+          <paramName>Device.DeviceInfo.X_COMCAST-COM_xfinitywifiCapable</paramName>
           <dataType>boolean</dataType>
         </dm>
       </mapping>

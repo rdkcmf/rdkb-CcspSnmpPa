@@ -61,7 +61,7 @@
 #include <net-snmp/agent/net-snmp-agent-includes.h>
 
 #ifdef CCSP_DEBUG
-#define  AnscTraceInfo(a)						printf a
+#define  AnscTraceInfo(a)                       printf a
 #define  AnscTraceWarning(a)                    printf a
 #define  AnscTraceError(a)                      printf a
 #define  CcspTraceDebug(a)                      printf a
