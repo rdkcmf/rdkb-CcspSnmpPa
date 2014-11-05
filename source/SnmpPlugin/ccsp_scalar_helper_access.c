@@ -326,6 +326,26 @@ scalarGroupSetReserve2
 #endif
 			/* parse MIB value to DM value */
 			CcspUtilMIBValueToDM(pMapping, (void*)&pValueArray[uCount], requestvb);
+
+			/*
+		    AnscTraceFlow
+		    	((
+		    		"SnmpPA - scalarGroupSetReserve2, ucount = %d, name = %s, type = %d, value = %s, MIB type = %d, length = %d, value = %02X%02X%02X%02X%02X%02X.\n",
+		    		uCount,
+		    		pValueArray[uCount].parameterName,
+		    		pValueArray[uCount].type,
+		    		pValueArray[uCount].parameterValue,
+		    		requestvb->type,
+		    		requestvb->val_len,
+		    		(requestvb->val_len > 0) ? requestvb->val.string[0] : 0xFF,
+		    		(requestvb->val_len > 1) ? requestvb->val.string[1] : 0xFF,
+		    		(requestvb->val_len > 2) ? requestvb->val.string[2] : 0xFF,
+		    		(requestvb->val_len > 3) ? requestvb->val.string[3] : 0xFF,
+		    		(requestvb->val_len > 4) ? requestvb->val.string[4] : 0xFF,
+		    		(requestvb->val_len > 5) ? requestvb->val.string[5] : 0xFF
+		    	));
+		     */
+
 			pThisObject->bBackground |= pMapping->Mapping.backgroundCommit;
 			uCount ++;
 		}
