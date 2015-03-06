@@ -40,8 +40,13 @@
 #include "CcspSnmpPlugin.h"
 #include "ccsp_mib_helper.h"
 #include "cosa_api.h"
-
+#ifdef RDKB_MIB
+#define  CCSP_MIB_MAPPING_LIST_FILE        "CcspRDKBMibList.xml"
+#else
 #define  CCSP_MIB_MAPPING_LIST_FILE        "CcspMibList.xml"
+#endif
+
+
 #define  CCSP_MIB_FILE_NODE_NAME           "mibFile"
 
 #define NELEMS(arr)                         (sizeof(arr) / sizeof((arr)[0]))

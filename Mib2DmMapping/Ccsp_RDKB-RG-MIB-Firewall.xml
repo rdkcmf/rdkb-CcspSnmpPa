@@ -1,0 +1,1558 @@
+<?xml version="1.0"  encoding="UTF-8" ?>
+
+<!--
+   Copyright [2014] [Cisco Systems, Inc.]
+
+   Licensed under the Apache License, Version 2.0 (the \"License\");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an \"AS IS\" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+
+<mib2DM xml="http://www.w3.org/XML/1998/namespace">
+    <version>1</version>
+    <name>RDKB-RG-MIB</name>
+    <lastUpdate>05/08/2012 12:04</lastUpdate>
+    <author>CcspMibHelper Mapping File Generator</author>
+    <!-- Add the library name if callbacks are needed. -->
+        <library>snmp_custom.so</library>
+    <scalarGroups>
+        <scalarGroup>
+            <name>rdkbRgIpMgmtNat</name>
+            <baseOid>1.3.6.1.4.1.17270.50.2.3.7</baseOid>
+            <!--  'enabled' can be set to 'false' if this set of mibs are not ready at back-end yet or deprecated -->
+            <enabled>false</enabled>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- <mapToEntry>Wifi.Radio.%d.Frequency=2.4</mapToEntry> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <mapping>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>rdkbRgIpMgmtNatTcpWait</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>1</min><max>65535</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.NAT.X_CISCO_COM_TCPTimeout</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>rdkbRgIpMgmtNatUdpWait</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>1</min><max>65535</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.NAT.X_CISCO_COM_UDPTimeout</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>rdkbRgIpMgmtNatIcmpWait</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>1</min><max>65535</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.NAT.X_CISCO_COM_ICMPTimeout</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+        </scalarGroup>
+        <scalarGroup>
+            <name>rdkbRgFirewallBase</name>
+            <baseOid>1.3.6.1.4.1.17270.50.2.4.1</baseOid>
+            <!--  'enabled' can be set to 'false' if this set of mibs are not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- <mapToEntry>Wifi.Radio.%d.Frequency=2.4</mapToEntry> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <mapping>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>rdkbRgFirewallProtection</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>0</min><max>4</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_Security.Firewall.FirewallLevel</paramName>
+                    <dataType>string</dataType>
+                    <enumeration>High(3),Medium(2),Low(1),Custom(4),None(0)</enumeration>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>rdkbRgFirewallDmzAddress</name>
+                    <access>ReadWrite</access>
+                    <dataType>IpAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.NAT.X_CISCO_COM_DMZ.InternalIP</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>rdkbRgFirewallPortForwardEnable</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.NAT.X_Comcast_com_EnablePortMapping</paramName>
+                    <dataType>boolean</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>rdkbRgFirewallPortTriggerEnable</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.NAT.X_CISCO_COM_PortTriggers.Enable</paramName>
+                    <dataType>boolean</dataType>
+                </dm>
+            </mapping>
+        </scalarGroup>
+        <scalarGroup>
+            <name>rdkbRgFirewallTraffic</name>
+            <baseOid>1.3.6.1.4.1.17270.50.2.4.2</baseOid>
+            <!--  'enabled' can be set to 'false' if this set of mibs are not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- <mapToEntry>Wifi.Radio.%d.Frequency=2.4</mapToEntry> -->
+            <callbacks>
+                <handleRequests>handleFwBlockRequests</handleRequests>
+            </callbacks>
+            <!--
+            <mapping>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>rdkbRgFirewallTrafficBlock</name>
+                    <access>ReadWrite</access>
+                    <dataType>BITS</dataType>
+                </mib>
+                <dm>
+                    <paramName>Device.X_CISCO_COM_Security.FilterWebTraffic</paramName>
+                    <dataType>string</dataType>
+                    <bitmask>proxy(0),cookies(1),javaApplets(2),activeX(3),popUp(4),fragmentedIp(5)</bitmask>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>rdkbRgFirewallTrafficDetect</name>
+                    <access>ReadWrite</access>
+                    <dataType>BITS</dataType>
+                </mib>
+                <dm>
+                    <paramName>Device.X_CISCO_COM_Security.TrafficDetect</paramName>
+                    <dataType>string</dataType>
+                    <bitmask>portScan(0),ipFlood(1)</bitmask>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>rdkbRgFirewallTrafficPassThru</name>
+                    <access>ReadWrite</access>
+                    <dataType>BITS</dataType>
+                </mib>
+                <dm>
+                    <paramName>Device.X_CISCO_COM_Security.AllowPassthrough</paramName>
+                    <dataType>string</dataType>
+                    <bitmask>ipsec(0),pptp(1),multicast(2)</bitmask>
+                </dm>
+            </mapping>
+            -->
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>rdkbRgFirewallWANBlockingEnable</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <!--<paramName>Device.X_CISCO_COM_Security.Firewall.FilterAnonymousInternetRequests</paramName>
+                    <dataType>boolean</dataType>-->
+                </dm>
+            </mapping>
+        </scalarGroup>
+        <scalarGroup>
+            <name>rdkbRgFirewallReportMgmt</name>
+            <baseOid>1.3.6.1.4.1.17270.50.2.4.4.2</baseOid>
+            <!--  'enabled' can be set to 'false' if this set of mibs are not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- <mapToEntry>Wifi.Radio.%d.Frequency=2.4</mapToEntry> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <mapping>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>rdkbRgFirewallReportMgmtClearLog</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_Security.CleanLog</paramName>
+                    <dataType>boolean</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>rdkbRgFirewallReportEmailLogNow</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_Security.TriggerEmailLog</paramName>
+                    <dataType>boolean</dataType>
+                </dm>
+            </mapping>
+        </scalarGroup>
+        <scalarGroup>
+            <name>rdkbRgFirewallReportEmail</name>
+            <baseOid>1.3.6.1.4.1.17270.50.2.4.4.3</baseOid>
+            <!--  'enabled' can be set to 'false' if this set of mibs are not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- <mapToEntry>Wifi.Radio.%d.Frequency=2.4</mapToEntry> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <mapping>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>rdkbRgFirewallReportEmailEnable</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_Security.EmailSendLogs</paramName>
+                    <dataType>boolean</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>rdkbRgFirewallReportEmailAddress</name>
+                    <access>ReadWrite</access>
+                    <dataType>SnmpAdminString</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_Security.EmailSendTo</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>rdkbRgFirewallReportEmailSmtpServer</name>
+                    <access>ReadWrite</access>
+                    <dataType>SnmpAdminString</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_Security.EmailServer</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>rdkbRgFirewallReportEmailUsername</name>
+                    <access>ReadWrite</access>
+                    <dataType>SnmpAdminString</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_Security.EmailUserName</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>rdkbRgFirewallReportEmailPassword</name>
+                    <access>ReadWrite</access>
+                    <dataType>SnmpAdminString</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_Security.EmailPassword</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+        </scalarGroup>
+        <scalarGroup>
+            <name>rdkbRgFirewallRules</name>
+            <baseOid>1.3.6.1.4.1.17270.50.2.4.5</baseOid>
+            <!--  'enabled' can be set to 'false' if this set of mibs are not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- <mapToEntry>Wifi.Radio.%d.Frequency=2.4</mapToEntry> -->
+            <callbacks>
+                <handleRequests>handleFirewallRules</handleRequests>
+            </callbacks>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>rdkbRgFirewallMacFilterEnable</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_Comcast_com_ParentalControl.ManagedDevices.Enable</paramName>
+                    <dataType>boolean</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>rdkbRgFirewallMacFilterMode</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>0</min><max>1</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_Comcast_com_ParentalControl.ManagedDevices.AllowAll</paramName>
+                    <dataType>boolean</dataType>
+                    <!--<enumeration>block(0),permit(1)</enumeration>-->
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>6</lastOid>
+                    <name>rdkbRgFirewallPortFilterEnable</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_Comcast_com_ParentalControl.ManagedServices.Enable</paramName>
+                    <dataType>boolean</dataType>
+                </dm>
+            </mapping>
+        </scalarGroup>
+        <scalarGroup>
+            <name>rdkbRgFirewallUrlKeywordFilterEnable</name>
+            <baseOid>1.3.6.1.4.1.17270.50.2.4.5.7</baseOid>
+            <!--  'enabled' can be set to 'false' if this set of mibs are not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- <mapToEntry>Wifi.Radio.%d.Frequency=2.4</mapToEntry> -->
+            <callbacks>
+                <!--<handleRequests></handleRequests>-->
+            </callbacks>
+            <mapping>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>rdkbRgFirewallUrlKeywordFilterEnable</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_Comcast_com_ParentalControl.ManagedSites.Enable</paramName>
+                    <dataType>boolean</dataType>
+                </dm>
+            </mapping>
+        </scalarGroup>
+        <scalarGroup>
+            <name>rdkbRgFirewall</name>
+            <baseOid>1.3.6.1.4.1.17270.50.2.4</baseOid>
+            <!--  'enabled' can be set to 'false' if this set of mibs are not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- <mapToEntry>Wifi.Radio.%d.Frequency=2.4</mapToEntry> -->
+            <callbacks>
+                <handleRequests>handleFwRequests</handleRequests>
+            </callbacks>
+            <mapping>
+                <mib>
+                    <lastOid>8</lastOid>
+                    <name>rdkbRgFirewallHttpBlockingEnable</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <!--<paramName>Device.X_CISCO_COM_Security.Firewall.FilterHTTP</paramName>
+                    <dataType>boolean</dataType>-->
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>9</lastOid>
+                    <name>rdkbRgFirewallP2pBlockingEnable</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <!--<paramName>Device.X_CISCO_COM_Security.Firewall.FilterP2P</paramName>
+                    <dataType>boolean</dataType>-->
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>10</lastOid>
+                    <name>rdkbRgFirewallIdentBlockingEnable</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <!--<paramName>Device.X_CISCO_COM_Security.Firewall.FilterP2P</paramName>
+                    <dataType>boolean</dataType>-->
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>11</lastOid>
+                    <name>rdkbRgFirewallIcmpBlockingEnable</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <!--<paramName>Device.X_CISCO_COM_Security.Firewall.FilterP2P</paramName>
+                    <dataType>boolean</dataType>-->
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>12</lastOid>
+                    <name>rdkbRgFirewallMulticastBlockingEnable</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <!--<paramName>Device.X_CISCO_COM_Security.Firewall.FilterP2P</paramName>
+                    <dataType>boolean</dataType>-->
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>1001</lastOid>
+                    <name>rdkbRgFirewallApplySettings</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_Security.ApplyFirewallSettings</paramName>
+                    <dataType>boolean</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>1002</lastOid>
+                    <name>rdkbRgFirewallFactoryReset</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_DeviceControl.FactoryReset</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+        </scalarGroup>
+        <scalarGroup>
+            <name>rdkbRgParentalControl</name>
+            <baseOid>1.3.6.1.4.1.17270.50.2.13</baseOid>
+            <!--  'enabled' can be set to 'false' if this set of mibs are not ready at back-end yet or deprecated -->
+            <enabled>false</enabled>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- <mapToEntry>Wifi.Radio.%d.Frequency=2.4</mapToEntry> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <mapping>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>rdkbRgParentalControlEnable</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcd.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>rdkbRgParentalControlEnableNotification</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcd.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>rdkbRgParentalControlApplySettings</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcd.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+        </scalarGroup>
+    </scalarGroups>
+    <mibTables>
+        <mibTable>
+            <name>rdkbRgFirewallReportEventTable</name>
+            <tableOid>1.3.6.1.4.1.17270.50.2.4.4.1</tableOid>
+            <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <writable>false</writable>
+            <maxEntries>16</maxEntries>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- Add filters in the table -->
+            <!-- <mapToEntries>Device.RoutingTable.%d.type=static</mapToEntries> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <index>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>rdkbRgFirewallReportEventIndex</name>
+                    <access>NoAccess</access>
+                    <dataType>INTEGER</dataType>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.X_CISCO_COM_Security.InternetAccess.LogEntry.%d</tableObj>
+                    <!-- If index maps to a different value, use <map> to add the mapping below. -->
+                </mapToInsNumber>
+            </index>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>rdkbRgFirewallReportEventDescription</name>
+                    <access>ReadOnly</access>
+                    <dataType>SnmpAdminString</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_Security.InternetAccess.LogEntry.%d.Action</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>rdkbRgFirewallReportEventCount</name>
+                    <access>ReadOnly</access>
+                    <dataType>INTEGER</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_Security.InternetAccess.LogEntry.%d.Count</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>rdkbRgFirewallReportEventLastOccurance</name>
+                    <access>ReadOnly</access>
+                    <dataType>SnmpAdminString</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_Security.InternetAccess.LogEntry.%d.OccuranceTime</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>rdkbRgFirewallReportEventTarget</name>
+                    <access>ReadOnly</access>
+                    <dataType>SnmpAdminString</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_Security.InternetAccess.LogEntry.%d.TargetIP</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>6</lastOid>
+                    <name>rdkbRgFirewallReportEventSource</name>
+                    <access>ReadOnly</access>
+                    <dataType>SnmpAdminString</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_Security.InternetAccess.LogEntry.%d.SourceIP</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+        </mibTable>
+        <mibTable>
+            <name>rdkbRgFirewallIpFilterTable</name>
+            <tableOid>1.3.6.1.4.1.17270.50.2.4.5.1</tableOid>
+            <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <writable>true</writable>
+            <maxEntries>10</maxEntries>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- Add filters in the table -->
+            <!-- <mapToEntries>Device.RoutingTable.%d.type=static</mapToEntries> -->
+            <callbacks>
+                <refreshCache>handleFwIpFilterRefreshCache</refreshCache>
+                <handleRequests>handleFwIpFilterRequests</handleRequests>
+            </callbacks>
+            <index>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>rdkbRgFirewallIpFilterIndex</name>
+                    <access>NoAccess</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>1</min><max>10</max>
+                    </range>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.Hosts.Host.%d</tableObj>
+                    <!-- If index maps to a different value, use <map> to add the mapping below. -->
+                </mapToInsNumber>
+            </index>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>rdkbRgFirewallIpFilterRowStatus</name>
+                    <access>WriteOnly</access>
+                    <dataType>RowStatus</dataType>
+                </mib>
+                <!-- It's Rowstatus and has no mapping. -->
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>rdkbRgFirewallIpFilterAddressStart</name>
+                    <access>ReadWrite</access>
+                    <dataType>IpAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.Hosts.Host.%d.IPAddress</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>rdkbRgFirewallIpFilterAddressEnd</name>
+                    <access>ReadWrite</access>
+                    <dataType>IpAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.Hosts.Host.%d.IPAddress</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>rdkbRgFirewallIpFilterTrusted</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                </mib>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>6</lastOid>
+                    <name>rdkbRgFirewallIpFilterPolicy</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                </mib>
+            </mapping>
+        </mibTable>
+        <mibTable>
+            <name>rdkbRgFirewallPortFilterTable</name>
+            <tableOid>1.3.6.1.4.1.17270.50.2.4.5.2</tableOid>
+            <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+            <enabled>ture</enabled>
+            <writable>true</writable>
+            <maxEntries>16</maxEntries>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- Add filters in the table -->
+            <!-- <mapToEntries>Device.X_CISCO_COM_Security.InternetAccess.AccessPolicy.1.BlockedApplication</mapToEntries> -->
+            <callbacks>
+                <handleRequests>handleFwPortFilter</handleRequests>
+            </callbacks>
+            <index>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>rdkbRgFirewallPortFilterIndex</name>
+                    <access>NoAccess</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>1</min><max>10</max>
+                    </range>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.X_Comcast_com_ParentalControl.ManagedServices.Service.</tableObj>
+                    <!-- If index maps to a different value, use <map> to add the mapping below. -->
+                </mapToInsNumber>
+            </index>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>rdkbRgFirewallPortFilterRowStatus</name>
+                    <access>WriteOnly</access>
+                    <dataType>RowStatus</dataType>
+                </mib>
+                <!-- It's Rowstatus and has no mapping. -->
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>rdkbRgFirewallPortFilterPortStart</name>
+                    <access>ReadWrite</access>
+                    <dataType>InetPortNumber</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_Comcast_com_ParentalControl.ManagedServices.Service.%d.StartPort</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>6</lastOid>
+                    <name>rdkbRgFirewallPortFilterPortEnd</name>
+                    <access>ReadWrite</access>
+                    <dataType>InetPortNumber</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_Comcast_com_ParentalControl.ManagedServices.Service.%d.EndPort</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>7</lastOid>
+                    <name>rdkbRgFirewallPortFilterProto</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>1</min><max>3</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_Comcast_com_ParentalControl.ManagedServices.Service.%d.Protocol</paramName>
+                    <dataType>int</dataType>
+                    <enumeration>UDP(1),TCP(2),BOTH(3)</enumeration>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>8</lastOid>
+                    <name>rdkbRgFirewallPortFilterAlwaysBlock</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_Comcast_com_ParentalControl.ManagedServices.Service.%d.AlwaysBlock</paramName>
+                    <dataType>boolean</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>9</lastOid>
+                    <name>rdkbRgFirewallPortFilterBlockStartTime</name>
+                    <access>ReadWrite</access>
+                    <dataType>OCTET STRING</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_Comcast_com_ParentalControl.ManagedServices.Service.%d.StartTime</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>10</lastOid>
+                    <name>rdkbRgFirewallPortFilterBlockEndTime</name>
+                    <access>ReadWrite</access>
+                    <dataType>OCTET STRING</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_Comcast_com_ParentalControl.ManagedServices.Service.%d.EndTime</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>11</lastOid>
+                    <name>rdkbRgFirewallPortFilterBlockDays</name>
+                    <access>ReadWrite</access>
+                    <dataType>BITS</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_Comcast_com_ParentalControl.ManagedServices.Service.%d.BlockDays</paramName>
+                    <dataType>string</dataType>
+                    <bitmask>Sun(0),Mon(1),Tue(2),Wed(3),Thu(4),Fri(5),Sat(6)</bitmask>
+                </dm>
+            </mapping>
+        </mibTable>
+        <mibTable>
+            <name>rdkbRgFirewallMacFilterTable</name>
+            <tableOid>1.3.6.1.4.1.17270.50.2.4.5.3</tableOid>
+            <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <writable>true</writable>
+            <maxEntries>16</maxEntries>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- Add filters in the table -->
+            <!-- <mapToEntries>Device.RoutingTable.%d.type=static</mapToEntries> -->
+            <callbacks>
+                <handleRequests>handleFwMacFilter</handleRequests>
+            </callbacks>
+            <index>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>rdkbRgFirewallMacFilterIndex</name>
+                    <access>NoAccess</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>1</min><max>20</max>
+                    </range>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.X_Comcast_com_ParentalControl.ManagedDevices.Device.%d</tableObj>
+                    <!-- If index maps to a different value, use <map> to add the mapping below. -->
+                </mapToInsNumber>
+            </index>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>rdkbRgFirewallMacFilterRowStatus</name>
+                    <access>WriteOnly</access>
+                    <dataType>RowStatus</dataType>
+                </mib>
+                <!-- It's Rowstatus and has no mapping. -->
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>rdkbRgFirewallMacFilterAddress</name>
+                    <access>ReadWrite</access>
+                    <dataType>MacAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_Comcast_com_ParentalControl.ManagedDevices.Device.%d.MACAddress</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>rdkbRgFirewallMacFilterAlwaysBlock</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_Comcast_com_ParentalControl.ManagedDevices.Device.%d.AlwaysBlock</paramName>
+                    <dataType>boolean</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>rdkbRgFirewallMacFilterBlockStartTime</name>
+                    <access>ReadWrite</access>
+                    <dataType>OCTET STRING</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_Comcast_com_ParentalControl.ManagedDevices.Device.%d.StartTime</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>6</lastOid>
+                    <name>rdkbRgFirewallMacFilterBlockEndTime</name>
+                    <access>ReadWrite</access>
+                    <dataType>OCTET STRING</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_Comcast_com_ParentalControl.ManagedDevices.Device.%d.EndTime</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>7</lastOid>
+                    <name>rdkbRgFirewallMacFilterBlockDays</name>
+                    <access>ReadWrite</access>
+                    <dataType>BITS</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_Comcast_com_ParentalControl.ManagedDevices.Device.%d.BlockDays</paramName>
+                    <dataType>string</dataType>
+                    <bitmask>Sun(0),Mon(1),Tue(2),Wed(3),Thu(4),Fri(5),Sat(6)</bitmask>
+                </dm>
+            </mapping>
+        </mibTable>
+        <mibTable>
+            <name>rdkbRgFirewallPortFwdTable</name>
+            <tableOid>1.3.6.1.4.1.17270.50.2.4.6</tableOid>
+            <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <writable>true</writable>
+            <maxEntries>16</maxEntries>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- Add filters in the table -->
+            <!-- <mapToEntries>Device.RoutingTable.%d.type=static</mapToEntries> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <index>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>rdkbRgFirewallPortFwdIndex</name>
+                    <access>NoAccess</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>1</min><max>30</max>
+                    </range>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.NAT.PortMapping.</tableObj>
+                    <!-- If index maps to a different value, use <map> to add the mapping below. -->
+                </mapToInsNumber>
+            </index>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>rdkbRgFirewallPortFwdRowStatus</name>
+                    <access>WriteOnly</access>
+                    <dataType>RowStatus</dataType>
+                </mib>
+                <!-- It's Rowstatus and has no mapping. -->
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.NAT.PortMapping.%d.Enable</paramName>
+                    <dataType>boolean</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>rdkbRgFirewallPortFwdToAddress</name>
+                    <access>ReadWrite</access>
+                    <dataType>IpAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.NAT.PortMapping.%d.InternalClient</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>rdkbRgFirewallPortFwdPortStart</name>
+                    <access>ReadWrite</access>
+                    <dataType>InetPortNumber</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.NAT.PortMapping.%d.ExternalPort</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>rdkbRgFirewallPortFwdPortEnd</name>
+                    <access>ReadWrite</access>
+                    <dataType>InetPortNumber</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.NAT.PortMapping.%d.ExternalPortEndRange</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>6</lastOid>
+                    <name>rdkbRgFirewallPortFwdProto</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>1</min><max>3</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.NAT.PortMapping.%d.Protocol</paramName>
+                    <dataType>string</dataType>
+                    <enumeration>UDP(1),TCP(2),BOTH(3)</enumeration>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>7</lastOid>
+                    <name>rdkbRgFirewallPortFwdSrvcName</name>
+                    <access>ReadWrite</access>
+                    <dataType>SnmpAdminString</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.NAT.PortMapping.%d.Description</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+        </mibTable>
+        <mibTable>
+            <name>rdkbRgFirewallPortTrigTable</name>
+            <tableOid>1.3.6.1.4.1.17270.50.2.4.7</tableOid>
+            <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <writable>true</writable>
+            <maxEntries>16</maxEntries>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- Add filters in the table -->
+            <!-- <mapToEntries>Device.RoutingTable.%d.type=static</mapToEntries> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <index>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>rdkbRgFirewallPortTrigIndex</name>
+                    <access>NoAccess</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>1</min><max>10</max>
+                    </range>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.NAT.X_CISCO_COM_PortTriggers.Trigger.</tableObj>
+                    <!-- If index maps to a different value, use <map> to add the mapping below. -->
+                </mapToInsNumber>
+            </index>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>rdkbRgFirewallPortTrigRowStatus</name>
+                    <access>WriteOnly</access>
+                    <dataType>RowStatus</dataType>
+                </mib>
+                <!-- It's Rowstatus and has no mapping. -->
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.NAT.X_CISCO_COM_PortTriggers.Trigger.%d.Enable</paramName>
+                    <dataType>boolean</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>rdkbRgFirewallPortTrigTriggerPortStart</name>
+                    <access>ReadWrite</access>
+                    <dataType>InetPortNumber</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.NAT.X_CISCO_COM_PortTriggers.Trigger.%d.TriggerPortStart</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>rdkbRgFirewallPortTrigTriggerPortEnd</name>
+                    <access>ReadWrite</access>
+                    <dataType>InetPortNumber</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.NAT.X_CISCO_COM_PortTriggers.Trigger.%d.TriggerPortEnd</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>rdkbRgFirewallPortTrigTargetPortStart</name>
+                    <access>ReadWrite</access>
+                    <dataType>InetPortNumber</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.NAT.X_CISCO_COM_PortTriggers.Trigger.%d.ForwardPortStart</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>6</lastOid>
+                    <name>rdkbRgFirewallPortTrigTargetPortEnd</name>
+                    <access>ReadWrite</access>
+                    <dataType>InetPortNumber</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.NAT.X_CISCO_COM_PortTriggers.Trigger.%d.ForwardPortEnd</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>7</lastOid>
+                    <name>rdkbRgFirewallPortTrigProto</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>1</min><max>3</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.NAT.X_CISCO_COM_PortTriggers.Trigger.%d.TriggerProtocol</paramName>
+                    <dataType>string</dataType>
+                    <enumeration>UDP(1),TCP(2),BOTH(3)</enumeration>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>8</lastOid>
+                    <name>rdkbRgFirewallPortTrigSrvcName</name>
+                    <access>ReadWrite</access>
+                    <dataType>SnmpAdminString</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.NAT.X_CISCO_COM_PortTriggers.Trigger.%d.Description</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+        </mibTable>
+        <mibTable>
+            <name>rdkbRgParentalControlRuleTable</name>
+            <tableOid>1.3.6.1.4.1.17270.50.2.13.2</tableOid>
+            <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+            <enabled>false</enabled>
+            <writable>true</writable>
+            <maxEntries>16</maxEntries>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- Add filters in the table -->
+            <!-- <mapToEntries>Device.RoutingTable.%d.type=static</mapToEntries> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <index>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>rdkbRgParentalControlRuleIndex</name>
+                    <access>NoAccess</access>
+                    <dataType>Integer32</dataType>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.xxxTable.</tableObj>
+                    <!-- If index maps to a different value, use <map> to add the mapping below. -->
+                </mapToInsNumber>
+            </index>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>rdkbRgParentalControlRuleMAC</name>
+                    <access>ReadWrite</access>
+                    <dataType>MacAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>rdkbRgParentalControlRuleBitmap</name>
+                    <access>ReadWrite</access>
+                    <dataType>Integer32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>rdkbRgParentalControlRuleTarget</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>rdkbRgParentalControlRuleIpaddr</name>
+                    <access>ReadWrite</access>
+                    <dataType>IpAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>6</lastOid>
+                    <name>rdkbRgParentalControlRuleSubnetMask</name>
+                    <access>ReadWrite</access>
+                    <dataType>IpAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>7</lastOid>
+                    <name>rdkbRgParentalControlRuleProto</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>8</lastOid>
+                    <name>rdkbRgParentalControlRulePortStart</name>
+                    <access>ReadWrite</access>
+                    <dataType>InetPortNumber</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>9</lastOid>
+                    <name>rdkbRgParentalControlRulePortEnd</name>
+                    <access>ReadWrite</access>
+                    <dataType>InetPortNumber</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>10</lastOid>
+                    <name>rdkbRgParentalControlRuleKeyword</name>
+                    <access>ReadWrite</access>
+                    <dataType>DisplayString</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>11</lastOid>
+                    <name>rdkbRgParentalControlRuleTimeStart</name>
+                    <access>ReadWrite</access>
+                    <dataType>DateAndTime</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>12</lastOid>
+                    <name>rdkbRgParentalControlRuleTimeEnd</name>
+                    <access>ReadWrite</access>
+                    <dataType>DateAndTime</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcTable.%d.xyz</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>13</lastOid>
+                    <name>rdkbRgParentalControlRuleStatus</name>
+                    <access>WriteOnly</access>
+                    <dataType>RowStatus</dataType>
+                </mib>
+                <!-- It's Rowstatus and has no mapping. -->
+            </mapping>
+        </mibTable>
+        <mibTable>
+            <name>rdkbRgFirewallUrlKeywordFilterTable</name>
+            <tableOid>1.3.6.1.4.1.17270.50.2.4.5.7.2</tableOid>
+            <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <writable>true</writable>
+            <maxEntries>16</maxEntries>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- Add filters in the table -->
+            <!-- <mapToEntries>Device.RoutingTable.%d.type=static</mapToEntries> -->
+            <callbacks>
+                <handleRequests>handleFwUrlKeywordFilter</handleRequests>
+            </callbacks>
+            <index>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>rdkbRgFirewallUrlKeywordFilterIndex</name>
+                    <access>NoAccess</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>1</min><max>20</max>
+                    </range>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.X_Comcast_com_ParentalControl.ManagedSites.BlockedSite.%d</tableObj>
+                    <!-- If index maps to a different value, use <map> to add the mapping below. -->
+                </mapToInsNumber>
+            </index>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>rdkbRgFirewallUrlKeywordFilterRowStatus</name>
+                    <access>WriteOnly</access>
+                    <dataType>RowStatus</dataType>
+                </mib>
+                <!-- It's Rowstatus and has no mapping. -->
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>rdkbRgFirewallUrlKeywordFilterMethod</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_Comcast_com_ParentalControl.ManagedSites.BlockedSite.%d.BlockMethod</paramName>
+                    <dataType>string</dataType>
+                    <enumeration>URL(1),Keyword(2)</enumeration>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>rdkbRgFirewallUrlKeywordFilterMatch</name>
+                    <access>ReadWrite</access>
+                    <dataType>OCTET STRING</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_Comcast_com_ParentalControl.ManagedSites.BlockedSite.%d.Site</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>rdkbRgFirewallUrlKeywordFilterAlwaysBlock</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_Comcast_com_ParentalControl.ManagedSites.BlockedSite.%d.AlwaysBlock</paramName>
+                    <dataType>boolean</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>6</lastOid>
+                    <name>rdkbRgFirewallUrlKeywordFilterBlockStartTime</name>
+                    <access>ReadWrite</access>
+                    <dataType>OCTET STRING</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_Comcast_com_ParentalControl.ManagedSites.BlockedSite.%d.StartTime</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>7</lastOid>
+                    <name>rdkbRgFirewallUrlKeywordFilterBlockEndTime</name>
+                    <access>ReadWrite</access>
+                    <dataType>OCTET STRING</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_Comcast_com_ParentalControl.ManagedSites.BlockedSite.%d.EndTime</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>8</lastOid>
+                    <name>rdkbRgFirewallUrlKeywordFilterBlockDays</name>
+                    <access>ReadWrite</access>
+                    <dataType>BITS</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_Comcast_com_ParentalControl.ManagedSites.BlockedSite.%d.BlockDays</paramName>
+                    <dataType>string</dataType>
+                    <bitmask>Sun(0),Mon(1),Tue(2),Wed(3),Thu(4),Fri(5),Sat(6)</bitmask>
+                </dm>
+            </mapping>
+        </mibTable>
+    </mibTables>
+</mib2DM>
