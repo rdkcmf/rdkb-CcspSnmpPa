@@ -494,8 +494,8 @@ netsnmp_request_info* req;
 }
 
 static int getBssEnable(PCCSP_TABLE_ENTRY entry) {
-    parameterValStruct_t **valStr;
-    int nval, retval;
+    parameterValStruct_t **valStr, **valStr2;
+    int nval, retval, nval2;
     char mystring[30];
     char* name = (char *)mystring;
     
@@ -510,13 +510,23 @@ static int getBssEnable(PCCSP_TABLE_ENTRY entry) {
         return -1;
     }
 
-    if (nval < 1)
+    if(entry->IndexValue[0].Value.uValue % 2) 
+        snprintf(name, sizeof(mystring), WIFI_DM_RADIO_ENABLE, 1);
+    else
+        snprintf(name, sizeof(mystring), WIFI_DM_RADIO_ENABLE, 2);
+    if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval2, &valStr2))
+    {
+        AnscTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
+        return -1;
+    }
+
+    if (nval<1 || nval2<1)
     {
         AnscTraceError(("%s: nval < 1 \n", __FUNCTION__));
         return -1;
     }
     
-    retval = _ansc_strncmp("true", valStr[0]->parameterValue, 5) ? 2 : 1;
+    retval = _ansc_strncmp("false", valStr[0]->parameterValue, 6)&&_ansc_strncmp("false", valStr2[0]->parameterValue, 6) ? 1 : 2;
     
     Cosa_FreeParamValues(nval, valStr);
     

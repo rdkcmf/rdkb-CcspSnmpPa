@@ -45,6 +45,8 @@
 
 #include "cosa_api.h"
 
+#include<time.h>
+
 /**********************************************************************
 
     prototype:
@@ -498,6 +500,8 @@ CcspScalarHelperSetMibValues
 				{
 					Cosa_BackgroundCommit(pThisObject->pCcspComp, pThisObject->pCcspPath, TRUE);
 					pThisObject->bBackground = 0;
+                                        struct timespec delay = {0, 80000000};
+                                        nanosleep(&delay, NULL);
 				}
 				else
 				{

@@ -2294,6 +2294,16 @@ CcspUtilDMValueToMIB
 					AnscFreeMemory(pTime);
 				}
 			}
+			else if( AnscEqualString(pMibInfo->pType, "InetAddressIPv6", FALSE))
+            {
+                struct in6_addr *addr6;
+
+                pMibValue->Value.puBuffer = addr6 = AnscAllocateMemory(sizeof(struct in6_addr));
+                if (addr6) {
+                    inet_pton(AF_INET6, pValue, addr6);
+                    pMibValue->uSize = sizeof(struct in6_addr);
+                }
+            }
 			else if( pValue != NULL)
 			{
 				pMibValue->Value.pBuffer = AnscCloneString(pValue);
@@ -2579,8 +2589,37 @@ CcspUtilMIBValueToDM
 					pVb->val.bitstring[5]
 				);
 			pValue->parameterValue = AnscCloneString(pBuff);
-		}
-		else
+        } 
+        else if ( AnscEqualString(pMibMapping->MibInfo.pType, "InetAddressIPv6", FALSE))
+        {
+            if (inet_ntop(AF_INET6, pVb->val.bitstring, pBuff, sizeof(pBuff)) != NULL)
+                pValue->parameterValue = AnscCloneString(pBuff);
+            /*
+              _ansc_sprintf
+                (
+                    pBuff,
+                    "%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X:%02X%02X",
+                    pVb->val.bitstring[0],
+                    pVb->val.bitstring[1],
+                    pVb->val.bitstring[2],
+                    pVb->val.bitstring[3],
+                    pVb->val.bitstring[4],
+                    pVb->val.bitstring[5],
+                    pVb->val.bitstring[6],
+                    pVb->val.bitstring[7],
+                    pVb->val.bitstring[8],
+                    pVb->val.bitstring[9],
+                    pVb->val.bitstring[10],
+                    pVb->val.bitstring[11],
+                    pVb->val.bitstring[12],
+                    pVb->val.bitstring[13],
+                    pVb->val.bitstring[14],
+                    pVb->val.bitstring[15]
+                );
+            pValue->parameterValue = AnscCloneString(pBuff);
+                */
+        }
+        else
 		{
 			pValue->parameterValue = AnscCloneString((char*)pVb->val.string);
 		}
