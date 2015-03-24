@@ -19,6 +19,11 @@
 
 include $(CCSP_ROOT_DIR)/arch/ccsp_common.mk
 
+ifeq ($(CcspBoard), intel_usg_arm)
+#added by sicong
+	CFLAGS  += -funwind-tables
+	LDFLAGS += -lubacktrace 
+endif
 SNMP_PLUGIN = snmp_plugin
 PLUGIN	= $(ComponentBuildDir)/lib$(SNMP_PLUGIN).so
 SUBAGNT = $(ComponentBuildDir)/snmp_subagnet
@@ -63,7 +68,11 @@ CFLAGS  += -rdynamic
 CFLAGS  += $(INCFLAGS) $(LDFLAGS)
 
 ifeq ($(CcspBoard), "pc")
-	CFLAGS += -D_COSA_SIM_
+	CFLAGS += -D_COSA_SIM_ /
+			   -DRDKB_MIB
+endif
+ifeq ($(CcspBoard), "rdkb_arm")
+	CFLAGS += -DRDKB_MIB
 endif
 
 vpath %.c $(PLUGIN_SRC_DIR)
@@ -115,4 +124,7 @@ endif
 ifneq ($(CONFIG_CISCO_WECB),y)
 	@rm -f $(SNMP_INSDIR)/Ccsp_SA-RG-MIB-WECB.xml
 endif
-	
+ifneq ($(CONFIG_CISCO_HOTSPOT),)
+	@rm -f $(SNMP_INSDIR)/Ccsp_SA-RG-MIB-Hotspot.xml
+endif
+

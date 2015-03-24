@@ -41,14 +41,14 @@
                     <access>ReadWrite</access>
                     <dataType>INTEGER</dataType>
                     <range>
-                        <min>1</min><max>5</max>
+                        <min>0</min><max>5</max>
                     </range>
                 </mib>
                 <dm>
                     <!-- fill in DM param and type -->
                     <paramName>Device.X_CISCO_COM_DeviceControl.DeviceMode</paramName>
                     <dataType>string</dataType>
-                    <enumeration>multiSsid(1),cableHome11(2),Ipv4(3),Ipv6(4),Dualstack(5)</enumeration>
+                    <enumeration>Bridge(0),multiSsid(1),cableHome11(2),Ipv4(3),Ipv6(4),Dualstack(5)</enumeration>
                 </dm>
             </mapping>
             <mapping>

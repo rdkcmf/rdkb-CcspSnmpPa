@@ -144,7 +144,8 @@ static struct block_day blockDays[] = {
     },
 };
 
-#ifdef CONFIG_CISCO_CCSP_PRODUCT_ARES
+//#ifdef CONFIG_CISCO_CCSP_PRODUCT_ARES
+#if 1
 
 struct mac_filter_mode {
     const char *allowAll;
@@ -812,7 +813,8 @@ int handleFwMacFilter(
             }
             ins = pEntry->IndexValue[0].Value.iValue;
 
-#ifdef CONFIG_CISCO_CCSP_PRODUCT_ARES
+//#ifdef CONFIG_CISCO_CCSP_PRODUCT_ARES
+#if 1
             // comcast requirement: only show blocked or permitted devices
             {
                 int snmpFilterMode=SNMP_BLOCK;
@@ -898,7 +900,8 @@ int handleFwMacFilter(
 
         case MODE_SET_ACTION:
 
-#ifdef CONFIG_CISCO_CCSP_PRODUCT_ARES
+//#ifdef CONFIG_CISCO_CCSP_PRODUCT_ARES
+#if 1
             {
                 int snmpFilterMode;
                 char typeDm[128] = {'\0'};
@@ -1033,7 +1036,8 @@ int handleFwUrlKeywordFilter(
 }
 
 // Comcast ARES specific handling
-#ifdef CONFIG_CISCO_CCSP_PRODUCT_ARES
+//#ifdef CONFIG_CISCO_CCSP_PRODUCT_ARES
+#if 1
 
 /*
  * Backend: .AllowAll -> boolean -> true/false 
