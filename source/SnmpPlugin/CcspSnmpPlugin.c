@@ -91,6 +91,8 @@ set_debug_level(void)
         {"emergency",   CCSP_TRACE_LEVEL_EMERGENCY, },
     };
 
+            pComponentName = "CCSP_SNMNP_Plugin";
+
     ccspDbg = getenv("CCSPDBG");
     if (!ccspDbg)
         return;
@@ -100,7 +102,7 @@ set_debug_level(void)
         if (AnscEqualString(ccspDbg, levelTab[i].name, TRUE))
         {
             AnscSetTraceLevel(levelTab[i].level);
-            pComponentName = "CCSP_SNMNP_Plugin";
+            //pComponentName = "CCSP_SNMNP_Plugin";
 
             AnscTraceWarning(("setting debug level to \"%s\"\n", levelTab[i].name));
             break;
@@ -132,6 +134,13 @@ init_ccsp_snmp_plugin(void)
         AnscTraceError(("%s: Cosa_Init error\n", __FUNCTION__));
         return;
     }
+
+	printf("****snmp rdklogger init %s\n",pComponentName);
+
+	#ifdef FEATURE_SUPPORT_RDKLOG
+		rdk_logger_init("/fss/gw/lib/debug.ini");
+	#endif
+    CcspTraceWarning(("SNMP:snmp initialzed!\n"));
 
 	g_CcspMibHelper = (PCCSP_MIB_HELPER_OBJECT)CcspCreateMibHelper();
 
@@ -184,7 +193,7 @@ init_ccsp_snmp_plugin(void)
 
     pRootNode = (PANSC_XML_DOM_NODE_OBJECT)
         AnscXmlDomParseString((ANSC_HANDLE)NULL, (PCHAR*)&pBackBuffer, uBufferSize);
-
+	printf("Test XML : %s\n", pRootNode->Name);
     AnscFreeMemory(pXMLContent);
 
     if( pRootNode == NULL)

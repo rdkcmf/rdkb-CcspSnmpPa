@@ -317,6 +317,114 @@ static int set_snmp_enable(const char *octet)
     return TRUE;
 }
 
+#define FactoryReset_lastoid 1002
+#define DeviceReset_lastoid 1003
+#define FACTORY_RESET_DM 	"Device.X_CISCO_COM_DeviceControl.FactoryReset"
+#define FACTORY_RESET_DM_WIFI	"Device.WiFi.X_CISCO_COM_FactoryResetRadioAndAp"
+
+int setFactoryReset(int value)
+{
+    if ((value < 0) || (value > 3 )){
+        return -1; /* if not true, return inconsistent value */
+    }
+		printf("%s ... \n",__FUNCTION__);
+/*Value list: 
+Call appropriate DML parameter based on the reset case 
+		false(0)
+		routerAndWifi(1)
+		routerOnly(2)
+		wifi(3)
+*/
+    switch(value){
+	case 0 :
+		break;
+	case 1 :
+		if (set_dm_value(FACTORY_RESET_DM_WIFI, "1,2;1,2", strlen("1,2;1,2")) || 
+		    set_dm_value(FACTORY_RESET_DM, "Router,VoIP", strlen("Router,VoIP"))){
+       			return -1;
+    		}
+    				
+		break;
+	case 2 :
+		if (set_dm_value(FACTORY_RESET_DM, "Router", strlen("Router"))){
+       			return -1;
+    		}
+		break;
+        case 3 : 
+		if (set_dm_value(FACTORY_RESET_DM_WIFI, "1,2;1,2", strlen("1,2;1,2"))){
+       			return -1;
+    		}
+		break;
+	default :
+		break;
+	}
+    return 0;
+}
+
+// This function is to handle WiFi only reset case
+int handleDeviceMgmtParam( 
+    netsnmp_mib_handler             *handler,
+    netsnmp_handler_registration    *reginfo,
+    netsnmp_agent_request_info      *reqinfo,
+    netsnmp_request_info            *requests
+)
+{
+    netsnmp_request_info* request;
+    netsnmp_variable_list *requestvb    = NULL;
+    int subid, ret;
+    int retval=SNMP_ERR_NOERROR;
+    netsnmp_variable_list *vb = NULL;
+    int value = 0;
+
+    for (request = requests; request != NULL; request = request->next) {
+         requestvb = request->requestvb;
+         subid = requestvb->name[requestvb->name_length - 2];
+
+        switch(reqinfo->mode){
+        case MODE_GET:
+            if(subid == FactoryReset_lastoid) {
+                /* always return false when get */
+                value = 0;
+                snmp_set_var_typed_value(request->requestvb, (u_char)ASN_INTEGER, (u_char *)&value, sizeof(value));
+                request->processed = 1;
+            }
+            break;
+
+	 case MODE_SET_RESERVE1:
+                ret = netsnmp_check_vb_type(requests->requestvb, ASN_INTEGER);
+                if (ret != SNMP_ERR_NOERROR)
+                    netsnmp_set_request_error(reqinfo, requests, ret);
+                request->processed = 1;     /* request->processed will be reset in every step by netsnmp_call_handlers */
+                break;
+	case MODE_SET_RESERVE2:
+	      if(subid == FactoryReset_lastoid) {
+                 if (setFactoryReset(*requestvb->val.integer)){
+                        netsnmp_set_request_error(reqinfo, request, SNMP_ERR_INCONSISTENTVALUE);
+                 }
+                 request->processed = 1;
+              }
+		if(subid == DeviceReset_lastoid){
+			CcspTraceWarning(("RDKB_REBOOT : Reboot triggered through SNMP\n"));
+		}
+            break;
+	case MODE_SET_ACTION:
+                break;
+                
+            case MODE_SET_FREE:
+            case MODE_SET_COMMIT:
+            case MODE_SET_UNDO:
+                break;
+            
+            default:
+                return SNMP_ERR_GENERR;
+        }
+	}
+    
+    return SNMP_ERR_NOERROR;
+}
+
+
+
 int
 handleDeviceConfig(
     netsnmp_mib_handler             *handler,
@@ -384,3 +492,72 @@ handleDeviceConfig(
     }
     return SNMP_ERR_NOERROR;
 } /* saRgDeviceConfigSnmpEnable end */
+
+#define CONNECTEDCLIENT_DM_INTERFACE "Device.Hosts.Host.%d.Layer1Interface"
+int getInterface(PCCSP_TABLE_ENTRY pEntry, char *interface)
+{
+    char dmStr[128] = {'\0'};
+	int ret ;
+	char index;	
+	int iface;
+    if(!interface)
+        return -1;
+    snprintf(dmStr, sizeof(dmStr), CONNECTEDCLIENT_DM_INTERFACE, pEntry->IndexValue[0].Value.uValue);
+    ret = get_dm_value(dmStr, interface, 50);
+	if(strstr(interface,"WiFi")) {
+		index = interface[strlen(interface)-1];
+		iface = index - '0';
+		if(iface == 1)                  
+			strcpy(interface,"WiFi 2.4G");
+		else if(iface == 2)
+			strcpy(interface,"WiFi 5G");
+		else
+			strcpy(interface,"WiFi");
+	}
+    return 0; 
+}
+
+int
+handleConnectedDevices(
+    netsnmp_mib_handler             *handler,
+    netsnmp_handler_registration    *reginfo,
+    netsnmp_agent_request_info      *reqinfo,
+    netsnmp_request_info            *requests
+)
+{
+    netsnmp_request_info* req;
+    int subid;
+    int intval, status;
+    int retval=SNMP_ERR_NOERROR;
+    PCCSP_TABLE_ENTRY entry = NULL; 
+    netsnmp_variable_list *vb = NULL;
+    int index;
+	char interface[50] = {'\0'};
+
+    for (req = requests; req != NULL; req = req->next) {
+   
+		vb = req->requestvb;
+		subid = vb->name[vb->name_length -2];
+
+		entry = (PCCSP_TABLE_ENTRY)netsnmp_tdata_extract_entry(req);
+		if (entry == NULL) {
+			netsnmp_request_set_error(req, SNMP_NOSUCHINSTANCE);
+			AnscTraceWarning(("No entry found for Connected clients!\n"));
+			continue;
+		}
+		switch (reqinfo->mode) {
+			case MODE_GET:
+				if(subid == 6){
+					getInterface(entry, interface);
+				    snmp_set_var_typed_value(req->requestvb, (u_char)ASN_OCTET_STR, (u_char *)interface, strlen(interface));
+					req->processed = 1;
+
+				}
+				break;
+			default:
+				netsnmp_set_request_error(reqinfo, req, SNMP_ERR_GENERR);
+				return SNMP_ERR_GENERR;
+		}
+    }
+    return SNMP_ERR_NOERROR;
+}
