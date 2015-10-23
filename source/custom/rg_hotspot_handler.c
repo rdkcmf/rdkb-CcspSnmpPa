@@ -48,11 +48,21 @@
 
 #define TRUE 1
 #define FALSE 0
-#define HOTSPOT_DM_OPTION82_CURCUIT_ID "Device.X_COMCAST_COM_GRE.Interface.1.DHCPCircuitIDSSID"
-#define HOTSPOT_DM_OPTION82_REMOTE_ID "Device.X_COMCAST_COM_GRE.Interface.1.DHCPRemoteID"
-#define HOTSPOT_DM_REMOTE_ENDPOINTS "Device.X_COMCAST_COM_GRE.Interface.1.RemoteEndpoints"
-#define HOTSPOT_DM_LOCAL_INTERFACES "Device.X_COMCAST_COM_GRE.Interface.1.LocalInterfaces"
-#define HOTSPOT_DM_ASSOCIATE_BRIDGES "Device.X_COMCAST_COM_GRE.Interface.1.AssociatedBridges"
+//zqiu>>
+//#define HOTSPOT_DM_OPTION82_CURCUIT_ID "Device.X_COMCAST_COM_GRE.Interface.1.DHCPCircuitIDSSID"
+//#define HOTSPOT_DM_OPTION82_REMOTE_ID "Device.X_COMCAST_COM_GRE.Interface.1.DHCPRemoteID"
+//#define HOTSPOT_DM_REMOTE_ENDPOINTS "Device.X_COMCAST_COM_GRE.Interface.1.RemoteEndpoints"
+//#define HOTSPOT_DM_LOCAL_INTERFACES "Device.X_COMCAST_COM_GRE.Interface.1.LocalInterfaces"
+//#define HOTSPOT_DM_ASSOCIATE_BRIDGES "Device.X_COMCAST_COM_GRE.Interface.1.AssociatedBridges"
+#define HOTSPOT_DM_OPTION82_CURCUIT_ID "Device.X_COMCAST-COM_GRE.Tunnel.1.EnableCircuitID"
+#define HOTSPOT_DM_OPTION82_REMOTE_ID "Device.X_COMCAST-COM_GRE.Tunnel.1.EnableRemoteID"
+#define HOTSPOT_DM_PRI_REMOTE_ENDPOINT "Device.X_COMCAST-COM_GRE.Tunnel.1.PrimaryRemoteEndpoint"	//
+#define HOTSPOT_DM_SEC_REMOTE_ENDPOINT "Device.X_COMCAST-COM_GRE.Tunnel.1.SecondaryRemoteEndpoint"	//
+#define HOTSPOT_DM_IF1_LOCAL_INTERFACES "Device.X_COMCAST-COM_GRE.Tunnel.1.Interface.1.LocalInterfaces"	//
+#define HOTSPOT_DM_IF2_LOCAL_INTERFACES "Device.X_COMCAST-COM_GRE.Tunnel.1.Interface.2.LocalInterfaces"	//
+#define HOTSPOT_DM_IF1_ASSOCIATE_BRIDGES "Device.X_COMCAST-COM_GRE.Tunnel.1.Interface.1.AssociatedBridges"	//
+#define HOTSPOT_DM_IF2_ASSOCIATE_BRIDGES "Device.X_COMCAST-COM_GRE.Tunnel.1.Interface.2.AssociatedBridges"	//
+//zqiu<<
 #define HOTSPOT_DM_WIFI_SSID "Device.WiFi.SSID.%d."
 #define HOTSPOT_DM_VLAN_TAG "Device.Bridging.Bridge.%d.VLAN.1.VLANID"
 #define HOTSPOT_DM_VLAN_MODE "Device.Bridging.Bridge.%d.Port.3.X_CISCO_COM_Mode"
@@ -243,66 +253,90 @@ int setInsertDhcpOption(int value)
 
 int getRemoteEpAddr(int oid, char *ip)
 {
-    char epAddr[256] = {'\0'};
-    char *ep, *saveptr, *remoteIp[2];
-    int i=0;
+	//char epAddr[256] = {'\0'};
+    //char *ep, *saveptr, *remoteIp[2];
+    //int i=0;
 
     if(NULL==ip) return FALSE;
-
-    if (get_dm_value(HOTSPOT_DM_REMOTE_ENDPOINTS, epAddr, sizeof(epAddr))) {
-        AnscTraceWarning(("get_dm_value: %s failed\n", HOTSPOT_DM_REMOTE_ENDPOINTS));
-        return FALSE;
-    }
-
-    ep = strdup(epAddr);
-    saveptr = ep;
-
-    while ((remoteIp[i]=strsep(&saveptr, ","))!=NULL) i++;
-    if ((oid==PriEpAddr_lastOid) && remoteIp[0])
-        _ansc_strcpy(ip, remoteIp[0]);
-    else if((oid==SecEpAddr_lastOid) && remoteIp[1]) 
-        _ansc_strcpy(ip, remoteIp[1]);
-
-    free(ep);
+	
+	//zqiu:
+    //if (get_dm_value(HOTSPOT_DM_REMOTE_ENDPOINTS, epAddr, sizeof(epAddr))) {
+    //    AnscTraceWarning(("get_dm_value: %s failed\n", HOTSPOT_DM_REMOTE_ENDPOINTS));
+    //    return FALSE;
+    //}
+	if(oid==PriEpAddr_lastOid) {
+		if (get_dm_value(HOTSPOT_DM_PRI_REMOTE_ENDPOINT, ip, 256)) {
+			AnscTraceWarning(("get_dm_value: %s failed\n", HOTSPOT_DM_PRI_REMOTE_ENDPOINT));
+			return FALSE;
+		}
+	} else if(oid==SecEpAddr_lastOid) {
+		if (get_dm_value(HOTSPOT_DM_SEC_REMOTE_ENDPOINT, ip, 256)) {
+			AnscTraceWarning(("get_dm_value: %s failed\n", HOTSPOT_DM_SEC_REMOTE_ENDPOINT));
+			return FALSE;
+		}
+	}
+	
+    //ep = strdup(epAddr);
+    //saveptr = ep;
+	//
+    //while ((remoteIp[i]=strsep(&saveptr, ","))!=NULL) i++;
+    //if ((oid==PriEpAddr_lastOid) && remoteIp[0])
+    //    _ansc_strcpy(ip, remoteIp[0]);
+    //else if((oid==SecEpAddr_lastOid) && remoteIp[1]) 
+    //    _ansc_strcpy(ip, remoteIp[1]);
+	//
+    //free(ep);
+	
+	
     return TRUE;
 }
 
 int setRemoteEpAddr(int oid, char *ip)
 {
-    char epAddr[256] = {'\0'};
-    char *ep, *saveptr, *remoteIp[2];
-    int i=0, ret=TRUE;
+	//zqiu:
+    // char epAddr[256] = {'\0'};
+    // char *ep, *saveptr, *remoteIp[2];
+    //int i=0, ret=TRUE;
+	int ret=TRUE;
 
-    if (get_dm_value(HOTSPOT_DM_REMOTE_ENDPOINTS, epAddr, sizeof(epAddr))) {
-        AnscTraceWarning(("get_dm_value: %s failed\n", HOTSPOT_DM_REMOTE_ENDPOINTS));
-        return FALSE;
-    }
+    // if (get_dm_value(HOTSPOT_DM_REMOTE_ENDPOINTS, epAddr, sizeof(epAddr))) {
+        // AnscTraceWarning(("get_dm_value: %s failed\n", HOTSPOT_DM_REMOTE_ENDPOINTS));
+        // return FALSE;
+    // }
 
-    ep = strdup(epAddr);
-    saveptr = ep;
+    // ep = strdup(epAddr);
+    // saveptr = ep;
 
-    while ((remoteIp[i]=strsep(&saveptr, ","))!=NULL) i++;
+    // while ((remoteIp[i]=strsep(&saveptr, ","))!=NULL) i++;
 
-    memset(epAddr, 0, sizeof(epAddr));
+    // memset(epAddr, 0, sizeof(epAddr));
 
-    if (oid==PriEpAddr_lastOid) {
-        _ansc_strcpy(epAddr, ip);
-        if(remoteIp[1]) {
-            _ansc_strcat(epAddr, ",");
-            _ansc_strcat(epAddr, remoteIp[1]);
-        }
-    }else if(oid==SecEpAddr_lastOid){
-        if (remoteIp[0]) {
-            _ansc_strcpy(epAddr, remoteIp[0]);
-            _ansc_strcat(epAddr, ",");
-        }else
-            _ansc_strcpy(epAddr, ",");
-        _ansc_strcat(epAddr, ip);
-    }
+    // if (oid==PriEpAddr_lastOid) {
+        // _ansc_strcpy(epAddr, ip);
+        // if(remoteIp[1]) {
+            // _ansc_strcat(epAddr, ",");
+            // _ansc_strcat(epAddr, remoteIp[1]);
+        // }
+    // }else if(oid==SecEpAddr_lastOid){
+        // if (remoteIp[0]) {
+            // _ansc_strcpy(epAddr, remoteIp[0]);
+            // _ansc_strcat(epAddr, ",");
+        // }else
+            // _ansc_strcpy(epAddr, ",");
+        // _ansc_strcat(epAddr, ip);
+    // }
 
-    if (set_dm_value(HOTSPOT_DM_REMOTE_ENDPOINTS, epAddr, strlen(epAddr))) 
-        ret = FALSE;
-		
+    // if (set_dm_value(HOTSPOT_DM_REMOTE_ENDPOINTS, epAddr, strlen(epAddr))) 
+        // ret = FALSE;
+	
+	if (oid==PriEpAddr_lastOid) {
+        if (set_dm_value(HOTSPOT_DM_PRI_REMOTE_ENDPOINT, ip, 256)) 
+			ret = FALSE;
+    } else if(oid==SecEpAddr_lastOid) {
+		if (set_dm_value(HOTSPOT_DM_SEC_REMOTE_ENDPOINT, ip, 256)) 
+			ret = FALSE;
+	}
+	
 	/* If two varbings come in one request, current custom logic will
        do set-set and commit-commit for each request with seperate dbus sessions.
        Problem is framework has been changed to limit same dm set without commit
@@ -311,7 +345,7 @@ int setRemoteEpAddr(int oid, char *ip)
      */
     cosaCommitArmPam();
 
-    free(ep);
+    // free(ep);
     return ret;
 }
 
@@ -334,86 +368,114 @@ static int hotspot_get_if_enabled(int ins, int *bEnabled)
 
     snprintf(ssidDm, sizeof(ssidDm), HOTSPOT_DM_WIFI_SSID, ins);
 
-    if(get_dm_value(HOTSPOT_DM_LOCAL_INTERFACES, localIntf, sizeof(localIntf))) {
-        AnscTraceError(("Failed to get value DM %s!\n", HOTSPOT_DM_LOCAL_INTERFACES));
-        return FALSE;
-    }
+	//zqiu:
+    //if(get_dm_value(HOTSPOT_DM_LOCAL_INTERFACES, localIntf, sizeof(localIntf))) {
+    //    AnscTraceError(("Failed to get value DM %s!\n", HOTSPOT_DM_LOCAL_INTERFACES));
+    //    return FALSE;
+    //}
+	//
 
-    if (strstr(localIntf, ssidDm)) *bEnabled = 1;
-    else *bEnabled = 2;
-
+	if(ins==HOTSPOT_SSID1_INS) {
+		if(get_dm_value(HOTSPOT_DM_IF1_LOCAL_INTERFACES, localIntf, sizeof(localIntf))) {
+			AnscTraceError(("Failed to get value DM %s!\n", HOTSPOT_DM_IF1_LOCAL_INTERFACES));
+			return FALSE;
+		}
+	} else if (ins==HOTSPOT_SSID2_INS) {
+		if(get_dm_value(HOTSPOT_DM_IF1_LOCAL_INTERFACES, localIntf, sizeof(localIntf))) {
+			AnscTraceError(("Failed to get value DM %s!\n", HOTSPOT_DM_IF1_LOCAL_INTERFACES));
+			return FALSE;
+		}
+	}
+	
+	if (strstr(localIntf, ssidDm) )  *bEnabled = 1;
+	else *bEnabled = 2;
+	
     return TRUE;
 }
 
 static int hotspot_set_if_enabled(int ins, int bEnabled)
 {
     char ssidDm[32] = {'\0'};
-    char localIf[256] = {'\0'};
-    char *substr, *saveptr, *save, *str;
-    int ifBitmask = 0, len, ifIns;
-    char strVal[256] = {'\0'};
+    // char localIf[256] = {'\0'};
+    // char *substr, *saveptr, *save, *str;
+    // int ifBitmask = 0, len, ifIns;
+    // char strVal[256] = {'\0'};
 
-    if(get_dm_value(HOTSPOT_DM_LOCAL_INTERFACES, localIf, sizeof(localIf))) {
-        AnscTraceError(("Failed to set get DM %s!\n", HOTSPOT_DM_LOCAL_INTERFACES));
-        return FALSE;
-    }
+    // if(get_dm_value(HOTSPOT_DM_LOCAL_INTERFACES, localIf, sizeof(localIf))) {
+        // AnscTraceError(("Failed to set get DM %s!\n", HOTSPOT_DM_LOCAL_INTERFACES));
+        // return FALSE;
+    // }
 
-    str = strdup(localIf);
-    save = str;
+    // str = strdup(localIf);
+    // save = str;
 
-    for(substr=NULL; ; str=NULL) {
-        substr = strtok_r(str, ",", &saveptr);
-        if(substr == NULL) break;
+    // for(substr=NULL; ; str=NULL) {
+        // substr = strtok_r(str, ",", &saveptr);
+        // if(substr == NULL) break;
 
-        len = strlen(substr);
-        if(len == 0) continue;
+        // len = strlen(substr);
+        // if(len == 0) continue;
 
-        if(substr[len-1] == '.') substr[len-1] = '\0';
-        ifIns = substr[len-2] - '0';
+        // if(substr[len-1] == '.') substr[len-1] = '\0';
+        // ifIns = substr[len-2] - '0';		//ifIns
 
-        if(ifIns == HOTSPOT_SSID1_INS) 
-            ifBitmask |= HOTSPOT_SSID1_BIT;
-        else if(ifIns == HOTSPOT_SSID2_INS)
-            ifBitmask |= HOTSPOT_SSID2_BIT;
-    }
+        // if(ifIns == HOTSPOT_SSID1_INS) 
+            // ifBitmask |= HOTSPOT_SSID1_BIT;
+        // else if(ifIns == HOTSPOT_SSID2_INS)
+            // ifBitmask |= HOTSPOT_SSID2_BIT;
+    // }
 
-    if(save) free(save);
+    // if(save) free(save);
 
-    if(bEnabled == 1) {
-        if(ins == HOTSPOT_SSID1_INS) 
-            ifBitmask |= HOTSPOT_SSID1_BIT;
-        else if (ins == HOTSPOT_SSID2_INS) 
-            ifBitmask |= HOTSPOT_SSID2_BIT;
-    }else{
-        if(ins == HOTSPOT_SSID1_INS) 
-            ifBitmask &= ~HOTSPOT_SSID1_BIT;
-        else if(ins == HOTSPOT_SSID2_INS) 
-            ifBitmask &= ~HOTSPOT_SSID2_BIT;
-    }
+    // if(bEnabled == 1) {
+        // if(ins == HOTSPOT_SSID1_INS) 
+            // ifBitmask |= HOTSPOT_SSID1_BIT;
+        // else if (ins == HOTSPOT_SSID2_INS) 
+            // ifBitmask |= HOTSPOT_SSID2_BIT;
+    // }else{
+        // if(ins == HOTSPOT_SSID1_INS) 
+            // ifBitmask &= ~HOTSPOT_SSID1_BIT;
+        // else if(ins == HOTSPOT_SSID2_INS) 
+            // ifBitmask &= ~HOTSPOT_SSID2_BIT;
+    // }
 
-    if(ifBitmask & HOTSPOT_SSID1_BIT){
-        snprintf(ssidDm, sizeof(ssidDm), HOTSPOT_DM_WIFI_SSID, HOTSPOT_SSID1_INS);
-        _ansc_strcpy(strVal, ssidDm);
-    }
+    // if(ifBitmask & HOTSPOT_SSID1_BIT){
+        // snprintf(ssidDm, sizeof(ssidDm), HOTSPOT_DM_WIFI_SSID, HOTSPOT_SSID1_INS);
+        // _ansc_strcpy(strVal, ssidDm);
+    // }
 
-    if(ifBitmask & HOTSPOT_SSID2_BIT){
-        snprintf(ssidDm, sizeof(ssidDm), HOTSPOT_DM_WIFI_SSID, HOTSPOT_SSID2_INS);
-        if(strlen(strVal)){
-            _ansc_strcat(strVal, ",");
-            _ansc_strcat(strVal, ssidDm);
-        }else{
-            _ansc_strcpy(strVal, ",");
-            _ansc_strcat(strVal, ssidDm);
-        }
-    }
+    // if(ifBitmask & HOTSPOT_SSID2_BIT){
+        // snprintf(ssidDm, sizeof(ssidDm), HOTSPOT_DM_WIFI_SSID, HOTSPOT_SSID2_INS);
+        // if(strlen(strVal)){
+            // _ansc_strcat(strVal, ",");
+            // _ansc_strcat(strVal, ssidDm);
+        // }else{
+            // _ansc_strcpy(strVal, ",");
+            // _ansc_strcat(strVal, ssidDm);
+        // }
+    // }
 
-    if(strlen(strVal) == 0)
-        _ansc_strcpy(strVal, ",");
+    // if(strlen(strVal) == 0)
+        // _ansc_strcpy(strVal, ",");
 
-    if(set_dm_value(HOTSPOT_DM_LOCAL_INTERFACES, strVal, strlen(strVal))) {
-        AnscTraceError(("Failed to set value DM %s!\n", HOTSPOT_DM_LOCAL_INTERFACES));
-        return FALSE;
-    }
+    // if(set_dm_value(HOTSPOT_DM_LOCAL_INTERFACES, strVal, strlen(strVal))) {
+        // AnscTraceError(("Failed to set value DM %s!\n", HOTSPOT_DM_LOCAL_INTERFACES));
+        // return FALSE;
+    // }
+	
+	//zqiu:
+	snprintf(ssidDm, sizeof(ssidDm), HOTSPOT_DM_WIFI_SSID, ins);
+	if(ins == HOTSPOT_SSID1_INS) {
+		if(set_dm_value(HOTSPOT_DM_IF1_LOCAL_INTERFACES, ssidDm, sizeof(ssidDm))) {
+			AnscTraceError(("Failed to set value DM %s!\n", HOTSPOT_DM_IF1_LOCAL_INTERFACES));
+			return FALSE;
+		}
+	} else if(ins == HOTSPOT_SSID2_INS) {
+		if(set_dm_value(HOTSPOT_DM_IF2_LOCAL_INTERFACES, ssidDm, sizeof(ssidDm))) {
+			AnscTraceError(("Failed to set value DM %s!\n", HOTSPOT_DM_IF2_LOCAL_INTERFACES));
+			return FALSE;
+		}
+	}
 
     return TRUE;
 }

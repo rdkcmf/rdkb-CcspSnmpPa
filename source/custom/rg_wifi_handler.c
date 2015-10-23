@@ -185,6 +185,7 @@ static int SetAllAPsonRadio(int radioInst, parameterValStruct_t valStr[], char* 
     }
 
     *aps = numAPs/2;
+ #if 0
     for(i = 0; i < *aps; i++) {
         offset = (i == 0) ? 0 : (i*strSize);
         valStr[i].parameterValue = value;
@@ -192,7 +193,11 @@ static int SetAllAPsonRadio(int radioInst, parameterValStruct_t valStr[], char* 
         sprintf(valStr[i].parameterName, dmFormat, radioInst+(i*2));
         valStr[i].type = type;
     }
-
+#endif
+        valStr[0].parameterValue = value;
+        valStr[0].parameterName = &namestrings[0];
+        sprintf(valStr[0].parameterName, dmFormat, radioInst);
+        valStr[0].type = type;
     return 0;
 }
 
@@ -855,52 +860,52 @@ static struct dot11_data_s gDot11Info[] = {
         .mib_index = -1,
     },
     [WIFI1_1] = {
-        .mib_index = 32,
+        .mib_index = 10001,
     },
     [WIFI2_1] = {
-        .mib_index = 112,
+        .mib_index = 10101,
     },
     [WIFI1_2] = {
-        .mib_index = 33,
+        .mib_index = 10002,
     },
     [WIFI2_2] = {
-        .mib_index = 113,
+        .mib_index = 10102,
     },
     [WIFI1_3] = {
-        .mib_index = 34,
+        .mib_index = 10003,
     },
     [WIFI2_3] = {
-        .mib_index = 114,
+        .mib_index = 10103,
     },
     [WIFI1_4] = {
-        .mib_index = 35,
+        .mib_index = 10004,
     },
     [WIFI2_4] = {
-        .mib_index = 115,
+        .mib_index = 10104,
     },
     [WIFI1_5] = {
-        .mib_index = 36,
+        .mib_index = 10005,
     },
     [WIFI2_5] = {
-        .mib_index = 116,
+        .mib_index = 10105,
     },
     [WIFI1_6] = {
-        .mib_index = 37,
+        .mib_index = 10006,
     },
     [WIFI2_6] = {
-        .mib_index = 117,
+        .mib_index = 10106,
     },
     [WIFI1_7] = {
-        .mib_index = 38,
+        .mib_index = 10007,
     },
     [WIFI2_7] = {
-        .mib_index = 118,
+        .mib_index = 10107,
     },
     [WIFI1_8] = {
-        .mib_index = 39,
+        .mib_index = 10008,
     },
     [WIFI2_8] = {
-        .mib_index = 119,
+        .mib_index = 10108,
     },
 };
 
@@ -976,6 +981,7 @@ static int setBssSsid(PCCSP_TABLE_ENTRY pEntry, const char *ssid)
 }
 
 #define WIFI_DM_BSS_SECURITY_MODE "Device.WiFi.AccessPoint.%d.Security.ModeEnabled"
+#define WIFI_DM_BSS_ENCRYPTION "Device.WiFi.AccessPoint.%d.Security.X_CISCO_COM_EncryptionMethod"
 
 static int getBssSecurityMode(PCCSP_TABLE_ENTRY pEntry)
 {
@@ -1008,10 +1014,14 @@ static int getBssSecurityMode(PCCSP_TABLE_ENTRY pEntry)
 
 static int setBssSecurityMode(PCCSP_TABLE_ENTRY pEntry, int mode)
 {
-    parameterValStruct_t valStr;
-    char str[2][100];
-    valStr.parameterName=str[0];
-    valStr.parameterValue=str[1];
+    parameterValStruct_t valStr[2];
+    char str[4][100];
+    valStr[0].parameterName=str[0];
+    valStr[0].parameterValue=str[1];
+    valStr[1].parameterName = str[2];
+    valStr[1].parameterValue = str[3];
+    int valCnt =1;
+    unsigned int algor = 2;
     char modeStr[64] = {'\0'};
     
     switch(mode){
@@ -1035,15 +1045,30 @@ static int setBssSecurityMode(PCCSP_TABLE_ENTRY pEntry, int mode)
             return 0;
     }
     
-    sprintf(valStr.parameterName, WIFI_DM_BSS_SECURITY_MODE, pEntry->IndexValue[0].Value.uValue);
-    sprintf(valStr.parameterValue, "%s", modeStr);
-    valStr.type = ccsp_string;
+    sprintf(valStr[0].parameterName, WIFI_DM_BSS_SECURITY_MODE, pEntry->IndexValue[0].Value.uValue);
+    sprintf(valStr[0].parameterValue, "%s", modeStr);
+    valStr[0].type = ccsp_string;
 
     FindWifiDestComp(); /*TODO: Handle error*/
 
-    if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
+    if(mode == 3)
     {
-        AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
+		sprintf(valStr[1].parameterValue, "%s", "AES");
+		sprintf(valStr[1].parameterName, WIFI_DM_BSS_ENCRYPTION, pEntry->IndexValue[0].Value.uValue);
+        valStr[1].type = ccsp_string;
+		valCnt = 2;
+    }
+    else if(mode == 7)
+    {	
+		sprintf(valStr[1].parameterValue, "%s", "AES+TKIP");
+		sprintf(valStr[1].parameterName, WIFI_DM_BSS_ENCRYPTION, pEntry->IndexValue[0].Value.uValue);
+        valStr[1].type = ccsp_string;
+		valCnt = 2;
+    }
+    
+    if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, valCnt))
+    {
+        AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr[0].parameterName));
         return -1;
     }
 
@@ -1813,7 +1838,7 @@ static int setWmm(PCCSP_TABLE_ENTRY entry, int val){
 	
 	SetAllAPsonRadio(entry->IndexValue[0].Value.uValue, valStr, str, 50, &aps, WIFI_DM_WMM_ENABLE, valueString, ccsp_boolean);
 
-	if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, aps))
+	if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, 1))
 	{
 	    AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr[0].parameterName));
 	    return -1;
@@ -1821,7 +1846,7 @@ static int setWmm(PCCSP_TABLE_ENTRY entry, int val){
 
 	SetAllAPsonRadio(entry->IndexValue[0].Value.uValue, valStr, str, 50, &aps, WIFI_DM_WMM_UAPSD_ENABLE, valueString, ccsp_boolean);
 
-	if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, aps))
+	if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, 1))
 	{
 	    AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr[0].parameterName));
 	    return -1;
@@ -1830,7 +1855,7 @@ static int setWmm(PCCSP_TABLE_ENTRY entry, int val){
     // When disabling first disable UAPSD then Wmm
 	SetAllAPsonRadio(entry->IndexValue[0].Value.uValue, valStr, str, 50, &aps, WIFI_DM_WMM_UAPSD_ENABLE, valueString, ccsp_boolean);
 	
-	if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, aps))
+	if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, 1))
 	{
 	    AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr[0].parameterName));
 	    return -1;
@@ -1838,7 +1863,7 @@ static int setWmm(PCCSP_TABLE_ENTRY entry, int val){
 
 	SetAllAPsonRadio(entry->IndexValue[0].Value.uValue, valStr, str, 50, &aps, WIFI_DM_WMM_ENABLE, valueString, ccsp_boolean);
 
-	if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, aps))
+	if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, 1))
 	{
 	    AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr[0].parameterName));
 	    return -1;
@@ -1861,7 +1886,7 @@ static int setWmmNoAck(PCCSP_TABLE_ENTRY entry, int val){
     
     FindWifiDestComp(); /*TODO: Handle error*/
 
-    if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, aps))
+    if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, 1))
     {
         AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr[0].parameterName));
         return -1;
@@ -1882,7 +1907,7 @@ static int setMcastRate(PCCSP_TABLE_ENTRY entry, int val){
     
     FindWifiDestComp(); /*TODO: Handle error*/
 
-    if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, aps))
+    if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, 1))
     {
         AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr[0].parameterName));
         return -1;
@@ -2587,6 +2612,20 @@ handleNExtTable(
 */
 }
 
+static int getWpaPSK(PCCSP_TABLE_ENTRY pEntry, char *key)
+{
+    char dmStr[128] = {'\0'};
+
+    if(!key)
+        return -1;
+
+    snprintf(dmStr, sizeof(dmStr), WIFI_DM_PSK, pEntry->IndexValue[0].Value.uValue);
+    if(get_dm_value(dmStr, key, 32))
+        return -1;
+
+    return 0; 
+}
+
 int setWpaPSK(PCCSP_TABLE_ENTRY entry, char *key, int keyLen) {
     parameterValStruct_t valStr;
     char str[2][100];
@@ -2624,6 +2663,7 @@ handleDot11WpaTable(
     int retval=SNMP_ERR_NOERROR;
     PCCSP_TABLE_ENTRY entry = NULL;
     netsnmp_variable_list *vb = NULL;
+    char value[64]={'\0'};
 
     for (req = requests; req != NULL; req = req->next)
     {
@@ -2638,8 +2678,9 @@ handleDot11WpaTable(
             case MODE_GET:
                 if (subid == saRgDot11WpaPreSharedKey_subid) {
                     // This parameter can't be read, but snmp was defined as read/write
-                    unsigned char value = '\0';
-                    snmp_set_var_typed_value(req->requestvb, (u_char)ASN_OCTET_STR, (u_char *)&value, 0);
+                    //unsigned char value = '\0';
+					getWpaPSK(entry,value);
+                    snmp_set_var_typed_value(req->requestvb, (u_char)ASN_OCTET_STR, (u_char *)&value, strlen(value));
                     req->processed = 1;
                 }
                 

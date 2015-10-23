@@ -40,9 +40,9 @@
 #    echo "ERROR: not run as root !!"
 #    exit 1
 #fi
-
+source /etc/utopia/service.d/log_capture_path.sh
 # change to subagent directory first
-cd /fss/gw/usr/share/snmp
+cd /fss/gw/usr/ccsp/snmp
 
 export LD_LIBRARY_PATH=$PWD/libs:../:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/fss/gw/usr/ccsp/:/fss/gw/lib/:/fss/gw/usr/lib/
