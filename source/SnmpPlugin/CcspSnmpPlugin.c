@@ -65,6 +65,7 @@
 #define  CCSP_MIB_MAPPING_LIST_FILE        "CcspMibList.xml"
 #endif
 
+#define DEBUG_INI_NAME  "/etc/debug.ini"
 
 #define  CCSP_MIB_FILE_NODE_NAME           "mibFile"
 
@@ -138,7 +139,7 @@ init_ccsp_snmp_plugin(void)
 	printf("****snmp rdklogger init %s\n",pComponentName);
 
 	#ifdef FEATURE_SUPPORT_RDKLOG
-		rdk_logger_init("/fss/gw/lib/debug.ini");
+		rdk_logger_init(DEBUG_INI_NAME);
 	#endif
     CcspTraceWarning(("SNMP:snmp initialzed!\n"));
 
