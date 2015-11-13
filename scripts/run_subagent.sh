@@ -40,6 +40,7 @@
 #    echo "ERROR: not run as root !!"
 #    exit 1
 #fi
+BINPATH="/usr/bin"
 source /etc/utopia/service.d/log_capture_path.sh
 # change to subagent directory first
 cd /fss/gw/usr/ccsp/snmp
@@ -58,11 +59,14 @@ fi
 
 master=$1 # may empty
 
-killall snmp_subagnet ; sleep 1
+killall snmp_subagent ; sleep 1
+
 if [ "x$master" != "x" ]; then
-    ./snmp_subagnet -x $master
+    echo "starting snmp_subagent process with $master"
+    ${BINPATH}/snmp_subagent -x $master
 else
-    ./snmp_subagnet
+    echo "starting snmp_subagent"
+    ${BINPATH}/snmp_subagent
 fi
 
 if [ ! $? -eq 0 ]; then
