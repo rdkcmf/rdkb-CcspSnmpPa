@@ -39,7 +39,10 @@
 #include <net-snmp/agent/net-snmp-agent-includes.h>
 
 #include "CcspSnmpPlugin.h"
+
+#ifdef USE_PCD_API_EXCEPTION_HANDLING
 #include "pcdapi.h"
+#endif
 
 #define AGNT_NAME           "ccsp-snmp-subagent"
 #define DEF_MASTER_ADDR     "tcp:127.0.0.1:705"
@@ -124,8 +127,10 @@ main(int argc, char *argv[])
 
     /* AGNT_NAME.conf may used */
     init_snmp(AGNT_NAME);
+#ifdef USE_PCD_API_EXCEPTION_HANDLING
     printf("Registering PCD exception handler for snmp subagent\n");
     PCD_api_register_exception_handlers( argv[0], NULL );
+#endif
     keep_running = 1;
     signal(SIGTERM, stop_server);
     signal(SIGINT, stop_server);
