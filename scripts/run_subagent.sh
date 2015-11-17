@@ -43,10 +43,10 @@
 BINPATH="/usr/bin"
 source /etc/utopia/service.d/log_capture_path.sh
 # change to subagent directory first
-cd /fss/gw/usr/ccsp/snmp
+cd /usr/ccsp/snmp
 
 export LD_LIBRARY_PATH=$PWD/libs:../:$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/fss/gw/usr/ccsp/:/fss/gw/lib/:/fss/gw/usr/lib/
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/ccsp/:/lib/:/usr/lib/
 export SNMPDLMODPATH=$PWD/libs
 # for apps like snmpget... source this file then
 export MIBDIRS=$PWD/mibs
@@ -54,19 +54,19 @@ export MIBS=ALL
 
 # copy ccsp_msg.cfg to /tmp, if it's not available there
 if [ ! -f /tmp/ccsp_msg.cfg ]; then
-	cp /fss/gw/usr/ccsp/ccsp_msg.cfg /tmp
+	cp /usr/ccsp/ccsp_msg.cfg /tmp
 fi
 
 master=$1 # may empty
 
-killall snmp_subagent ; sleep 1
+killall snmp_subagnet ; sleep 1
 
 if [ "x$master" != "x" ]; then
     echo "starting snmp_subagent process with $master"
-    ${BINPATH}/snmp_subagent -x $master
+#    ${BINPATH}/snmp_subagnet -x $master
 else
     echo "starting snmp_subagent"
-    ${BINPATH}/snmp_subagent
+#    ${BINPATH}/snmp_subagnet
 fi
 
 if [ ! $? -eq 0 ]; then
