@@ -198,12 +198,12 @@ static int mac_filter_get_mode(const char *dm, int *value)
     int i;
 
     if(dm == NULL || value == NULL) {
-        AnscTraceWarning(("%s(%d) bad parameter.\n", __func__, __LINE__));
+        CcspTraceError(("%s(%d) bad parameter.\n", __func__, __LINE__));
         return -1;
     }
 
     if(get_dm_value(dm, strVal, sizeof(strVal))) {
-        AnscTraceWarning(("%s(%d) %s failed.\n", __func__, __LINE__, dm));
+        CcspTraceError(("%s(%d) %s failed.\n", __func__, __LINE__, dm));
         return -1;
     }
 
@@ -213,7 +213,7 @@ static int mac_filter_get_mode(const char *dm, int *value)
             break;
         }
     }
-    AnscTraceWarning(("%s(%d) value %d.\n", __func__, __LINE__, *value));
+    CcspTraceInfo(("%s(%d) value %d.\n", __func__, __LINE__, *value));
 
     return 0;
 }
@@ -224,7 +224,7 @@ static int mac_filter_set_mode(const char *dm, int value)
         return -1;
 
     if(set_dm_value(dm, filterMode[value].allowAll, strlen(filterMode[value].allowAll))) {
-        AnscTraceWarning(("%s(%d) %s set failed.\n", __func__, __LINE__, dm));
+        CcspTraceError(("%s(%d) %s set failed.\n", __func__, __LINE__, dm));
         return -1;
     }
     return 0;
@@ -654,13 +654,13 @@ static int get_block_days(const char *dmName, unsigned char *octet)
     if(get_dm_value(dmName, strVal, sizeof(strVal))) 
         return -1;
 
-    AnscTraceWarning(("%s(%d) strVal %s.\n", __func__, __LINE__, strVal));
+    CcspTraceInfo(("%s(%d) strVal %s.\n", __func__, __LINE__, strVal));
 
     for(ptr=strVal; ; ptr=NULL) {
         substr = strtok_r(ptr, ",", &saveptr);
         if(substr == NULL) 
             break;
-        AnscTraceWarning(("%s(%d) substr %s.\n", __func__, __LINE__, substr));
+        CcspTraceInfo(("%s(%d) substr %s.\n", __func__, __LINE__, substr));
 
         for(i=SUN; i<=SAT; i++) {
             if(strcasecmp(substr, blockDays[i].day) == 0) {
@@ -670,7 +670,7 @@ static int get_block_days(const char *dmName, unsigned char *octet)
         }
     }
 
-    AnscTraceWarning(("%s(%d) octet 0x%x.\n", __func__, __LINE__, *octet));
+    CcspTraceInfo(("%s(%d) octet 0x%x.\n", __func__, __LINE__, *octet));
     return 0;
 }
 
@@ -684,7 +684,7 @@ static int set_block_days(const char *dmName, char *octetStr)
 
     sprintf(preStr, "%x", octetStr[0]);  // one octet str -> presentation
     bitmap = strtoul(preStr, NULL, 16);
-    AnscTraceWarning(("%s(%d) bitmap 0x%x.\n", __func__, __LINE__, bitmap));
+    CcspTraceInfo(("%s(%d) bitmap 0x%x.\n", __func__, __LINE__, bitmap));
 
     bzero(preStr, sizeof(preStr));
 
@@ -700,7 +700,7 @@ static int set_block_days(const char *dmName, char *octetStr)
         }
     }
 
-    AnscTraceWarning(("%s(%d) strVal %s.\n", __func__, __LINE__, preStr));
+    CcspTraceInfo(("%s(%d) strVal %s.\n", __func__, __LINE__, preStr));
     if(set_dm_value(dmName, preStr, strlen(preStr)))
         return -1;
     return 0;
@@ -731,7 +731,7 @@ int handleFwPortFilter(
             pEntry = (PCCSP_TABLE_ENTRY)netsnmp_tdata_extract_entry(request);
             if (pEntry == NULL) {
                 netsnmp_request_set_error(request, SNMP_NOSUCHINSTANCE);
-                AnscTraceWarning(("Entry not found for PortFilter\n"));
+                CcspTraceWarning(("Entry not found for PortFilter\n"));
                 continue;
             }
             ins = pEntry->IndexValue[0].Value.iValue;
@@ -742,7 +742,7 @@ int handleFwPortFilter(
             if(subid == saRgFwPortFilterBlockDays_lastOid) {
 
                 snprintf(dmStr, sizeof(dmStr), PORT_FILTER_BLOCK_DAYS_DM, ins);
-                AnscTraceWarning(("%s(%d) dmStr %s.\n", __func__, __LINE__, dmStr));
+                CcspTraceInfo(("%s(%d) dmStr %s.\n", __func__, __LINE__, dmStr));
 
                 if(get_block_days(dmStr, &octet) < 0) 
                     netsnmp_set_request_error(reqinfo, request, SNMP_ERR_GENERR);
@@ -780,7 +780,7 @@ int handleFwPortFilter(
                 if(strlen(vb->val.string) == 1) { // hex format: one octet
                     snprintf(dmStr, sizeof(dmStr), PORT_FILTER_BLOCK_DAYS_DM, ins);
                     if(set_block_days(dmStr, vb->val.string) < 0) {
-                        AnscTraceError(("%s set failed.\n", dmStr));
+                        CcspTraceError(("%s set failed.\n", dmStr));
                         netsnmp_request_set_error(request, SNMP_ERR_GENERR);
                     }
                     request->processed = 1;
@@ -827,7 +827,7 @@ int handleFwMacFilter(
             pEntry = (PCCSP_TABLE_ENTRY)netsnmp_tdata_extract_entry(request);
             if (pEntry == NULL) {
                 netsnmp_request_set_error(request, SNMP_NOSUCHINSTANCE);
-                AnscTraceWarning(("Entry not found for PortFilter\n"));
+                CcspTraceWarning(("Entry not found for PortFilter\n"));
                 continue;
             }
             ins = pEntry->IndexValue[0].Value.iValue;
@@ -853,7 +853,7 @@ int handleFwMacFilter(
 
                     if(strcmp(typeVal, filterMode[snmpFilterMode].type)) {
                         netsnmp_request_set_error(request, SNMP_NOSUCHINSTANCE);
-                        AnscTraceWarning(("%s(%d) blockAll %d type %s.\n", __func__, __LINE__, snmpFilterMode, typeVal));
+                        CcspTraceInfo(("%s(%d) blockAll %d type %s.\n", __func__, __LINE__, snmpFilterMode, typeVal));
                         continue;
                     }
                 }
@@ -866,7 +866,7 @@ int handleFwMacFilter(
             if(subid == saRgFwMacFilterBlockDays_lastOid) {
 
                 snprintf(dmStr, sizeof(dmStr), MAC_FILTER_BLOCK_DAYS_DM, ins);
-                AnscTraceWarning(("%s(%d) dmStr %s.\n", __func__, __LINE__, dmStr));
+                CcspTraceInfo(("%s(%d) dmStr %s.\n", __func__, __LINE__, dmStr));
 
                 if(get_block_days(dmStr, &octet) < 0) 
                     netsnmp_set_request_error(reqinfo, request, SNMP_ERR_GENERR);
@@ -904,7 +904,7 @@ int handleFwMacFilter(
                 if(strlen(vb->val.string) == 1) { // hex format: one octet
                     snprintf(dmStr, sizeof(dmStr), MAC_FILTER_BLOCK_DAYS_DM, ins);
                     if(set_block_days(dmStr, vb->val.string) < 0) {
-                        AnscTraceError(("%s set failed.\n", dmStr));
+                        CcspTraceError(("%s set failed.\n", dmStr));
                         netsnmp_request_set_error(request, SNMP_ERR_GENERR);
                     }
                     request->processed = 1;
@@ -931,13 +931,13 @@ int handleFwMacFilter(
                     pEntry = (PCCSP_TABLE_ENTRY)netsnmp_tdata_extract_entry(request);
                     if(pEntry) {
                         ins = pEntry->IndexValue[0].Value.iValue;
-                        AnscTraceWarning(("%s(%d) ins %d.\n", __func__, __LINE__, ins));
+                        CcspTraceInfo(("%s(%d) ins %d.\n", __func__, __LINE__, ins));
 
                         if(mac_filter_get_mode(MAC_FILTER_MODE_DM, &snmpFilterMode) < 0)
-                            AnscTraceWarning(("%s(%d) %s failed.\n", __func__, __LINE__, MAC_FILTER_MODE_DM));
+                            CcspTraceWarning(("%s(%d) %s failed.\n", __func__, __LINE__, MAC_FILTER_MODE_DM));
                         snprintf(typeDm, sizeof(typeDm), MAC_FILTER_TYPE_DM, ins);
                         if(set_dm_value(typeDm, filterMode[snmpFilterMode].type, strlen(filterMode[snmpFilterMode].type))) 
-                            AnscTraceWarning(("%s(%d) %s set failed.\n", __func__, __LINE__, typeDm));
+                            CcspTraceError(("%s(%d) %s set failed.\n", __func__, __LINE__, typeDm));
                     }
                 }
             }
@@ -983,7 +983,7 @@ int handleFwUrlKeywordFilter(
             pEntry = (PCCSP_TABLE_ENTRY)netsnmp_tdata_extract_entry(request);
             if (pEntry == NULL) {
                 netsnmp_request_set_error(request, SNMP_NOSUCHINSTANCE);
-                AnscTraceWarning(("Entry not found for PortFilter\n"));
+                CcspTraceWarning(("Entry not found for PortFilter\n"));
                 continue;
             }
             ins = pEntry->IndexValue[0].Value.iValue;
@@ -994,7 +994,7 @@ int handleFwUrlKeywordFilter(
             if(subid == saRgFwUrlFilterBlockDays_lastOid) {
 
                 snprintf(dmStr, sizeof(dmStr), URL_FILTER_BLOCK_DAYS_DM, ins);
-                AnscTraceWarning(("%s(%d) dmStr %s.\n", __func__, __LINE__, dmStr));
+                CcspTraceInfo(("%s(%d) dmStr %s.\n", __func__, __LINE__, dmStr));
 
                 if(get_block_days(dmStr, &octet) < 0) 
                     netsnmp_set_request_error(reqinfo, request, SNMP_ERR_GENERR);
@@ -1032,7 +1032,7 @@ int handleFwUrlKeywordFilter(
                 if(strlen(vb->val.string) == 1) { // hex format: one octet
                     snprintf(dmStr, sizeof(dmStr), URL_FILTER_BLOCK_DAYS_DM, ins);
                     if(set_block_days(dmStr, vb->val.string) < 0) {
-                        AnscTraceError(("%s set failed.\n", dmStr));
+                        CcspTraceError(("%s set failed.\n", dmStr));
                         netsnmp_request_set_error(request, SNMP_ERR_GENERR);
                     }
                     request->processed = 1;
@@ -1204,11 +1204,11 @@ static int find_ccsp_comp_path(void)
     if (!Cosa_FindDestComp("Device.Time.", &dstComp, &dstPath)
             || !dstComp || !dstPath)
     {
-        AnscTraceError(("%s: fail to find dest comp\n", __FUNCTION__));
+        CcspTraceError(("%s: fail to find dest comp\n", __FUNCTION__));
         return -1;
     }
 
-    AnscTraceWarning(("dstComp %s, dstPath %s.\n", dstComp, dstPath));
+    CcspTraceInfo(("dstComp %s, dstPath %s.\n", dstComp, dstPath));
 
     return 0;
 }
@@ -1295,10 +1295,10 @@ commit_trusted_user_entry(struct trusted_user_entry *pUserEntry, const char *ip)
         snprintf(dm, sizeof(dm), TRUSTED_USER_OBJ, policy[URLKEYWORD]);
         pUserEntry->ins[URLKEYWORD-1] = Cosa_AddEntry(dstComp, dstPath, dm);
         if(pUserEntry->ins[URLKEYWORD-1] == 0) {
-            AnscTraceError(("%s(%d): failed to create entry %s.\n", __func__, __LINE__, dm));
+            CcspTraceError(("%s(%d): failed to create entry %s.\n", __func__, __LINE__, dm));
             return SNMP_ERR_RESOURCEUNAVAILABLE;
         }
-        AnscTraceWarning(("%s(%d): AddEntry %s %d.\n", __func__, __LINE__, dm, pUserEntry->ins[URLKEYWORD-1]));
+        CcspTraceInfo(("%s(%d): AddEntry %s %d.\n", __func__, __LINE__, dm, pUserEntry->ins[URLKEYWORD-1]));
     }
 
     // create the entry in ManagedServices table
@@ -1306,15 +1306,15 @@ commit_trusted_user_entry(struct trusted_user_entry *pUserEntry, const char *ip)
         snprintf(dm, sizeof(dm), TRUSTED_USER_OBJ, policy[PORT]);
         pUserEntry->ins[PORT-1] = Cosa_AddEntry(dstComp, dstPath, dm);
         if(pUserEntry->ins[PORT-1] == 0) {
-            AnscTraceError(("%s(%d): failed to create entry %s.\n", __func__, __LINE__, dm));
+            CcspTraceError(("%s(%d): failed to create entry %s.\n", __func__, __LINE__, dm));
             return SNMP_ERR_RESOURCEUNAVAILABLE;
         }
-        AnscTraceWarning(("%s(%d): AddEntry %s %d.\n", __func__, __LINE__, dm, pUserEntry->ins[PORT-1]));
+        CcspTraceInfo(("%s(%d): AddEntry %s %d.\n", __func__, __LINE__, dm, pUserEntry->ins[PORT-1]));
     }
 
     pValueArray = (parameterValStruct_t*)AnscAllocateMemory(sizeof(parameterValStruct_t)* 4);
     if(pValueArray == NULL) {
-        AnscTraceError(("%s(%d): failed to create ccsp ValStruct.\n", __func__, __LINE__));
+        CcspTraceError(("%s(%d): failed to create ccsp ValStruct.\n", __func__, __LINE__));
         return SNMP_ERR_RESOURCEUNAVAILABLE;
     }
 
@@ -1365,7 +1365,7 @@ commit_trusted_user_entry(struct trusted_user_entry *pUserEntry, const char *ip)
     }
 
     for(i=0; i<4; i++) 
-        AnscTraceWarning(("param %d name %s value %s.\n", i, pValueArray[i].parameterName, pValueArray[i].parameterValue));
+        CcspTraceInfo(("param %d name %s value %s.\n", i, pValueArray[i].parameterName, pValueArray[i].parameterValue));
 
     Cosa_SetParamValuesNoCommit(dstComp,
                                 dstPath,
@@ -1406,11 +1406,11 @@ static int set_trusted_user_entry(netsnmp_request_info *requests)
         vb = request->requestvb;
         subid = vb->name[vb->name_length - 2];
         index = vb->name[vb->name_length - 1];
-        AnscTraceWarning(("%s(%d): subid %d index %d processed %d.\n", __func__, __LINE__, subid, index, request->processed));
+        CcspTraceInfo(("%s(%d): subid %d index %d processed %d.\n", __func__, __LINE__, subid, index, request->processed));
 
         pEntry = (PCCSP_TABLE_ENTRY)netsnmp_tdata_extract_entry(request);
         if (pEntry == NULL) {
-            AnscTraceWarning(("No entry available for IpFilter\n"));
+            CcspTraceWarning(("No entry available for IpFilter\n"));
             netsnmp_request_set_error(request, SNMP_NOSUCHINSTANCE);
             continue;
         }
@@ -1418,19 +1418,19 @@ static int set_trusted_user_entry(netsnmp_request_info *requests)
         if(lastIndex != index) {
             snprintf(dm, sizeof(dm), HOSTS_HOST_IPADDR, ins);
             if(get_dm_value(dm, ip, sizeof(ip))) {
-                AnscTraceError(("%s(%d) %s failed.\n", __func__, __LINE__, dm));
+                CcspTraceError(("%s(%d) %s failed.\n", __func__, __LINE__, dm));
                 netsnmp_request_set_error(request, SNMP_ERR_GENERR);
                 continue;
             }
             pUserEntry = lookup_trusted_user_entry(ip);
             if(pUserEntry == NULL) {
-                AnscTraceWarning(("No Entry available for IpFilter\n"));
+                CcspTraceWarning(("No Entry available for IpFilter\n"));
                 netsnmp_request_set_error(request, SNMP_NOSUCHINSTANCE);
                 continue;
             }
             lastIndex = index;
         }
-        AnscTraceWarning(("%s(%d): last time trust %d policy %d.\n", __func__, __LINE__, pUserEntry->trust, pUserEntry->policy));
+        CcspTraceInfo(("%s(%d): last time trust %d policy %d.\n", __func__, __LINE__, pUserEntry->trust, pUserEntry->policy));
 
         if(subid == FILTER_TRUSTED_LASTOID) {
             pUserEntry->trust = *(vb->val.integer);
@@ -1472,13 +1472,13 @@ static int load_trusted_user_entry(netsnmp_tdata *table)
             for(j=0; j<insCount; j++) {
                 snprintf(pTemp, sizeof(pTemp), TRUSTED_USER_IPADDR, policy[i], insArray[j]);
                 if(get_dm_value(pTemp, ip, sizeof(ip))) {
-                    AnscTraceError(("%s(%d): %s failed.\n", __func__, __LINE__, pTemp));
+                    CcspTraceError(("%s(%d): %s failed.\n", __func__, __LINE__, pTemp));
                     continue;
                 }
 
                 snprintf(pTemp, sizeof(pTemp), TRUSTED_USER_TRUST, policy[i], insArray[j]);
                 if(get_dm_value(pTemp, trusted, sizeof(trusted))) {
-                    AnscTraceError(("%s(%d): %s failed.\n", __func__, __LINE__, pTemp));
+                    CcspTraceError(("%s(%d): %s failed.\n", __func__, __LINE__, pTemp));
                     continue;
                 }
 
@@ -1498,16 +1498,16 @@ static int load_trusted_user_entry(netsnmp_tdata *table)
                     if(pEntry->start_ip[0] == 0) 
                         strncpy(pEntry->start_ip, ip, sizeof(pEntry->start_ip));
                 }else{
-                    AnscTraceError(("%s(%d): trusted user entry is full.\n", __func__, __LINE__));
+                    CcspTraceInfo(("%s(%d): trusted user entry is full.\n", __func__, __LINE__));
                     return -1;
                 }
             }
         }else{
-            AnscTraceError(("%s(%d): No entries for %s.\n", __func__, __LINE__, pTemp));
+            CcspTraceInfo(("%s(%d): No entries for %s.\n", __func__, __LINE__, pTemp));
             return -1;
         }
     }
-    AnscTraceWarning(("%s(%d): Exiting...\n", __func__, __LINE__));
+    CcspTraceInfo(("%s(%d): Exiting...\n", __func__, __LINE__));
 
     return 0;
 }
@@ -1549,7 +1549,7 @@ int handleFwIpFilterRequests(netsnmp_mib_handler *handler,
 
             pEntry = (PCCSP_TABLE_ENTRY)netsnmp_tdata_extract_entry(request);
             if (pEntry == NULL) {
-                AnscTraceWarning(("No entry available for IpFilter\n"));
+                CcspTraceWarning(("No entry available for IpFilter\n"));
                 netsnmp_request_set_error(request, SNMP_NOSUCHINSTANCE);
                 continue;
             }
@@ -1557,14 +1557,14 @@ int handleFwIpFilterRequests(netsnmp_mib_handler *handler,
             if(lastIndex != index) {
                 snprintf(dm, sizeof(dm), HOSTS_HOST_IPADDR, ins);
                 if(get_dm_value(dm, ip, sizeof(ip))) {
-                    AnscTraceError(("%s(%d) %s failed.\n", __func__, __LINE__, dm));
+                    CcspTraceError(("%s(%d) %s failed.\n", __func__, __LINE__, dm));
                     netsnmp_request_set_error(request, SNMP_ERR_GENERR);
                     continue;
                 }
                 lastIndex = index;
                 pIpFilter = lookup_trusted_user_entry(ip);
                 if(pIpFilter == NULL) {
-                    AnscTraceWarning(("No Entry available for IpFilter\n"));
+                    CcspTraceWarning(("No Entry available for IpFilter\n"));
                     netsnmp_request_set_error(request, SNMP_NOSUCHINSTANCE);
                     continue;
                 }
@@ -1580,7 +1580,7 @@ int handleFwIpFilterRequests(netsnmp_mib_handler *handler,
             vb = request->requestvb;
             subid = vb->name[vb->name_length - 2];
 
-            AnscTraceWarning(("%s(%d): mode %d subid %d.\n", __func__, __LINE__, reqinfo->mode, subid));
+            CcspTraceInfo(("%s(%d): mode %d subid %d.\n", __func__, __LINE__, reqinfo->mode, subid));
 
             // Per Comcast webui: READ-ONLY fields
             if(subid == FILTER_ROWSTATUS ||

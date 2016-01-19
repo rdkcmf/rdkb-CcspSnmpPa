@@ -348,6 +348,22 @@
                     <enumeration>false(0),true(1)</enumeration>
                 </dm -->
             </mapping> 
+            <mapping>
+                <mib>
+                    <lastOid>16</lastOid>
+                    <name>rdkbRgDot11BssDefaultSSID</name>
+                    <access>ReadOnly</access>
+                    <dataType>OCTET STRING</dataType>
+                    <range>
+                        <min>0</min><max>32</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.SSID.%d.X_COMCAST-COM_DefaultSSID</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
         </mibTable>
         <mibTable>
             <name>rdkbRgDot11AccessMacTable</name>
@@ -517,6 +533,21 @@
                     <paramName>Device.WiFi.AccessPoint.%d.Security.RekeyingInterval</paramName>
                     <dataType>int</dataType>
                 </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>rdkbRgDot11WpaDefaultPreSharedKey</name>
+                    <access>ReadOnly</access>
+                    <dataType>OCTET STRING</dataType>
+                    <range>
+                        <min>8</min><max>64</max>
+                    </range>
+                </mib>
+                <dm>
+                    <paramName>Device.WiFi.AccessPoint.%d.Security.X_COMCAST-COM_DefaultKeyPassphrase</paramName>
+                    <dataType>string</dataType>
+                </dm> 
             </mapping>
         </mibTable>
         <mibTable>
@@ -1290,6 +1321,19 @@
                     <enumeration>disable(0),enable(1)</enumeration>
                 </dm>
             </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>24</lastOid>
+                    <name>rdkbRgDot11ExtRadioResetCount</name>
+                    <access>ReadOnly</access>
+                    <dataType>INTEGER</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.Radio.%d.RadioResetCount</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
         </mibTable>
         <mibTable>
             <name>rdkbRgDot11nExtTable</name> <!-- TODO , fix mappings -->
@@ -1443,5 +1487,6 @@
                 </dm>
             </mapping>
         </mibTable>
+        
     </mibTables>
 </mib2DM>

@@ -112,10 +112,10 @@ static BOOL FindMoCADestComp(void)
     if (!Cosa_FindDestComp(MOCA_DM_OBJ, &dstComp, &dstPath)
             || !dstComp || !dstPath)
     {
-        AnscTraceError(("%s: fail to find dest comp\n", __FUNCTION__));
+        CcspTraceError(("%s: fail to find dest comp\n", __FUNCTION__));
         return FALSE;
     } else {
-        AnscTraceWarning(("MOCA_DM_OBJ: %s dstComp: %s dstPath: %s\n", MOCA_DM_OBJ, dstComp, dstPath));
+        CcspTraceInfo(("MOCA_DM_OBJ: %s dstComp: %s dstPath: %s\n", MOCA_DM_OBJ, dstComp, dstPath));
     }
 
     return TRUE;
@@ -128,25 +128,25 @@ static int getTxPowerLimit(int subid) {
     char* name = (char *)mystring;
     int pwrTxMax = 0;
 
-    AnscTraceWarning(("getTxPowerLimit called on subid: %d\n", subid));
+    CcspTraceInfo(("getTxPowerLimit called on subid: %d\n", subid));
     
     FindMoCADestComp();
     
     snprintf(name, sizeof(mystring), MOCA_DM_TxPowerLimit);
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
-        AnscTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
+        CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
         return -1;
     }
 
     if (nval < 1)
     {
-        AnscTraceError(("%s: nval < 1 \n", __FUNCTION__));
+        CcspTraceError(("%s: nval < 1 \n", __FUNCTION__));
         return -1;
     }
     
     pwrTxMax = _ansc_atoi(valStr[0]->parameterValue);
-    AnscTraceWarning(("pwrTxMax: %d\n", pwrTxMax));
+    CcspTraceInfo(("pwrTxMax: %d\n", pwrTxMax));
     retval = pwrTxMax;
 
     Cosa_FreeParamValues(nval, valStr);
@@ -160,7 +160,7 @@ static int setTxPowerLimit(int value) {
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
     
-    AnscTraceWarning(("value: %d\n", value));
+    CcspTraceInfo(("value: %d\n", value));
 
     FindMoCADestComp(); /*TODO: Handle error*/
 
@@ -170,7 +170,7 @@ static int setTxPowerLimit(int value) {
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
     {
-        AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
+        CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
         return -1;
     }
 
@@ -184,25 +184,25 @@ static int getBeaconPwrLevel(int subid) {
     char* name = (char *)mystring;
     int beaconPwrLevel = 0;
 
-    AnscTraceWarning(("getBeaconPwrLevel called on subid: %d\n", subid));
+    CcspTraceInfo(("getBeaconPwrLevel called on subid: %d\n", subid));
     
     FindMoCADestComp();
     
     snprintf(name, sizeof(mystring), MOCA_DM_BeaconPowerLimit);
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
-        AnscTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
+        CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
         return -1;
     }
 
     if (nval < 1)
     {
-        AnscTraceError(("%s: nval < 1 \n", __FUNCTION__));
+        CcspTraceError(("%s: nval < 1 \n", __FUNCTION__));
         return -1;
     }
     
     beaconPwrLevel = -(_ansc_atoi(valStr[0]->parameterValue));
-    AnscTraceWarning(("beaconPwrLevel: %d\n", beaconPwrLevel));
+    CcspTraceInfo(("beaconPwrLevel: %d\n", beaconPwrLevel));
     retval = beaconPwrLevel;
 
     Cosa_FreeParamValues(nval, valStr);
@@ -216,7 +216,7 @@ static int setBeaconPwrLevel(int value) {
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
     
-    AnscTraceWarning(("value: %d\n", value));
+    CcspTraceInfo(("value: %d\n", value));
 
     FindMoCADestComp(); 
 
@@ -224,14 +224,14 @@ static int setBeaconPwrLevel(int value) {
     sprintf(valStr.parameterValue, "%d", -value);
     valStr.type = ccsp_unsignedInt;
 
-    AnscTraceWarning(("dstComp: %s\n", dstComp));
-    AnscTraceWarning(("dstPath: %s\n", dstPath));
-    AnscTraceWarning(("valStr.parameterName: %s\n", valStr.parameterName));
-    AnscTraceWarning(("valStr.parameterValue: %s\n", valStr.parameterValue));
+    CcspTraceInfo(("dstComp: %s\n", dstComp));
+    CcspTraceInfo(("dstPath: %s\n", dstPath));
+    CcspTraceInfo(("valStr.parameterName: %s\n", valStr.parameterName));
+    CcspTraceInfo(("valStr.parameterValue: %s\n", valStr.parameterValue));
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
     {
-        AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
+        CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
         return -1;
     }
 
@@ -245,25 +245,25 @@ static int getPwrCtrlPhyRate(int subid) {
     char* name = (char *)mystring;
     int controlPhyRate = 0;
 
-    AnscTraceWarning(("getPwrCtrlPhyRate called on subid: %d\n", subid));
+    CcspTraceInfo(("getPwrCtrlPhyRate called on subid: %d\n", subid));
     
     FindMoCADestComp();
     
     snprintf(name, sizeof(mystring), MOCA_DM_AutoPowerControlPhyRate);
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
-        AnscTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
+        CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
         return -1;
     }
 
     if (nval < 1)
     {
-        AnscTraceError(("%s: nval < 1 \n", __FUNCTION__));
+        CcspTraceError(("%s: nval < 1 \n", __FUNCTION__));
         return -1;
     }
     
     controlPhyRate = _ansc_atoi(valStr[0]->parameterValue);
-    AnscTraceWarning(("controlPhyRate: %d\n", controlPhyRate));
+    CcspTraceInfo(("controlPhyRate: %d\n", controlPhyRate));
     retval = controlPhyRate;
 
     Cosa_FreeParamValues(nval, valStr);
@@ -277,7 +277,7 @@ static int setPwrCtrlPhyRate(int value) {
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
     
-    AnscTraceWarning(("value: %d\n", value));
+    CcspTraceInfo(("value: %d\n", value));
 
     FindMoCADestComp(); 
 
@@ -285,14 +285,14 @@ static int setPwrCtrlPhyRate(int value) {
     sprintf(valStr.parameterValue, "%d", value);
     valStr.type = ccsp_unsignedInt;
 
-    AnscTraceWarning(("dstComp: %s\n", dstComp));
-    AnscTraceWarning(("dstPath: %s\n", dstPath));
-    AnscTraceWarning(("valStr.parameterName: %s\n", valStr.parameterName));
-    AnscTraceWarning(("valStr.parameterValue: %s\n", valStr.parameterValue));
+    CcspTraceInfo(("dstComp: %s\n", dstComp));
+    CcspTraceInfo(("dstPath: %s\n", dstPath));
+    CcspTraceInfo(("valStr.parameterName: %s\n", valStr.parameterName));
+    CcspTraceInfo(("valStr.parameterValue: %s\n", valStr.parameterValue));
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
     {
-        AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
+        CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
         return -1;
     }
 
@@ -327,7 +327,7 @@ for (req = requests; req != NULL; req = req->next)
                 if (intval >= 0) {
                     snmp_set_var_typed_value(req->requestvb, (u_char)ASN_INTEGER, (u_char *)&intval, sizeof(intval));
                     req->processed = 1;
-                    AnscTraceWarning(("saMocaDevicePower, retrieved value %d\n", intval));
+                    CcspTraceInfo(("saMocaDevicePower, retrieved value %d\n", intval));
                 }
 
             } else if (subid == saMocaDevPwrBeaconLevel_subid) {
@@ -336,7 +336,7 @@ for (req = requests; req != NULL; req = req->next)
                 if (intval <= 0) {
                     snmp_set_var_typed_value(req->requestvb, (u_char)ASN_INTEGER, (u_char *)&intval, sizeof(intval));
                     req->processed = 1;
-                    AnscTraceWarning(("saMocaDevicePower, retrieved value %d\n", intval));
+                    CcspTraceInfo(("saMocaDevicePower, retrieved value %d\n", intval));
                 }
 
             } else if (subid == saMocaDevPwrCtrlPhyRate_subid) {
@@ -345,7 +345,7 @@ for (req = requests; req != NULL; req = req->next)
                 if (intval >= 0) {
                     snmp_set_var_typed_value(req->requestvb, (u_char)ASN_INTEGER, (u_char *)&intval, sizeof(intval));
                     req->processed = 1;
-                    AnscTraceWarning(("saMocaDevicePower, retrieved value %d\n", intval));
+                    CcspTraceInfo(("saMocaDevicePower, retrieved value %d\n", intval));
                 }
             }
 
@@ -357,15 +357,15 @@ for (req = requests; req != NULL; req = req->next)
                 if ((retval=netsnmp_check_vb_type(req->requestvb, ASN_INTEGER))!=SNMP_ERR_NOERROR){
                     netsnmp_set_request_error(reqinfo, req, retval);
 
-                    AnscTraceWarning(("MODE_SET_RESERVE1: incorrect type for value: %d\n", *(vb->val.integer)));
-                    AnscTraceWarning(("MODE_SET_RESERVE1: should be ASN_INTEGER\n"));
+                    CcspTraceError(("MODE_SET_RESERVE1: incorrect type for value: %d\n", *(vb->val.integer)));
+                    CcspTraceWarning(("MODE_SET_RESERVE1: should be ASN_INTEGER\n"));
 
                 } else if ( *(vb->val.integer) > 10 || *(vb->val.integer) < 0) {
                     netsnmp_set_request_error(reqinfo, req, SNMP_ERR_BADVALUE);
                     retval = SNMP_ERR_BADVALUE;
 
-                    AnscTraceWarning(("MODE_SET_RESERVE1: incorrect range for value: %d\n", *(vb->val.integer)));
-                    AnscTraceWarning(("MODE_SET_RESERVE1: valid range is 0 - 10\n"));
+                    CcspTraceError(("MODE_SET_RESERVE1: incorrect range for value: %d\n", *(vb->val.integer)));
+                    CcspTraceWarning(("MODE_SET_RESERVE1: valid range is 0 - 10\n"));
                 }
                 
                 req->processed = 1;
@@ -375,15 +375,15 @@ for (req = requests; req != NULL; req = req->next)
                 if ((retval=netsnmp_check_vb_type(req->requestvb, ASN_INTEGER))!=SNMP_ERR_NOERROR){
                     netsnmp_set_request_error(reqinfo, req, retval);
 
-                    AnscTraceWarning(("MODE_SET_RESERVE1: incorrect type for value: %d\n", *(vb->val.integer)));
-                    AnscTraceWarning(("MODE_SET_RESERVE1: should be ASN_INTEGER\n"));
+                    CcspTraceError(("MODE_SET_RESERVE1: incorrect type for value: %d\n", *(vb->val.integer)));
+                    CcspTraceWarning(("MODE_SET_RESERVE1: should be ASN_INTEGER\n"));
 
                 } else if ( *(vb->val.integer) > 235 || *(vb->val.integer) < 0) {
                     netsnmp_set_request_error(reqinfo, req, SNMP_ERR_BADVALUE);
                     retval = SNMP_ERR_BADVALUE;
 
-                    AnscTraceWarning(("MODE_SET_RESERVE1: incorrect range for value: %d\n", *(vb->val.integer)));
-                    AnscTraceWarning(("MODE_SET_RESERVE1: valid range is 0 - 235\n"));
+                    CcspTraceError(("MODE_SET_RESERVE1: incorrect range for value: %d\n", *(vb->val.integer)));
+                    CcspTraceWarning(("MODE_SET_RESERVE1: valid range is 0 - 235\n"));
                 }
                 
                 req->processed = 1;
@@ -393,15 +393,15 @@ for (req = requests; req != NULL; req = req->next)
                 if ((retval=netsnmp_check_vb_type(req->requestvb, ASN_INTEGER))!=SNMP_ERR_NOERROR){
                     netsnmp_set_request_error(reqinfo, req, retval);
 
-                    AnscTraceWarning(("MODE_SET_RESERVE1: incorrect type for value: %d\n", *(vb->val.integer)));
-                    AnscTraceWarning(("MODE_SET_RESERVE1: should be ASN_INTEGER\n"));
+                    CcspTraceError(("MODE_SET_RESERVE1: incorrect type for value: %d\n", *(vb->val.integer)));
+                    CcspTraceWarning(("MODE_SET_RESERVE1: should be ASN_INTEGER\n"));
 
                 } else if ( *(vb->val.integer) > 0 || *(vb->val.integer) < -9) {
                     netsnmp_set_request_error(reqinfo, req, SNMP_ERR_BADVALUE);
                     retval = SNMP_ERR_BADVALUE;
 
-                    AnscTraceWarning(("MODE_SET_RESERVE1: incorrect range for value: %d\n", *(vb->val.integer)));
-                    AnscTraceWarning(("MODE_SET_RESERVE1: valid values are 0, -3, -6, -9\n"));
+                    CcspTraceError(("MODE_SET_RESERVE1: incorrect range for value: %d\n", *(vb->val.integer)));
+                    CcspTraceWarning(("MODE_SET_RESERVE1: valid values are 0, -3, -6, -9\n"));
                 }
                 
                 req->processed = 1;
@@ -494,7 +494,7 @@ static void freqMaskToBinaryStr(int freqCurrentMaskSetting, char * pvalue)
     int k = 0;
     int mask = freqCurrentMaskSetting;
 
-    AnscTraceWarning(("freqCurrentMaskSetting: %08x\n", freqCurrentMaskSetting));
+    CcspTraceInfo(("freqCurrentMaskSetting: %08x\n", freqCurrentMaskSetting));
 
     pvalue[32] = '\0';
 
@@ -512,7 +512,7 @@ static void freqMaskToBinaryStr(int freqCurrentMaskSetting, char * pvalue)
     }
 
     pvalue[24] = '\0';
-    AnscTraceWarning(("pvalue: %s\n", pvalue));
+    CcspTraceInfo(("pvalue: %s\n", pvalue));
 }
 
 static int32_t freqMaskToValue(uint32_t mask)
@@ -545,35 +545,35 @@ static int getFreqCurrentMaskSetting(char * pvalue) {
     snprintf(name, sizeof(mystring), MOCA_DM_FreqCurrentMaskSetting);
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
-        AnscTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
+        CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
         return -1;
     }
 
     if (nval < 1)
     {
-        AnscTraceError(("%s: nval < 1 \n", __FUNCTION__));
+        CcspTraceError(("%s: nval < 1 \n", __FUNCTION__));
         return -1;
     }
     
-    AnscTraceWarning(("valStr[0]->parameterValue: %s\n", valStr[0]->parameterValue));
+    CcspTraceInfo(("valStr[0]->parameterValue: %s\n", valStr[0]->parameterValue));
     sscanf(valStr[0]->parameterValue, "%016x", &freq_mask);
-    AnscTraceWarning(("freq_mask: %08x\n", freq_mask));
+    CcspTraceInfo(("freq_mask: %08x\n", freq_mask));
 
     for (i=0; i < 31; i++) {
 
         if(freq_mask & (1<<i)) {
 
             freq = freqMaskToValue((freq_mask & (1<<i)));
-            AnscTraceWarning(("freq: %d\n", freq));
+            CcspTraceWarning(("freq: %d\n", freq));
 
             for(j=0; j<kMax_FreqIndex; j++) {
 
                 if(saMocaFrequencies_list[j].frequency == freq) {
-                    AnscTraceWarning(("psFrequency: %s\n", saMocaFrequencies_list[j].psFrequency));
-                    AnscTraceWarning(("frequency: %d\n", saMocaFrequencies_list[j].frequency));
+                    CcspTraceInfo(("psFrequency: %s\n", saMocaFrequencies_list[j].psFrequency));
+                    CcspTraceInfo(("frequency: %d\n", saMocaFrequencies_list[j].frequency));
 
                     freqCurrentMaskSetting |= (1 << (31 - saMocaFrequencies_list[j].bit));
-                    AnscTraceWarning(("freqCurrentMaskSetting: %08x\n", freqCurrentMaskSetting));
+                    CcspTraceInfo(("freqCurrentMaskSetting: %08x\n", freqCurrentMaskSetting));
                 }
             }
         }
@@ -597,7 +597,7 @@ static int setFreqCurrentMaskSetting(char * pvalue, int val_len) {
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
 
-    AnscTraceWarning(("pvalue: %s\n", pvalue));
+    CcspTraceInfo(("pvalue: %s\n", pvalue));
 
     FindMoCADestComp(); 
 
@@ -606,13 +606,13 @@ static int setFreqCurrentMaskSetting(char * pvalue, int val_len) {
         if(pvalue[i] == '1') {
             bitmask |= (1 << (31 - saMocaFrequencies_list[i].bit));
 
-            AnscTraceWarning(("pvalue[%d]: %c\n", i, pvalue[i]));
-            AnscTraceWarning(("bitmask: %08x\n", bitmask));
-            AnscTraceWarning(("freq: %d\n", saMocaFrequencies_list[i].frequency));
+            CcspTraceInfo(("pvalue[%d]: %c\n", i, pvalue[i]));
+            CcspTraceInfo(("bitmask: %08x\n", bitmask));
+            CcspTraceInfo(("freq: %d\n", saMocaFrequencies_list[i].frequency));
 
         } else if (pvalue[i] != '0') {
 
-            AnscTraceError(("Invalid bitmask passed from user: pvalue[%d]: %c\n", i, pvalue[i]));
+            CcspTraceError(("Invalid bitmask passed from user: pvalue[%d]: %c\n", i, pvalue[i]));
             err = TRUE;
             break;
         }
@@ -623,12 +623,12 @@ static int setFreqCurrentMaskSetting(char * pvalue, int val_len) {
         sprintf(valStr.parameterValue, "%016x", bitmask);
         valStr.type = ccsp_string;
     
-        AnscTraceWarning(("valStr.parameterName: %s\n", valStr.parameterName));
-        AnscTraceWarning(("valStr.parameterValue: %s\n", valStr.parameterValue));
+        CcspTraceInfo(("valStr.parameterName: %s\n", valStr.parameterName));
+        CcspTraceInfo(("valStr.parameterValue: %s\n", valStr.parameterValue));
     
         if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
         {
-            AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
+            CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
             return -1;
         }
     }
@@ -652,35 +652,35 @@ static int getX_CISCO_COM_ChannelScanMask(char * pvalue) {
     snprintf(name, sizeof(mystring), MOCA_DM_X_CISCO_COM_ChannelScanMask);
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
-        AnscTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
+        CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
         return -1;
     }
 
     if (nval < 1)
     {
-        AnscTraceError(("%s: nval < 1 \n", __FUNCTION__));
+        CcspTraceError(("%s: nval < 1 \n", __FUNCTION__));
         return -1;
     }
     
-    AnscTraceWarning(("valStr[0]->parameterValue: %s\n", valStr[0]->parameterValue));
+    CcspTraceInfo(("valStr[0]->parameterValue: %s\n", valStr[0]->parameterValue));
     sscanf(valStr[0]->parameterValue, "%016x", &scan_mask);
-    AnscTraceWarning(("scan_mask: %08x\n", scan_mask));
+    CcspTraceInfo(("scan_mask: %08x\n", scan_mask));
 
     for (i=0; i < 31; i++) {
 
         if(scan_mask & (1<<i)) {
 
             freq = freqMaskToValue((scan_mask & (1<<i)));
-            AnscTraceWarning(("freq: %d\n", freq));
+            CcspTraceInfo(("freq: %d\n", freq));
 
             for(j=0; j<kMax_FreqIndex; j++) {
 
                 if(saMocaFrequencies_list[j].frequency == freq) {
-                    AnscTraceWarning(("psFrequency: %s\n", saMocaFrequencies_list[j].psFrequency));
-                    AnscTraceWarning(("frequency: %d\n", saMocaFrequencies_list[j].frequency));
+                    CcspTraceInfo(("psFrequency: %s\n", saMocaFrequencies_list[j].psFrequency));
+                    CcspTraceInfo(("frequency: %d\n", saMocaFrequencies_list[j].frequency));
 
                     X_CISCO_COM_ChannelScanMask |= (1 << (31 - saMocaFrequencies_list[j].bit));
-                    AnscTraceWarning(("X_CISCO_COM_ChannelScanMask: %08x\n", X_CISCO_COM_ChannelScanMask));
+                    CcspTraceInfo(("X_CISCO_COM_ChannelScanMask: %08x\n", X_CISCO_COM_ChannelScanMask));
                 }
             }
         }
@@ -704,7 +704,7 @@ static int setX_CISCO_COM_ChannelScanMask(char * pvalue, int val_len) {
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
 
-    AnscTraceWarning(("pvalue: %s\n", pvalue));
+    CcspTraceInfo(("pvalue: %s\n", pvalue));
 
     FindMoCADestComp(); 
 
@@ -713,13 +713,13 @@ static int setX_CISCO_COM_ChannelScanMask(char * pvalue, int val_len) {
         if(pvalue[i] == '1') {
             bitmask |= (1 << (31 - saMocaFrequencies_list[i].bit));
 
-            AnscTraceWarning(("pvalue[%d]: %c\n", i, pvalue[i]));
-            AnscTraceWarning(("bitmask: %08x\n", bitmask));
-            AnscTraceWarning(("freq: %d\n", saMocaFrequencies_list[i].frequency));
+            CcspTraceInfo(("pvalue[%d]: %c\n", i, pvalue[i]));
+            CcspTraceInfo(("bitmask: %08x\n", bitmask));
+            CcspTraceInfo(("freq: %d\n", saMocaFrequencies_list[i].frequency));
 
         } else if (pvalue[i] != '0') {
 
-            AnscTraceError(("Invalid bitmask passed from user: pvalue[%d]: %c\n", i, pvalue[i]));
+            CcspTraceError(("Invalid bitmask passed from user: pvalue[%d]: %c\n", i, pvalue[i]));
             err = TRUE;
             break;
         }
@@ -730,12 +730,12 @@ static int setX_CISCO_COM_ChannelScanMask(char * pvalue, int val_len) {
         sprintf(valStr.parameterValue, "%016x", bitmask);
         valStr.type = ccsp_string;
     
-        AnscTraceWarning(("valStr.parameterName: %s\n", valStr.parameterName));
-        AnscTraceWarning(("valStr.parameterValue: %s\n", valStr.parameterValue));
+        CcspTraceInfo(("valStr.parameterName: %s\n", valStr.parameterName));
+        CcspTraceInfo(("valStr.parameterValue: %s\n", valStr.parameterValue));
     
         if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
         {
-            AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
+            CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
             return -1;
         }
     }
@@ -791,8 +791,8 @@ for (req = requests; req != NULL; req = req->next)
                     snmp_set_var_typed_value(req->requestvb, (u_char)ASN_OCTET_STR, 
                                              (u_char *)&strval, strlen(strval));
 
-                    AnscTraceWarning(("intval %08x\n", intval));
-                    AnscTraceWarning(("strval %s\n", strval));
+                    CcspTraceInfo(("intval %08x\n", intval));
+                    CcspTraceInfo(("strval %s\n", strval));
 
                     req->processed = 1;
                 }
@@ -806,8 +806,8 @@ for (req = requests; req != NULL; req = req->next)
                     snmp_set_var_typed_value(req->requestvb, (u_char)ASN_OCTET_STR, 
                                              (u_char *)&strval, strlen(strval));
 
-                    AnscTraceWarning(("intval %08x\n", intval));
-                    AnscTraceWarning(("strval %s\n", strval));
+                    CcspTraceInfo(("intval %08x\n", intval));
+                    CcspTraceInfo(("strval %s\n", strval));
 
                     req->processed = 1;
                 }
@@ -821,14 +821,14 @@ for (req = requests; req != NULL; req = req->next)
 
                 for(i=0; i<kMax_AsnTypes; i++) {
 
-                    AnscTraceWarning(("checking for type %s type: %02x\n", 
+                    CcspTraceInfo(("checking for type %s type: %02x\n", 
                                       asn_types[i].ptype, asn_types[i].asn_type));
    
                     retval = netsnmp_check_vb_type(req->requestvb, asn_types[i].asn_type);
                     if(retval != SNMP_ERR_NOERROR) {
-                        AnscTraceWarning(("Not %s type\n", asn_types[i].ptype));
+                        CcspTraceWarning(("Not %s type\n", asn_types[i].ptype));
                     } else {
-                        AnscTraceWarning(("type is %s\n", asn_types[i].ptype));
+                        CcspTraceWarning(("type is %s\n", asn_types[i].ptype));
                     }
                 }
                 
@@ -843,8 +843,8 @@ for (req = requests; req != NULL; req = req->next)
             intval = 0;
             if(subid == saMocaDevChannelMask_subid) {
 
-                AnscTraceWarning(("val.string %s\n", req->requestvb->val.string));
-                AnscTraceWarning(("val_len %d\n", req->requestvb->val_len));
+                CcspTraceInfo(("val.string %s\n", req->requestvb->val.string));
+                CcspTraceInfo(("val_len %d\n", req->requestvb->val_len));
 
                 if(req->requestvb->val_len < kMax_FreqIndex) {
                     intval = setFreqCurrentMaskSetting(req->requestvb->val.string, 
@@ -855,7 +855,7 @@ for (req = requests; req != NULL; req = req->next)
 
                 } else {
 
-                    AnscTraceWarning(("val_len %d exceeds max: %d\n", 
+                    CcspTraceWarning(("val_len %d exceeds max: %d\n", 
                                       req->requestvb->val_len, kMax_FreqIndex-1));
 
                     netsnmp_request_set_error(req, SNMP_ERR_GENERR);
@@ -865,8 +865,8 @@ for (req = requests; req != NULL; req = req->next)
 
             } else if (subid == saMocaDevChannelScanMask_subid) {
 
-                AnscTraceWarning(("val.string %s\n", req->requestvb->val.string));
-                AnscTraceWarning(("val_len %d\n", req->requestvb->val_len));
+                CcspTraceInfo(("val.string %s\n", req->requestvb->val.string));
+                CcspTraceInfo(("val_len %d\n", req->requestvb->val_len));
 
                 if(req->requestvb->val_len < kMax_FreqIndex) {
                     intval = setX_CISCO_COM_ChannelScanMask(req->requestvb->val.string, 
@@ -877,7 +877,7 @@ for (req = requests; req != NULL; req = req->next)
 
                 } else {
 
-                    AnscTraceWarning(("val_len %d exceeds max: %d\n", 
+                    CcspTraceWarning(("val_len %d exceeds max: %d\n", 
                                       req->requestvb->val_len, kMax_FreqIndex-1));
 
                     netsnmp_request_set_error(req, SNMP_ERR_GENERR);
@@ -925,35 +925,35 @@ static int getTabooMaskSetting(char * pvalue) {
     snprintf(name, sizeof(mystring), MOCA_DM_TabooMask);
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
-        AnscTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
+        CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
         return -1;
     }
 
     if (nval < 1)
     {
-        AnscTraceError(("%s: nval < 1 \n", __FUNCTION__));
+        CcspTraceError(("%s: nval < 1 \n", __FUNCTION__));
         return -1;
     }
     
-    AnscTraceWarning(("valStr[0]->parameterValue: %s\n", valStr[0]->parameterValue));
+    CcspTraceInfo(("valStr[0]->parameterValue: %s\n", valStr[0]->parameterValue));
     sscanf(valStr[0]->parameterValue, "%016x", &freq_mask);
-    AnscTraceWarning(("freq_mask: %08x\n", freq_mask));
+    CcspTraceInfo(("freq_mask: %08x\n", freq_mask));
 
     for (i=0; i < 31; i++) {
 
         if(freq_mask & (1<<i)) {
 
             freq = freqMaskToValue((freq_mask & (1<<i)));
-            AnscTraceWarning(("freq: %d\n", freq));
+            CcspTraceInfo(("freq: %d\n", freq));
 
             for(j=0; j<kMax_FreqIndex; j++) {
 
                 if(saMocaFrequencies_list[j].frequency == freq) {
-                    AnscTraceWarning(("psFrequency: %s\n", saMocaFrequencies_list[j].psFrequency));
-                    AnscTraceWarning(("frequency: %d\n", saMocaFrequencies_list[j].frequency));
+                    CcspTraceInfo(("psFrequency: %s\n", saMocaFrequencies_list[j].psFrequency));
+                    CcspTraceInfo(("frequency: %d\n", saMocaFrequencies_list[j].frequency));
 
                     freqCurrentMaskSetting |= (1 << (31 - saMocaFrequencies_list[j].bit));
-                    AnscTraceWarning(("freqCurrentMaskSetting: %08x\n", freqCurrentMaskSetting));
+                    CcspTraceInfo(("freqCurrentMaskSetting: %08x\n", freqCurrentMaskSetting));
                 }
             }
         }
@@ -977,7 +977,7 @@ static int setTabooMaskSetting(char * pvalue, int val_len) {
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
 
-    AnscTraceWarning(("pvalue: %s\n", pvalue));
+    CcspTraceInfo(("pvalue: %s\n", pvalue));
 
     FindMoCADestComp(); 
 
@@ -986,13 +986,13 @@ static int setTabooMaskSetting(char * pvalue, int val_len) {
         if(pvalue[i] == '1') {
             bitmask |= (1 << (31 - saMocaFrequencies_list[i].bit));
 
-            AnscTraceWarning(("pvalue[%d]: %c\n", i, pvalue[i]));
-            AnscTraceWarning(("bitmask: %08x\n", bitmask));
-            AnscTraceWarning(("freq: %d\n", saMocaFrequencies_list[i].frequency));
+            CcspTraceInfo(("pvalue[%d]: %c\n", i, pvalue[i]));
+            CcspTraceInfo(("bitmask: %08x\n", bitmask));
+            CcspTraceInfo(("freq: %d\n", saMocaFrequencies_list[i].frequency));
 
         } else if (pvalue[i] != '0') {
 
-            AnscTraceError(("Invalid bitmask passed from user: pvalue[%d]: %c\n", i, pvalue[i]));
+            CcspTraceError(("Invalid bitmask passed from user: pvalue[%d]: %c\n", i, pvalue[i]));
             err = TRUE;
             break;
         }
@@ -1003,12 +1003,12 @@ static int setTabooMaskSetting(char * pvalue, int val_len) {
         sprintf(valStr.parameterValue, "%016x", bitmask);
         valStr.type = ccsp_string;
     
-        AnscTraceWarning(("valStr.parameterName: %s\n", valStr.parameterName));
-        AnscTraceWarning(("valStr.parameterValue: %s\n", valStr.parameterValue));
+        CcspTraceInfo(("valStr.parameterName: %s\n", valStr.parameterName));
+        CcspTraceInfo(("valStr.parameterValue: %s\n", valStr.parameterValue));
     
         if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
         {
-            AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
+            CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
             return -1;
         }
     }
@@ -1050,8 +1050,8 @@ for (req = requests; req != NULL; req = req->next)
                     snmp_set_var_typed_value(req->requestvb, (u_char)ASN_OCTET_STR, 
                                              (u_char *)&strval, strlen(strval));
 
-                    AnscTraceWarning(("intval %08x\n", intval));
-                    AnscTraceWarning(("strval %s\n", strval));
+                    CcspTraceInfo(("intval %08x\n", intval));
+                    CcspTraceInfo(("strval %s\n", strval));
 
                     req->processed = 1;
                 }
@@ -1066,14 +1066,14 @@ for (req = requests; req != NULL; req = req->next)
 
                 for(i=0; i<kMax_AsnTypes; i++) {
 
-                    AnscTraceWarning(("checking for type %s type: %02x\n", 
+                    CcspTraceInfo(("checking for type %s type: %02x\n", 
                                       asn_types[i].ptype, asn_types[i].asn_type));
    
                     retval = netsnmp_check_vb_type(req->requestvb, asn_types[i].asn_type);
                     if(retval != SNMP_ERR_NOERROR) {
-                        AnscTraceWarning(("Not %s type\n", asn_types[i].ptype));
+                        CcspTraceWarning(("Not %s type\n", asn_types[i].ptype));
                     } else {
-                        AnscTraceWarning(("type is %s\n", asn_types[i].ptype));
+                        CcspTraceWarning(("type is %s\n", asn_types[i].ptype));
                     }
                 }
                 
@@ -1088,8 +1088,8 @@ for (req = requests; req != NULL; req = req->next)
             intval = 0;
             if(subid == saMocaDevTabooMask_subid) {
 
-                AnscTraceWarning(("val.string %s\n", req->requestvb->val.string));
-                AnscTraceWarning(("val_len %d\n", req->requestvb->val_len));
+                CcspTraceInfo(("val.string %s\n", req->requestvb->val.string));
+                CcspTraceInfo(("val_len %d\n", req->requestvb->val_len));
 
                 if(req->requestvb->val_len < kMax_FreqIndex) {
                     intval = setTabooMaskSetting(req->requestvb->val.string, 
@@ -1100,7 +1100,7 @@ for (req = requests; req != NULL; req = req->next)
 
                 } else {
 
-                    AnscTraceWarning(("val_len %d exceeds max: %d\n", 
+                    CcspTraceWarning(("val_len %d exceeds max: %d\n", 
                                       req->requestvb->val_len, kMax_FreqIndex-1));
 
                     netsnmp_request_set_error(req, SNMP_ERR_GENERR);

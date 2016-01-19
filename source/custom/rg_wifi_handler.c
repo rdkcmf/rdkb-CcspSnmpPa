@@ -61,7 +61,7 @@
 #define WIFI_DM_MCASTRATE    "Device.WiFi.AccessPoint.%d.X_CISCO_COM_MulticastRate"
 #define WIFI_DM_OPERSTD      "Device.WiFi.Radio.%d.OperatingStandards"
 #define WIFI_DM_NPHYRATE     "Device.WiFi.Radio.%d.MCS"
-#define WIFI_DM_PSK          "Device.WiFi.AccessPoint.%d.Security.X_CISCO_COM_KeyPassphrase"
+#define WIFI_DM_PSK          "Device.WiFi.AccessPoint.%d.Security.X_COMCAST-COM_KeyPassphrase"
 #define WIFI_DM_NUMBER_APS   "Device.WiFi.AccessPointNumberOfEntries"
 #define WIFI_DM_BSSHOTSPOT  "Device.WiFi.AccessPoint.%d.X_CISCO_COM_BssHotSpot"
 #define WIFI_DM_BSSISOLATIONENABLE"Device.WiFi.AccessPoint.%d.IsolationEnable"
@@ -70,7 +70,9 @@
 #define WIFI_DM_BSSID         "Device.WiFi.SSID.%d.BSSID"
 #define WIFI_DM_SSID          "Device.WiFi.SSID.%d.SSID"
 #define WIFI_DM_WPS           "Device.WiFi.AccessPoint.%d.WPS.Enable"
-#define WIFI_DM_WPSTIME           "Device.WiFi.AccessPoint.%d.WPS.X_CISCO_COM_WpsPushButton"
+#define WIFI_DM_WPSTIME       "Device.WiFi.AccessPoint.%d.WPS.X_CISCO_COM_WpsPushButton"
+#define WIFI_DM_DEFAULT_SSID  "Device.WiFi.SSID.%d.X_COMCAST-COM_DefaultSSID"
+#define WIFI_DM_DEFAULT_PSK   "Device.WiFi.AccessPoint.%d.Security.X_COMCAST-COM_DefaultKeyPassphrase"
 
 #define MAX_APS_PER_RADIO 16
 
@@ -97,6 +99,8 @@ static const int saRgDot11ExtMulticastRate_subid = 22;
 static const int saRgDot11nExtMode_subid = 1;
 static const int saRgDot11nExtPhyRate_subid = 2;
 static const int saRgDot11WpaPreSharedKey_subid = 2;
+static const int saRgDot11BSSDefaultSSID_subid = 16;
+static const int saRgDot11WpaDefaultPreSharedKey_subid = 4;
 
 static char *dstComp, *dstPath; /* cache */
 
@@ -144,13 +148,13 @@ static int getNumAPs( ) {
     printf("%s: DML command %s \n", __FUNCTION__, name);
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
-        AnscTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
+        CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
         return -1;
     }
 
     if (nval < 1)
     {
-        AnscTraceError(("%s: nval < 1 \n", __FUNCTION__));
+        CcspTraceError(("%s: nval < 1 \n", __FUNCTION__));
         return -1;
     }
     
@@ -159,7 +163,7 @@ static int getNumAPs( ) {
     
     Cosa_FreeParamValues(nval, valStr);
     
-    AnscTraceError(("%s: Get number of APs returning %d \n",__FUNCTION__, retval ));
+    CcspTraceInfo(("%s: Get number of APs returning %d \n",__FUNCTION__, retval ));
 
     return retval;
 }
@@ -215,7 +219,7 @@ static BOOL FindWifiDestComp(void)
     if (!Cosa_FindDestComp(WIFI_DM_OBJ, &dstComp, &dstPath)
             || !dstComp || !dstPath)
     {
-        AnscTraceError(("%s: fail to find dest comp\n", __FUNCTION__));
+        CcspTraceError(("%s: fail to find dest comp\n", __FUNCTION__));
         return FALSE;
     }
 
@@ -246,7 +250,7 @@ static int applyDot11Settings(int val) {
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, 2))
     {
-        AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, WIFI_DM_APPLY));
+        CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, WIFI_DM_APPLY));
         return -1;
     }
 
@@ -278,13 +282,13 @@ static int getWps(PCCSP_TABLE_ENTRY entry)
     snprintf(str, sizeof(str),WIFI_DM_WPSTIME,1);
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
-        AnscTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
+        CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
         return -1;
     }
 
     if (nval == 0)
     {
-        AnscTraceError(("%s: nval < 1 \n", __FUNCTION__));
+        CcspTraceError(("%s: nval < 1 \n", __FUNCTION__));
         return -1;
     }
     
@@ -294,12 +298,12 @@ static int getWps(PCCSP_TABLE_ENTRY entry)
         snprintf(str, sizeof(str),WIFI_DM_WPSTIME,2);
         if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
         {
-            AnscTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));        
+            CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));        
             return -1;
         }
         if (nval == 0)
         {
-            AnscTraceError(("%s: nval < 1 \n", __FUNCTION__));
+            CcspTraceError(("%s: nval < 1 \n", __FUNCTION__));
             return -1;
         }
         retval = atoi(valStr[0]->parameterValue);
@@ -326,7 +330,7 @@ int setWps(PCCSP_TABLE_ENTRY entry, int wpsTime)
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
     {
-        AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
+        CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
         return -1;
     }
 
@@ -336,7 +340,7 @@ int setWps(PCCSP_TABLE_ENTRY entry, int wpsTime)
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
     {
-        AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
+        CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
         return -1;
     }
 
@@ -346,7 +350,7 @@ int setWps(PCCSP_TABLE_ENTRY entry, int wpsTime)
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
     {
-        AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
+        CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
         return -1;
     }
 
@@ -356,7 +360,7 @@ int setWps(PCCSP_TABLE_ENTRY entry, int wpsTime)
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
     {
-        AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
+        CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
         return -1;
     }
 
@@ -486,7 +490,7 @@ netsnmp_request_info* req;
         AnscTraceWarning(("Dot11ApplySettings SET_ACTION\n"));
         if (commitThreadHandle == NULL) {
             commitThreadHandle = AnscCreateTask(wifiCommitThread, USER_DEFAULT_TASK_STACK_SIZE, USER_DEFAULT_TASK_PRIORITY, NULL, "SNMPWifiCustomCommitThread");
-            AnscTraceWarning(("Spawned Dot11ApplySettings background thread\n"));
+            CcspTraceWarning(("Spawned Dot11ApplySettings background thread\n"));
         }
         pthread_mutex_lock(&commitMutex);
         bPendingCommit = 1;
@@ -523,14 +527,14 @@ static int getBssEnable(PCCSP_TABLE_ENTRY entry) {
     char mystring[30];
     char* name = (char *)mystring;
     
-    AnscTraceWarning(("getBssEnable called on entry: %d (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
+    CcspTraceInfo(("getBssEnable called on entry: %d (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
     FindWifiDestComp(); /*TODO: Handle error*/
     
     snprintf(name, sizeof(mystring), WIFI_DM_BSSENABLE, entry->IndexValue[0].Value.uValue);
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
-        AnscTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
+        CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
         return -1;
     }
 
@@ -540,13 +544,13 @@ static int getBssEnable(PCCSP_TABLE_ENTRY entry) {
         snprintf(name, sizeof(mystring), WIFI_DM_RADIO_ENABLE, 2);
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval2, &valStr2))
     {
-        AnscTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
+        CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
         return -1;
     }
 
     if (nval<1 || nval2<1)
     {
-        AnscTraceError(("%s: nval < 1 \n", __FUNCTION__));
+        CcspTraceError(("%s: nval < 1 \n", __FUNCTION__));
         return -1;
     }
     
@@ -575,7 +579,7 @@ static int setBssEnable(PCCSP_TABLE_ENTRY entry, int value) {
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
     {
-        AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
+        CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
         return -1;
     }
 
@@ -588,7 +592,7 @@ static int getBssAccessMode(PCCSP_TABLE_ENTRY entry) {
     char str[2][100];
     char* name[2] = {(char*) str[0], (char*) str[1]};
     
-    AnscTraceWarning(("getBssAccessMode called on entry: %d\n", entry->IndexValue[0].Value.uValue));
+    CcspTraceInfo(("getBssAccessMode called on entry: %d\n", entry->IndexValue[0].Value.uValue));
     
     FindWifiDestComp(); /*TODO: Handle error*/
     
@@ -597,13 +601,13 @@ static int getBssAccessMode(PCCSP_TABLE_ENTRY entry) {
 
     if (!Cosa_GetParamValues(dstComp, dstPath, name, 2, &nval, &valStr))
     {
-        AnscTraceError(("%s: fail to get: %s or %s\n", __FUNCTION__, name[0], name[1]));
+        CcspTraceError(("%s: fail to get: %s or %s\n", __FUNCTION__, name[0], name[1]));
         return -1;
     }
 
     if (nval < 2)
     {
-        AnscTraceError(("%s: nval < 1 \n", __FUNCTION__));
+        CcspTraceError(("%s: nval < 1 \n", __FUNCTION__));
         return -1;
     }
     
@@ -660,7 +664,7 @@ static int setBssAccessMode(PCCSP_TABLE_ENTRY entry, int value) {
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, valCnt))
     {
-        AnscTraceError(("%s: fail to set: %s or %s\n", __FUNCTION__, valStr[0].parameterName, valStr[1].parameterName));
+        CcspTraceError(("%s: fail to set: %s or %s\n", __FUNCTION__, valStr[0].parameterName, valStr[1].parameterName));
         return -1;
     }
 
@@ -673,20 +677,20 @@ static int getBssClosedNetwork(PCCSP_TABLE_ENTRY entry) {
     char mystring[100];
     char* name = (char *)mystring;
     
-    AnscTraceWarning(("getBssClosedNetwork called on entry: %d (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
+    CcspTraceInfo(("getBssClosedNetwork called on entry: %d (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
     FindWifiDestComp(); /*TODO: Handle error*/
     
     snprintf(name, sizeof(mystring), WIFI_DM_ADVERTISE, entry->IndexValue[0].Value.uValue);
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
-        AnscTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
+        CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
         return -1;
     }
 
     if (nval < 1)
     {
-        AnscTraceError(("%s: nval < 1 \n", __FUNCTION__));
+        CcspTraceError(("%s: nval < 1 \n", __FUNCTION__));
         return -1;
     }
     
@@ -715,7 +719,7 @@ static int setBssClosedNetwork(PCCSP_TABLE_ENTRY entry, int value) {
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
     {
-        AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
+        CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
         return -1;
     }
 
@@ -731,16 +735,16 @@ static int getBssHotSpot(PCCSP_TABLE_ENTRY entry) {
     FindWifiDestComp(); /*TODO: Handle error*/
     
     snprintf(name, sizeof(mystring), WIFI_DM_BSSHOTSPOT, entry->IndexValue[0].Value.uValue);
-    AnscTraceWarning(("%s: called on entry: %d %s(%d)\n", __func__, entry->IndexValue[0].Value.uValue, mystring, sizeof(mystring)));
+    CcspTraceInfo(("%s: called on entry: %d %s(%d)\n", __func__, entry->IndexValue[0].Value.uValue, mystring, sizeof(mystring)));
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
-        AnscTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
+        CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
         return -1;
     }
 
     if (nval < 1)
     {
-        AnscTraceError(("%s: nval < 1 \n", __FUNCTION__));
+        CcspTraceError(("%s: nval < 1 \n", __FUNCTION__));
         return -1;
     }
     
@@ -768,7 +772,7 @@ static int setBssHotSpot(PCCSP_TABLE_ENTRY entry, int value) {
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
     {
-        AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
+        CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
         return -1;
     }
 
@@ -783,16 +787,16 @@ static int getBssIsolationEnable(PCCSP_TABLE_ENTRY entry) {
     FindWifiDestComp(); /*TODO: Handle error*/
     
     snprintf(name, sizeof(mystring), WIFI_DM_BSSISOLATIONENABLE, entry->IndexValue[0].Value.uValue);
-    AnscTraceWarning(("%s: called on entry: %d %s(%d)\n", __func__, entry->IndexValue[0].Value.uValue, mystring, sizeof(mystring)));
+    CcspTraceInfo(("%s: called on entry: %d %s(%d)\n", __func__, entry->IndexValue[0].Value.uValue, mystring, sizeof(mystring)));
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
-        AnscTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
+        CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
         return -1;
     }
 
     if (nval < 1)
     {
-        AnscTraceError(("%s: nval < 1 \n", __FUNCTION__));
+        CcspTraceError(("%s: nval < 1 \n", __FUNCTION__));
         return -1;
     }
     
@@ -820,7 +824,7 @@ static int setBssIsolationEnable(PCCSP_TABLE_ENTRY entry, int value) {
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
     {
-        AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
+        CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
         return -1;
     }
 
@@ -944,6 +948,22 @@ static int getBssid(PCCSP_TABLE_ENTRY pEntry, char *macArray)
 
 }
 
+static int getDefaultSsid(PCCSP_TABLE_ENTRY pEntry, char *defaultssid)
+{
+    char dmStr[128] = {'\0'};
+
+    if(!defaultssid)
+        return -1;
+
+    snprintf(dmStr, sizeof(dmStr), WIFI_DM_DEFAULT_SSID, pEntry->IndexValue[0].Value.uValue);
+    if(get_dm_value(dmStr, defaultssid, 32))
+       return -1;
+    	
+
+	
+
+    return 0; 
+}
 static int getSsid(PCCSP_TABLE_ENTRY pEntry, char *ssid)
 {
     char dmStr[128] = {'\0'};
@@ -973,7 +993,7 @@ static int setBssSsid(PCCSP_TABLE_ENTRY pEntry, const char *ssid)
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
     {
-        AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
+        CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
         return -1;
     }
 
@@ -1068,7 +1088,7 @@ static int setBssSecurityMode(PCCSP_TABLE_ENTRY pEntry, int mode)
     
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, valCnt))
     {
-        AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr[0].parameterName));
+        CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr[0].parameterName));
         return -1;
     }
 
@@ -1105,7 +1125,7 @@ static int setBssMaxNumSta(PCCSP_TABLE_ENTRY pEntry, int num)
     valStr.type = ccsp_int;
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, valCnt))
     {
-        AnscTraceError(("%s: fail to set: %s \n", __FUNCTION__, valStr.parameterName));
+        CcspTraceError(("%s: fail to set: %s \n", __FUNCTION__, valStr.parameterName));
         return -1;
     }
 
@@ -1215,17 +1235,19 @@ int retval=SNMP_ERR_NOERROR;
 PCCSP_TABLE_ENTRY entry = NULL;
 netsnmp_variable_list *vb = NULL;
 unsigned char mac[6] = {'\0'};
-char ssid[32] = {'\0'};
+char ssid[32] = {'\0'}, defaultssid[32] = {'\0'};
 
 for (req = requests; req != NULL; req = req->next)
 {
+	
+
     vb = req->requestvb;
     subid = vb->name[vb->name_length -2];
-    AnscTraceWarning(("BssTable last 4: %d.%d.%d.%d\n", vb->name[vb->name_length-4],vb->name[vb->name_length-3],vb->name[vb->name_length-2],vb->name[vb->name_length-1]));
+    CcspTraceInfo(("BssTable last 4: %d.%d.%d.%d\n", vb->name[vb->name_length-4],vb->name[vb->name_length-3],vb->name[vb->name_length-2],vb->name[vb->name_length-1]));
     entry = (PCCSP_TABLE_ENTRY)netsnmp_tdata_extract_entry(req);
     if (entry == NULL) {
         netsnmp_request_set_error(req, SNMP_NOSUCHINSTANCE);
-        AnscTraceWarning(("No entry found for BssTable\n"));
+        CcspTraceWarning(("No entry found for BssTable\n"));
         continue;
     }
         
@@ -1259,14 +1281,21 @@ for (req = requests; req != NULL; req = req->next)
                 intval = getBssMaxNumSta(entry);
             } else if (subid == saRgDot11BssUserStatus_subid){
                 intval = getBssUserStatus(entry);
+            }else if( subid == saRgDot11BSSDefaultSSID_subid )
+            {
+				getDefaultSsid(entry,defaultssid);
+                snmp_set_var_typed_value(req->requestvb, (u_char)ASN_OCTET_STR, (u_char *)defaultssid, strlen(defaultssid));
+                req->processed = 1;
+
+                
             }
             
             if (intval >= 0) {
                 snmp_set_var_typed_value(req->requestvb, (u_char)ASN_INTEGER, (u_char *)&intval, sizeof(intval));
                 req->processed = 1;
-                AnscTraceWarning(("BssTable, retrieved value %d\n", intval));
+                CcspTraceInfo(("BssTable, retrieved value %d\n", intval));
             } else
-                AnscTraceWarning(("BssTable failed get call subid %d\n", subid));
+                CcspTraceWarning(("BssTable failed get call subid %d\n", subid));
         
         break;
 
@@ -1540,13 +1569,13 @@ static int getCurrentChannel (PCCSP_TABLE_ENTRY entry) {
 
     if (!Cosa_GetParamValues(dstComp, dstPath, name, 2, &nval, &valStr))
     {
-        AnscTraceError(("%s: fail to get: %s or %s\n", __FUNCTION__, name[0], name[1]));
+        CcspTraceError(("%s: fail to get: %s or %s\n", __FUNCTION__, name[0], name[1]));
         return -1;
     }
 
     if (nval < 2)
     {
-        AnscTraceError(("%s: nval < 1 \n", __FUNCTION__));
+        CcspTraceError(("%s: nval < 1 \n", __FUNCTION__));
         return -1;
     }
     
@@ -1569,20 +1598,20 @@ static int getWmm(PCCSP_TABLE_ENTRY entry) {
     char mystring[80];
     char* name = (char *)mystring;
     
-    AnscTraceWarning(("getWmm called on entry: %d (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
+    CcspTraceInfo(("getWmm called on entry: %d (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
     FindWifiDestComp(); /*TODO: Handle error*/
     /*Only perform get on one accesspoint, since all are set at same time. Assume 1 = 1 and 2 = 2 association in both AccessPoint and Radio tables*/
     snprintf(name, sizeof(mystring), WIFI_DM_WMM_ENABLE, entry->IndexValue[0].Value.uValue);
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
-        AnscTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
+        CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
         return -1;
     }
 
     if (nval < 1)
     {
-        AnscTraceError(("%s: nval < 1 \n", __FUNCTION__));
+        CcspTraceError(("%s: nval < 1 \n", __FUNCTION__));
         return -1;
     }
     
@@ -1599,20 +1628,20 @@ static int getWmmNoAck(PCCSP_TABLE_ENTRY entry){
     char mystring[80];
     char* name = (char *)mystring;
     
-    AnscTraceWarning(("getWmmNoAck called on entry: %d (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
+    CcspTraceInfo(("getWmmNoAck called on entry: %d (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
     FindWifiDestComp(); /*TODO: Handle error*/
     /*Only perform get on one accesspoint, since all are set at same time. Assume 1 = 1 and 2 = 2 association in both AccessPoint and Radio tables*/
     snprintf(name, sizeof(mystring), WIFI_DM_WMM_NOACK, entry->IndexValue[0].Value.uValue);
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
-        AnscTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
+        CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
         return -1;
     }
 
     if (nval < 1)
     {
-        AnscTraceError(("%s: nval < 1 \n", __FUNCTION__));
+        CcspTraceError(("%s: nval < 1 \n", __FUNCTION__));
         return -1;
     }
     
@@ -1629,20 +1658,20 @@ static int getMcastRate(PCCSP_TABLE_ENTRY entry){
     char mystring[80];
     char* name = (char *)mystring;
     
-    AnscTraceWarning(("getMcastRate called on entry: %d (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
+    CcspTraceInfo(("getMcastRate called on entry: %d (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
     FindWifiDestComp(); /*TODO: Handle error*/
     /*Only perform get on one accesspoint, since all are set at same time. Assume 1 = 1 and 2 = 2 association in both AccessPoint and Radio tables*/
     snprintf(name, sizeof(mystring), WIFI_DM_MCASTRATE, entry->IndexValue[0].Value.uValue);
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
-        AnscTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
+        CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
         return -1;
     }
 
     if (nval < 1)
     {
-        AnscTraceError(("%s: nval < 1 \n", __FUNCTION__));
+        CcspTraceError(("%s: nval < 1 \n", __FUNCTION__));
         return -1;
     }
     
@@ -1660,20 +1689,20 @@ static int getCountry(PCCSP_TABLE_ENTRY entry){
     char mystring[80];
     char* name = (char *)mystring;
 
-    AnscTraceWarning(("%s called on entry: %d (%d)\n", __FUNCTION__, entry->IndexValue[0].Value.uValue, sizeof(mystring)));
+    CcspTraceInfo(("%s called on entry: %d (%d)\n", __FUNCTION__, entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
     FindWifiDestComp(); /*TODO: Handle error*/
     /*Only perform get on one accesspoint, since all are set at same time. Assume 1 = 1 and 2 = 2 association in both AccessPoint and Radio tables*/
     snprintf(name, sizeof(mystring), WIFI_DM_RADIO_COUNTRY, entry->IndexValue[0].Value.uValue);
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
-        AnscTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
+        CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
         return -1;
     }
 
     if (nval < 1)
     {
-        AnscTraceError(("%s: nval < 1 \n", __FUNCTION__));
+        CcspTraceError(("%s: nval < 1 \n", __FUNCTION__));
         return -1;
     }
 
@@ -1694,20 +1723,20 @@ static int getMbssUserControl(PCCSP_TABLE_ENTRY entry)
     char mystring[80];
     char* name = (char *)mystring;
 
-    AnscTraceWarning(("%s called on entry: %d (%d)\n", __FUNCTION__, entry->IndexValue[0].Value.uValue, sizeof(mystring)));
+    CcspTraceInfo(("%s called on entry: %d (%d)\n", __FUNCTION__, entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
     FindWifiDestComp(); /*TODO: Handle error*/
     /*Only perform get on one accesspoint, since all are set at same time. Assume 1 = 1 and 2 = 2 association in both AccessPoint and Radio tables*/
     snprintf(name, sizeof(mystring), WIFI_DM_RADIO_USERCONTROL, entry->IndexValue[0].Value.uValue);
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
-        AnscTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
+        CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
         return -1;
     }
 
     if (nval < 1)
     {
-        AnscTraceError(("%s: nval < 1 \n", __FUNCTION__));
+        CcspTraceError(("%s: nval < 1 \n", __FUNCTION__));
         return -1;
     }
 
@@ -1726,20 +1755,20 @@ static int getMbssAdminControl(PCCSP_TABLE_ENTRY entry)
     char mystring[80];
     char* name = (char *)mystring;
     
-    AnscTraceWarning(("%s called on entry: %d (%d)\n", __FUNCTION__, entry->IndexValue[0].Value.uValue, sizeof(mystring)));
+    CcspTraceInfo(("%s called on entry: %d (%d)\n", __FUNCTION__, entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
     FindWifiDestComp(); /*TODO: Handle error*/
     /*Only perform get on one accesspoint, since all are set at same time. Assume 1 = 1 and 2 = 2 association in both AccessPoint and Radio tables*/
     snprintf(name, sizeof(mystring),  WIFI_DM_RADIO_ADMINCONTROL, entry->IndexValue[0].Value.uValue);
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
-        AnscTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
+        CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
         return -1;
     }
 
     if (nval < 1)
     {
-        AnscTraceError(("%s: nval < 1 \n", __FUNCTION__));
+        CcspTraceError(("%s: nval < 1 \n", __FUNCTION__));
         return -1;
     }
     
@@ -1765,13 +1794,13 @@ static int getOperMode(PCCSP_TABLE_ENTRY entry){
 
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
-        AnscTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
+        CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
         return -1;
     }
 
     if (nval < 1)
     {
-        AnscTraceError(("%s: nval < 1 \n", __FUNCTION__));
+        CcspTraceError(("%s: nval < 1 \n", __FUNCTION__));
         return -1;
     }
     
@@ -1816,7 +1845,7 @@ static int setCurrentChannel(PCCSP_TABLE_ENTRY entry, int val){
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, valCnt))
     {
-        AnscTraceError(("%s: fail to set: %s or %s\n", __FUNCTION__, valStr[0].parameterName, valStr[1].parameterName));
+        CcspTraceError(("%s: fail to set: %s or %s\n", __FUNCTION__, valStr[0].parameterName, valStr[1].parameterName));
         return -1;
     }
 
@@ -1840,7 +1869,7 @@ static int setWmm(PCCSP_TABLE_ENTRY entry, int val){
 
 	if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, 1))
 	{
-	    AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr[0].parameterName));
+	    CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr[0].parameterName));
 	    return -1;
 	}
 
@@ -1848,7 +1877,7 @@ static int setWmm(PCCSP_TABLE_ENTRY entry, int val){
 
 	if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, 1))
 	{
-	    AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr[0].parameterName));
+	    CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr[0].parameterName));
 	    return -1;
 	}
     } else {
@@ -1857,7 +1886,7 @@ static int setWmm(PCCSP_TABLE_ENTRY entry, int val){
 	
 	if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, 1))
 	{
-	    AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr[0].parameterName));
+	    CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr[0].parameterName));
 	    return -1;
 	}
 
@@ -1865,7 +1894,7 @@ static int setWmm(PCCSP_TABLE_ENTRY entry, int val){
 
 	if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, 1))
 	{
-	    AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr[0].parameterName));
+	    CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr[0].parameterName));
 	    return -1;
 	}
 
@@ -1888,7 +1917,7 @@ static int setWmmNoAck(PCCSP_TABLE_ENTRY entry, int val){
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, 1))
     {
-        AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr[0].parameterName));
+        CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr[0].parameterName));
         return -1;
     }
 
@@ -1909,7 +1938,7 @@ static int setMcastRate(PCCSP_TABLE_ENTRY entry, int val){
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, 1))
     {
-        AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr[0].parameterName));
+        CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr[0].parameterName));
         return -1;
     }
 
@@ -1936,7 +1965,7 @@ static int setMbssUserControl(PCCSP_TABLE_ENTRY entry, int val)
     valStr.type = ccsp_int;
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, valCnt))
     {
-        AnscTraceError(("%s: fail to set: %s \n", __FUNCTION__, valStr.parameterName));
+        CcspTraceError(("%s: fail to set: %s \n", __FUNCTION__, valStr.parameterName));
         return -1;
     }
 
@@ -1959,7 +1988,7 @@ static int setMbssAdminControl(PCCSP_TABLE_ENTRY entry, int val)
     valStr.type = ccsp_int;
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, valCnt))
     {
-        AnscTraceError(("%s: fail to set: %s \n", __FUNCTION__, valStr.parameterName));
+        CcspTraceError(("%s: fail to set: %s \n", __FUNCTION__, valStr.parameterName));
         return -1;
     }
 
@@ -1980,7 +2009,7 @@ static int setOperMode(PCCSP_TABLE_ENTRY entry, int val){
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
     {
-        AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
+        CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
         return -1;
     }
 
@@ -2301,13 +2330,13 @@ int getNMode(PCCSP_TABLE_ENTRY entry)
   
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
-        AnscTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
+        CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
         return -1;
     }
  
     if (nval < 1)
     {
-        AnscTraceError(("%s: nval < 1 \n", __FUNCTION__));
+        CcspTraceError(("%s: nval < 1 \n", __FUNCTION__));
         return -1;
     }
     
@@ -2366,7 +2395,7 @@ int setNMode(PCCSP_TABLE_ENTRY entry, int val)
         (fiveG && ((val & kBMask) || (val &kGMask))) || // b and g not valid for 5 GHz 
         (!fiveG && ((val & kAMask) || (val & kACMask)) ) )   // a and ac are not valid for 2.4 GHz 
     {
-        AnscTraceError(("%s: Failed to set, unsupported value for %s %d for %s radio\n", __FUNCTION__, valStr.parameterName, val, (fiveG) ? "5 GHz" : "2.4 GHz"));
+        CcspTraceError(("%s: Failed to set, unsupported value for %s %d for %s radio\n", __FUNCTION__, valStr.parameterName, val, (fiveG) ? "5 GHz" : "2.4 GHz"));
         return -1;
     } 
 
@@ -2407,7 +2436,7 @@ int setNMode(PCCSP_TABLE_ENTRY entry, int val)
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
     {
-        AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
+        CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
         return -1;
     }
 
@@ -2427,13 +2456,13 @@ int getNPhyRate(PCCSP_TABLE_ENTRY entry) {
     snprintf(name, sizeof(mystring), WIFI_DM_NPHYRATE, entry->IndexValue[0].Value.uValue);
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
-        AnscTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
+        CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
         return -1;
     }
 
     if (nval < 1)
     {
-        AnscTraceError(("%s: nval < 1 \n", __FUNCTION__));
+        CcspTraceError(("%s: nval < 1 \n", __FUNCTION__));
         return -1;
     }
     
@@ -2459,7 +2488,7 @@ int setNPhyRate(PCCSP_TABLE_ENTRY entry, int val) {
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
     {
-        AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
+        CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
         return -1;
     }
 
@@ -2612,6 +2641,26 @@ handleNExtTable(
 */
 }
 
+static int getWpaDefaultPSK(PCCSP_TABLE_ENTRY pEntry, char *key)
+{
+    char dmStr[128] = {'\0'};
+
+	
+
+    if(!key)
+        return -1;
+
+	
+
+    snprintf(dmStr, sizeof(dmStr), WIFI_DM_DEFAULT_PSK, pEntry->IndexValue[0].Value.uValue);
+    if(get_dm_value(dmStr, key, 64))
+        return -1;
+
+	
+
+    return 0; 
+}
+
 static int getWpaPSK(PCCSP_TABLE_ENTRY pEntry, char *key)
 {
     char dmStr[128] = {'\0'};
@@ -2620,7 +2669,7 @@ static int getWpaPSK(PCCSP_TABLE_ENTRY pEntry, char *key)
         return -1;
 
     snprintf(dmStr, sizeof(dmStr), WIFI_DM_PSK, pEntry->IndexValue[0].Value.uValue);
-    if(get_dm_value(dmStr, key, 32))
+    if(get_dm_value(dmStr, key, 64))
         return -1;
 
     return 0; 
@@ -2642,7 +2691,7 @@ int setWpaPSK(PCCSP_TABLE_ENTRY entry, char *key, int keyLen) {
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
     {
-        AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
+        CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
         return -1;
     }
 
@@ -2663,7 +2712,7 @@ handleDot11WpaTable(
     int retval=SNMP_ERR_NOERROR;
     PCCSP_TABLE_ENTRY entry = NULL;
     netsnmp_variable_list *vb = NULL;
-    char value[64]={'\0'};
+    char value[64]={'\0'},defpskvalue[64]={'\0'};
 
     for (req = requests; req != NULL; req = req->next)
     {
@@ -2683,6 +2732,13 @@ handleDot11WpaTable(
                     snmp_set_var_typed_value(req->requestvb, (u_char)ASN_OCTET_STR, (u_char *)&value, strlen(value));
                     req->processed = 1;
                 }
+				else if( saRgDot11WpaDefaultPreSharedKey_subid ){
+					
+					getWpaDefaultPSK(entry,defpskvalue);
+                    snmp_set_var_typed_value(req->requestvb, (u_char)ASN_OCTET_STR, (u_char *)&defpskvalue, strlen(defpskvalue));
+                    req->processed = 1;
+				}	
+					
                 
                 break;
 

@@ -75,7 +75,7 @@ static BOOL FindNtpServerDestComp(void)
     if (!Cosa_FindDestComp(NTPSERV_DM_OBJ, &dstComp, &dstPath)
             || !dstComp || !dstPath)
     {
-        AnscTraceError(("%s: fail to find dest comp\n", __FUNCTION__));
+        CcspTraceError(("%s: fail to find dest comp\n", __FUNCTION__));
         return FALSE;
     }
 
@@ -91,13 +91,13 @@ static BOOL GetNtpServer(struct NTPServer *ntpServ)
     name[0] = ntpServ->dmName;
     if (!Cosa_GetParamValues(dstComp, dstPath, name, 1, &nval, &valStr))
     {
-        AnscTraceError(("%s: fail to get: %s\n", __FUNCTION__, ntpServ->dmName));
+        CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, ntpServ->dmName));
         return FALSE;
     }
 
     if (nval < 1)
     {
-        AnscTraceError(("%s: nval < 1 \n", __FUNCTION__));
+        CcspTraceError(("%s: nval < 1 \n", __FUNCTION__));
         return FALSE;
     }
 
@@ -117,7 +117,7 @@ static BOOL SetNtpServer(struct NTPServer *ntpServ)
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
     {
-        AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, ntpServ->dmName));
+        CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, ntpServ->dmName));
         return FALSE;
     }
 
@@ -128,7 +128,7 @@ static BOOL CommitNtpServer(void)
 {
     if (!Cosa_SetCommit(dstComp, dstPath, TRUE))
     {
-        AnscTraceError(("%s: fail to commit\n", __FUNCTION__));
+        CcspTraceError(("%s: fail to commit\n", __FUNCTION__));
         return FALSE;
     }
 
@@ -139,7 +139,7 @@ static BOOL RollbackNtpServer(void)
 {
     if (!Cosa_SetCommit(dstComp, dstPath, FALSE))
     {
-        AnscTraceError(("%s: fail to rollback\n", __FUNCTION__));
+        CcspTraceError(("%s: fail to rollback\n", __FUNCTION__));
         return FALSE;
     }
 
@@ -346,7 +346,7 @@ static BOOL FindPortModeDestComp(void)
     if (!Cosa_FindDestComp(PORTMODE_DM_OBJ, &PMdstComp, &PMdstPath)
             || !PMdstComp || !PMdstPath)
     {
-        AnscTraceError(("%s: fail to find dest comp\n", __FUNCTION__));
+        CcspTraceError(("%s: fail to find dest comp\n", __FUNCTION__));
         return FALSE;
     }
 
@@ -367,13 +367,13 @@ static BOOL GetPortMode(struct PortMode *portMode)
     name[0] = PORTMODE_DM_PARAM_PAT;
     if (!Cosa_GetParamValues(PMdstComp, PMdstPath, name, 1, &nval, &valStr))
     {
-        AnscTraceError(("%s: fail to get: %s\n", __FUNCTION__, name[0]));
+        CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name[0]));
         return -1;
     }
 
     if (nval < 1)
     {
-        AnscTraceError(("%s: nval < 1 \n", __FUNCTION__));
+        CcspTraceError(("%s: nval < 1 \n", __FUNCTION__));
         return -1;
     }
 
@@ -400,7 +400,7 @@ static BOOL SetPortMode(struct PortMode *portMode)
 
     if (!Cosa_SetParamValuesNoCommit(PMdstComp, PMdstPath, &valStr, 1))
     {
-        AnscTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
+        CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
         return -1;
     }
 
@@ -413,7 +413,7 @@ static BOOL CommitPortMode(void)
     if (!Cosa_SetCommit(PMdstComp, PMdstPath, TRUE))
     {
         //printf("COMMITTING PORT MODE FAILURE\n"); fflush(stdout);
-        AnscTraceError(("%s: fail to commit\n", __FUNCTION__));
+        CcspTraceError(("%s: fail to commit\n", __FUNCTION__));
         return FALSE;
     }
     //printf("COMMITTING PORT MODE SUCCESS\n"); fflush(stdout);
@@ -425,7 +425,7 @@ static BOOL RollbackPortMode(void)
 {
     if (!Cosa_SetCommit(PMdstComp, PMdstPath, FALSE))
     {
-        AnscTraceError(("%s: fail to rollback\n", __FUNCTION__));
+        CcspTraceError(("%s: fail to rollback\n", __FUNCTION__));
         return FALSE;
     }
 
