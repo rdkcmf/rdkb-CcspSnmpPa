@@ -851,6 +851,19 @@
           <dataType>string</dataType>
         </dm>
       </mapping>
+      <mapping>
+        <mib>
+          <lastOid>9</lastOid>
+          <name>rdkbRgIpMgmtLanConnectedClientsRSSI</name>
+          <access>ReadOnly</access>
+          <dataType>Integer32</dataType>
+        </mib>
+        <dm>
+          <!-- fill in DM param and type -->
+          <paramName>Device.Hosts.Host.%d.X_CISCO_COM_RSSI</paramName>
+          <dataType>int</dataType>
+        </dm>
+      </mapping>
     </mibTable>
     </mibTables>
 </mib2DM>

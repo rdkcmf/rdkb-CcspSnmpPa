@@ -72,6 +72,7 @@ BOOL Cosa_Init(void)
                     malloc, free) != 0)
         {
             AnscTraceError(("%s: CCSP_Message_Bus_Init error\n", __FUNCTION__));
+			CcspTraceError(("%s: CCSP_Message_Bus_Init error\n", __FUNCTION__));
             return FALSE;
         }
     }
@@ -129,6 +130,8 @@ BOOL Cosa_GetParamValues
 		parameterValStruct_t***  	pppValueArray
 	)
 {
+	
+                CcspTraceInfo(("RDKB_SNMP : SNMP GET called for param '%s'\n",*pParamArray));     
 		int							iStatus = 0;
 		iStatus = 
 			CcspBaseIf_getParameterValues
@@ -141,7 +144,15 @@ BOOL Cosa_GetParamValues
 					puValueSize,
 					pppValueArray
 				);
-
+                if(iStatus != CCSP_SUCCESS && *pParamArray)
+                {
+                  CcspTraceWarning(("RDKB_SNMP : Failed to get parameter value for '%s'\n",*pParamArray));    
+                }
+                else
+                {
+                   
+                CcspTraceInfo(("RDKB_SNMP : SNMP GET SUCCESS for param '%s'\n",*pParamArray));
+                }            
 		return iStatus == CCSP_SUCCESS;
 }
 
@@ -157,6 +168,8 @@ BOOL Cosa_SetParamValuesNoCommit
 	int                        iStatus     = 0;
 	char                       *faultParam = NULL;
     CCSP_MESSAGE_BUS_INFO *bus_info = (CCSP_MESSAGE_BUS_INFO *)bus_handle;
+	
+    CcspTraceInfo(("RDKB_SNMP : SNMP SET called for param '%s' with value '%s'\n",val->parameterName,val->parameterValue)); 
 
     iStatus = CcspBaseIf_setParameterValues
 				(
@@ -173,10 +186,15 @@ BOOL Cosa_SetParamValuesNoCommit
     if (iStatus != CCSP_SUCCESS && faultParam)
     {
 		AnscTraceError(("Error:Failed to SetValue for param '%s'\n", faultParam));
+        CcspTraceWarning(("RDKB_SNMP : Failed to set parameter value for '%s'\n",faultParam)); 
 		bus_info->freefunc(faultParam);
-	}
-
-	return iStatus == CCSP_SUCCESS;
+    }
+    else
+    {
+                
+                CcspTraceInfo(("RDKB_SNMP : SNMP SET SUCCESS for param '%s'\n",val->parameterName));
+    } 
+            return iStatus == CCSP_SUCCESS;
 }
 
 /* SetCommit */

@@ -64,7 +64,7 @@ static BOOL FindIpMgntDestComp(void)
     if (!Cosa_FindDestComp(IPMGNT_DM_OBJ, &dhcpdstComp, &dhcpdstPath)
             || !dhcpdstComp || !dhcpdstPath)
     {
-        AnscTraceError(("%s: fail to find dest comp\n", __FUNCTION__));
+        CcspTraceError(("%s: fail to find dest comp\n", __FUNCTION__));
         return FALSE;
     }
 
@@ -144,11 +144,11 @@ static void getInterface(PCCSP_TABLE_ENTRY entry, char* interface ){
 
     if (!Cosa_GetParamValues(dhcpdstComp, dhcpdstPath, &name, 1, &nval, &valStr))
     {
-        AnscTraceError(("%s: fail to get: %s \n", __FUNCTION__, name[0]));
+        CcspTraceError(("%s: fail to get: %s \n", __FUNCTION__, name[0]));
         goto ERR;
     }
     if(nval < 1){
-        AnscTraceError(("%s: nval < 1 \n", __FUNCTION__));
+        CcspTraceError(("%s: nval < 1 \n", __FUNCTION__));
         goto ERR;
     }
 

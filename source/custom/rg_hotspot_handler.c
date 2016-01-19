@@ -181,10 +181,10 @@ static int cosaCommitArmPam(void)
 
     if (!Cosa_FindDestComp(HOTSPOT_DM_OPTION82_CURCUIT_ID, &armPamDestComp, &armPamDestPath)
         || !armPamDestComp || !armPamDestPath){
-        AnscTraceError(("%s: fail to find dest comp\n", __FUNCTION__));
+        CcspTraceError(("%s: fail to find dest comp\n", __FUNCTION__));
         return FALSE;
     }
-    AnscTraceWarning(("dstComp %s, dstPath %s!\n", armPamDestComp, armPamDestPath));
+    CcspTraceWarning(("dstComp %s, dstPath %s!\n", armPamDestComp, armPamDestPath));
 
 commit:
     Cosa_SetCommit(armPamDestComp, armPamDestPath, TRUE);
@@ -198,12 +198,12 @@ int getInsertDhcpOption(int *value)
     char strVal[64] = {'\0'};
 
     if (NULL == value) {
-        AnscTraceWarning(("Return value pointer is null\n"));
+        CcspTraceWarning(("Return value pointer is null\n"));
         return FALSE;
     }
 
     if (get_dm_value(HOTSPOT_DM_OPTION82_CURCUIT_ID, strVal, sizeof(strVal))) {
-        AnscTraceWarning(("get_dm_value: %s failed\n", HOTSPOT_DM_OPTION82_CURCUIT_ID));
+		CcspTraceWarning(("get_dm_value: %s failed\n", HOTSPOT_DM_OPTION82_CURCUIT_ID));
         return FALSE;
     }
 
@@ -214,7 +214,7 @@ int getInsertDhcpOption(int *value)
 
     memset(strVal, 0, sizeof(strVal));
     if (get_dm_value(HOTSPOT_DM_OPTION82_REMOTE_ID, strVal, sizeof(strVal))) {
-        AnscTraceWarning(("get_dm_value: %s failed\n", HOTSPOT_DM_OPTION82_REMOTE_ID));
+		CcspTraceWarning(("get_dm_value: %s failed\n", HOTSPOT_DM_OPTION82_REMOTE_ID));
         return FALSE;
     }
 
@@ -244,6 +244,7 @@ int setInsertDhcpOption(int value)
 
     if (set_dm_value(HOTSPOT_DM_OPTION82_CURCUIT_ID, curcuit, strlen(curcuit)) ||
         set_dm_value(HOTSPOT_DM_OPTION82_REMOTE_ID, remote, strlen(remote))) {
+		CcspTraceWarning(("set_dm_value: '%s' \ '%s' failed\n",HOTSPOT_DM_OPTION82_CURCUIT_ID, HOTSPOT_DM_OPTION82_REMOTE_ID));
         return FALSE;
     }
 
@@ -267,11 +268,13 @@ int getRemoteEpAddr(int oid, char *ip)
 	if(oid==PriEpAddr_lastOid) {
 		if (get_dm_value(HOTSPOT_DM_PRI_REMOTE_ENDPOINT, ip, 256)) {
 			AnscTraceWarning(("get_dm_value: %s failed\n", HOTSPOT_DM_PRI_REMOTE_ENDPOINT));
+			CcspTraceWarning(("get_dm_value: %s failed\n", HOTSPOT_DM_PRI_REMOTE_ENDPOINT));
 			return FALSE;
 		}
 	} else if(oid==SecEpAddr_lastOid) {
 		if (get_dm_value(HOTSPOT_DM_SEC_REMOTE_ENDPOINT, ip, 256)) {
 			AnscTraceWarning(("get_dm_value: %s failed\n", HOTSPOT_DM_SEC_REMOTE_ENDPOINT));
+			CcspTraceWarning(("get_dm_value: %s failed\n", HOTSPOT_DM_SEC_REMOTE_ENDPOINT));
 			return FALSE;
 		}
 	}
@@ -377,12 +380,12 @@ static int hotspot_get_if_enabled(int ins, int *bEnabled)
 
 	if(ins==HOTSPOT_SSID1_INS) {
 		if(get_dm_value(HOTSPOT_DM_IF1_LOCAL_INTERFACES, localIntf, sizeof(localIntf))) {
-			AnscTraceError(("Failed to get value DM %s!\n", HOTSPOT_DM_IF1_LOCAL_INTERFACES));
+			CcspTraceError(("Failed to get value DM %s!\n", HOTSPOT_DM_IF1_LOCAL_INTERFACES));
 			return FALSE;
 		}
 	} else if (ins==HOTSPOT_SSID2_INS) {
 		if(get_dm_value(HOTSPOT_DM_IF1_LOCAL_INTERFACES, localIntf, sizeof(localIntf))) {
-			AnscTraceError(("Failed to get value DM %s!\n", HOTSPOT_DM_IF1_LOCAL_INTERFACES));
+			CcspTraceError(("Failed to get value DM %s!\n", HOTSPOT_DM_IF1_LOCAL_INTERFACES));
 			return FALSE;
 		}
 	}
@@ -467,12 +470,12 @@ static int hotspot_set_if_enabled(int ins, int bEnabled)
 	snprintf(ssidDm, sizeof(ssidDm), HOTSPOT_DM_WIFI_SSID, ins);
 	if(ins == HOTSPOT_SSID1_INS) {
 		if(set_dm_value(HOTSPOT_DM_IF1_LOCAL_INTERFACES, ssidDm, sizeof(ssidDm))) {
-			AnscTraceError(("Failed to set value DM %s!\n", HOTSPOT_DM_IF1_LOCAL_INTERFACES));
+			CcspTraceError(("Failed to set value DM %s!\n", HOTSPOT_DM_IF1_LOCAL_INTERFACES));
 			return FALSE;
 		}
 	} else if(ins == HOTSPOT_SSID2_INS) {
 		if(set_dm_value(HOTSPOT_DM_IF2_LOCAL_INTERFACES, ssidDm, sizeof(ssidDm))) {
-			AnscTraceError(("Failed to set value DM %s!\n", HOTSPOT_DM_IF2_LOCAL_INTERFACES));
+			CcspTraceError(("Failed to set value DM %s!\n", HOTSPOT_DM_IF2_LOCAL_INTERFACES));
 			return FALSE;
 		}
 	}
@@ -498,12 +501,12 @@ static int hotspot_vlan_tag_func(int ins, int *vlan_id, int cmd)
     snprintf(ssidDm, sizeof(ssidDm), HOTSPOT_DM_WIFI_SSID, ins);
 
     if(get_dm_value(HOTSPOT_DM_LOCAL_INTERFACES, localIntf, sizeof(localIntf))) {
-        AnscTraceError(("Failed to get value DM %s!\n", HOTSPOT_DM_LOCAL_INTERFACES));
+        CcspTraceError(("Failed to get value DM %s!\n", HOTSPOT_DM_LOCAL_INTERFACES));
         return FALSE;
     }
 
     if(get_dm_value(HOTSPOT_DM_ASSOCIATE_BRIDGES, brlist, sizeof(brlist))) {
-        AnscTraceError(("Failed to get value DM %s!\n", HOTSPOT_DM_ASSOCIATE_BRIDGES));
+        CcspTraceError(("Failed to get value DM %s!\n", HOTSPOT_DM_ASSOCIATE_BRIDGES));
         return FALSE;
     }
 
@@ -512,12 +515,12 @@ static int hotspot_vlan_tag_func(int ins, int *vlan_id, int cmd)
     ifPtr = strdup(localIntf);
     ifSavePtr = ifPtr;
 
-    AnscTraceWarning(("associateBridges %s!\n", brSavePtr));
-    AnscTraceWarning(("localinterfaces %s!\n", ifSavePtr));
+    CcspTraceWarning(("associateBridges %s!\n", brSavePtr));
+    CcspTraceWarning(("localinterfaces %s!\n", ifSavePtr));
 
     i = 0;
     while((token = strsep(&brSavePtr, ","))!=NULL) {
-        AnscTraceWarning(("assBr[%d] %s!\n", i, token));
+        CcspTraceInfo(("assBr[%d] %s!\n", i, token));
         _ansc_strcpy(assBr[i], token);
         i++;
     }
@@ -530,13 +533,13 @@ static int hotspot_vlan_tag_func(int ins, int *vlan_id, int cmd)
 
     /*we must have one match, otherwise noSuchInstance is returned */
     for (i=0; i<2; i++) {
-        AnscTraceWarning(("ssidDm %s localIf[%d] %s assBr[%d] %s!\n", ssidDm, i, localIf[i], i, assBr[i]));
+        CcspTraceInfo(("ssidDm %s localIf[%d] %s assBr[%d] %s!\n", ssidDm, i, localIf[i], i, assBr[i]));
         if((strlen(localIf[i])) && 
            (strlen(assBr[i])) && 
            !strcmp(ssidDm, localIf[i])) {
             _ansc_strcpy(brDm, assBr[i]);
             _ansc_strcat(brDm, HOTSPOT_DM_VLAN_TAG);
-            AnscTraceWarning(("VLAN TAG DM %s!\n", brDm));
+            CcspTraceWarning(("VLAN TAG DM %s!\n", brDm));
             break;
         }
     }
@@ -629,7 +632,7 @@ handleL2ogreBase(
     for (req = requests; req != NULL; req = req->next) {
         vb = req->requestvb;
         subid = vb->name[vb->name_length -2];
-        AnscTraceWarning(("handleL2ogreBase last 4: %d.%d.%d.%d\n", vb->name[vb->name_length-4],vb->name[vb->name_length-3],vb->name[vb->name_length-2],vb->name[vb->name_length-1]));
+        CcspTraceInfo(("handleL2ogreBase last 4: %d.%d.%d.%d\n", vb->name[vb->name_length-4],vb->name[vb->name_length-3],vb->name[vb->name_length-2],vb->name[vb->name_length-1]));
         
         switch (reqinfo->mode) {
             case MODE_GET:
@@ -640,10 +643,10 @@ handleL2ogreBase(
             
                 if (TRUE == status) {
                     snmp_set_var_typed_value(req->requestvb, (u_char)ASN_OCTET_STR, (u_char *)ip, strlen(ip));
-                    AnscTraceWarning(("handleL2ogreBase, retrieved value %s\n", ip));
+                    CcspTraceInfo(("handleL2ogreBase, retrieved value %s\n", ip));
                 } else{
                     netsnmp_set_request_error(reqinfo, req, SNMP_ERR_GENERR);
-                    AnscTraceWarning(("handleL2ogreBase failed get call subid %d\n", subid));
+                    CcspTraceWarning(("handleL2ogreBase failed get call subid %d\n", subid));
                 }
             }
             else if (subid == PriEpAddrType_lastOid || subid == SecEpAddrType_lastOid) {
@@ -728,11 +731,11 @@ handleHotspotIf(
     for (req = requests; req != NULL; req = req->next) {
         vb = req->requestvb;
         subid = vb->name[vb->name_length -2];
-        AnscTraceWarning(("HotspotIf last 4: %d.%d.%d.%d\n", vb->name[vb->name_length-4],vb->name[vb->name_length-3],vb->name[vb->name_length-2],vb->name[vb->name_length-1]));
+        CcspTraceInfo(("HotspotIf last 4: %d.%d.%d.%d\n", vb->name[vb->name_length-4],vb->name[vb->name_length-3],vb->name[vb->name_length-2],vb->name[vb->name_length-1]));
         entry = (PCCSP_TABLE_ENTRY)netsnmp_tdata_extract_entry(req);
         if (entry == NULL) {
             netsnmp_request_set_error(req, SNMP_NOSUCHINSTANCE);
-            AnscTraceWarning(("No entry found for HotspotIf\n"));
+            CcspTraceWarning(("No entry found for HotspotIf\n"));
             continue;
         }
 
@@ -743,7 +746,7 @@ handleHotspotIf(
         if (index != HOTSPOT_SSID1_INS) {
         #endif
             netsnmp_request_set_error(req, SNMP_NOSUCHINSTANCE);
-            AnscTraceWarning(("Instance number %d are not for Hotspot SSID\n", index));
+            CcspTraceWarning(("Instance number %d are not for Hotspot SSID\n", index));
             continue;
         }
         
@@ -757,10 +760,10 @@ handleHotspotIf(
             
                 if (TRUE == status) {
                     snmp_set_var_typed_value(req->requestvb, (u_char)ASN_UNSIGNED, (u_char *)&intval, sizeof(intval));
-                    AnscTraceWarning(("HotspotIf, retrieved value %d\n", intval));
+                    CcspTraceInfo(("HotspotIf, retrieved value %d\n", intval));
                 } else{
                     netsnmp_set_request_error(reqinfo, req, SNMP_ERR_GENERR);
-                    AnscTraceWarning(("HotspotIf failed get call subid %d\n", subid));
+                    CcspTraceWarning(("HotspotIf failed get call subid %d\n", subid));
                 }
             }
             break;
@@ -834,11 +837,11 @@ handleL2ogreSourceIf(
     for (req = requests; req != NULL; req = req->next) {
         vb = req->requestvb;
         subid = vb->name[vb->name_length -2];
-        AnscTraceWarning(("L2ogreSourceIf last 4: %d.%d.%d.%d\n", vb->name[vb->name_length-4],vb->name[vb->name_length-3],vb->name[vb->name_length-2],vb->name[vb->name_length-1]));
+        CcspTraceInfo(("L2ogreSourceIf last 4: %d.%d.%d.%d\n", vb->name[vb->name_length-4],vb->name[vb->name_length-3],vb->name[vb->name_length-2],vb->name[vb->name_length-1]));
         entry = (PCCSP_TABLE_ENTRY)netsnmp_tdata_extract_entry(req);
         if (entry == NULL) {
             netsnmp_request_set_error(req, SNMP_NOSUCHINSTANCE);
-            AnscTraceWarning(("No entry found for L2ogreSourceIf\n"));
+            CcspTraceWarning(("No entry found for L2ogreSourceIf\n"));
             continue;
         }        
 
@@ -849,7 +852,7 @@ handleL2ogreSourceIf(
         if (index != HOTSPOT_SSID1_INS && index != HOTSPOT_SSID2_INS) {
         #endif
             netsnmp_request_set_error(req, SNMP_NOSUCHINSTANCE);
-            AnscTraceWarning(("Instance number %d are not for Hotspot SSID\n", index));
+            CcspTraceWarning(("Instance number %d are not for Hotspot SSID\n", index));
             continue;
         }
 
@@ -863,10 +866,10 @@ handleL2ogreSourceIf(
             
                 if (TRUE == status) {
                     snmp_set_var_typed_value(req->requestvb, (u_char)ASN_INTEGER, (u_char *)&intval, sizeof(intval));
-                    AnscTraceWarning(("L2ogreSourceIf, retrieved value %d\n", intval));
+                    CcspTraceInfo(("L2ogreSourceIf, retrieved value %d\n", intval));
                 } else{
                     netsnmp_set_request_error(reqinfo, req, SNMP_ERR_GENERR);
-                    AnscTraceWarning(("L2ogreSourceIf failed get call subid %d\n", subid));
+                    CcspTraceWarning(("L2ogreSourceIf failed get call subid %d\n", subid));
                 }
             }else if (subid == L2ogreSourceIf_lastOid) {
                 req->processed = 1;
@@ -881,10 +884,10 @@ handleL2ogreSourceIf(
 
                 if (TRUE == status) {
                     snmp_set_var_typed_value(req->requestvb, (u_char)ASN_INTEGER, (u_char *)&intval, sizeof(intval));
-                    AnscTraceWarning(("L2ogreSourceIfEnabled, retrieved value %d\n", intval));
+                    CcspTraceInfo(("L2ogreSourceIfEnabled, retrieved value %d\n", intval));
                 } else{
                     netsnmp_set_request_error(reqinfo, req, SNMP_ERR_GENERR);
-                    AnscTraceWarning(("L2ogreSourceIfEnabled failed get call subid %d\n", subid));
+                    CcspTraceWarning(("L2ogreSourceIfEnabled failed get call subid %d\n", subid));
                 }
             }
             break;
@@ -972,18 +975,18 @@ handleWifiAssocatedDevice(
     for (req = requests; req != NULL; req = req->next) {
         vb = req->requestvb;
         subid = vb->name[vb->name_length - 3];     /* we got two indexes */
-        AnscTraceWarning(("WifiAssociatedDevice last 4: %d.%d.%d.%d!\n", vb->name[vb->name_length-4],vb->name[vb->name_length-3],vb->name[vb->name_length-2],vb->name[vb->name_length-1]));
+        CcspTraceInfo(("WifiAssociatedDevice last 4: %d.%d.%d.%d!\n", vb->name[vb->name_length-4],vb->name[vb->name_length-3],vb->name[vb->name_length-2],vb->name[vb->name_length-1]));
         entry = (PCCSP_TABLE_ENTRY)netsnmp_tdata_extract_entry(req);
         if (entry == NULL) {
             netsnmp_request_set_error(req, SNMP_NOSUCHINSTANCE);
-            AnscTraceWarning(("No entry found for WifiAssociatedDevice!\n"));
+            CcspTraceWarning(("No entry found for WifiAssociatedDevice!\n"));
             continue;
         }
         /* currently the SSID instance numbers are staticlly 5 & 6 for Hotspot */
         index = entry->IndexValue[0].Value.iValue;  /* first of two indexes */
         if (index != HOTSPOT_SSID1_INS && index != HOTSPOT_SSID2_INS) {
             netsnmp_request_set_error(req, SNMP_NOSUCHINSTANCE);
-            AnscTraceWarning(("Instance number %d are not for Hotspot SSID\n", index));
+            CcspTraceWarning(("Instance number %d are not for Hotspot SSID\n", index));
             continue;
         }
     }

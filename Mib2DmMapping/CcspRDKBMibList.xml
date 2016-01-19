@@ -34,4 +34,5 @@
     <mibFile>Ccsp_RDKB-RG-MIB-Tr069Pa.xml</mibFile>
     <mibFile>XOPS-DEVICE-MGMT-MIB.xml</mibFile>
     <mibFile>DEVICE-WEBPA-MIB.xml</mibFile>
+    <mibFile>SELFHEAL-DEVICE-MIB.xml</mibFile>
 </ccspRDKBMibList>

@@ -67,11 +67,13 @@ static int is_iana_addr(int index)
 
     if(get_dm_value(dm_str, iana_origin, sizeof(iana_origin))) {
         AnscTraceError(("%s failed to get %s.\n", __func__, dm_str));
+		CcspTraceError(("%s failed to get %s.\n", __func__, dm_str));
         return FALSE;
     }
 
     if (strncmp(IANA_ORIGIN_DHCPv6, iana_origin, strlen(IANA_ORIGIN_DHCPv6))) {
         AnscTraceError(("IANA ORIGIN \"%s\".\n", iana_origin));
+		CcspTraceError(("IANA ORIGIN \"%s\".\n", iana_origin));
         return FALSE;
     }
 
@@ -86,6 +88,7 @@ static int iapd_handler(int lastOid, int insNum, iapd_t *pIapd)
 
     if (pIapd == NULL) {
         AnscTraceError(("%s invalid parameter.\n", __func__));
+		CcspTraceError(("%s invalid parameter.\n", __func__));
         return FALSE;
     }
 
@@ -93,6 +96,7 @@ static int iapd_handler(int lastOid, int insNum, iapd_t *pIapd)
 
     if(get_dm_value(dm_str, prefix, sizeof(prefix))) {
         AnscTraceError(("%s failed to get %s.\n", __func__, dm_str));
+		CcspTraceError(("%s failed to get %s.\n", __func__, dm_str));
         return FALSE;
     }
 
@@ -100,6 +104,7 @@ static int iapd_handler(int lastOid, int insNum, iapd_t *pIapd)
         pLen = strrchr(prefix, '/');
         if (!pLen) {
             AnscTraceError(("%s wrong backend value %s.\n", __func__, prefix));
+			CcspTraceError(("%s wrong backend value %s.\n", __func__, prefix));
             return FALSE;
         }else{
             pLen++; // skip '/'
@@ -109,11 +114,13 @@ static int iapd_handler(int lastOid, int insNum, iapd_t *pIapd)
         pVal = strtok(prefix, "/");
         if(!pVal) {
             AnscTraceError(("%s wrong backend value %s.\n", __func__, prefix));
+			CcspTraceError(("%s wrong backend value %s.\n", __func__, prefix));
             return FALSE;
         }else 
             strncpy(pIapd->prefix_value, pVal, sizeof(pIapd->prefix_value));
     }else{
         AnscTraceError(("%s unexpected lastOid %d.\n", __func__, lastOid));
+		CcspTraceError(("%s unexpected lastOid %d.\n", __func__, lastOid));
         return FALSE;
     }
    
@@ -142,6 +149,7 @@ handleIanaTable(
         if (entry == NULL) {
             netsnmp_request_set_error(req, SNMP_NOSUCHINSTANCE);
             AnscTraceError(("No entry found for IA_NA table.\n"));
+			CcspTraceError(("No entry found for IA_NA table.\n"));
             continue;
         }
 
@@ -149,6 +157,7 @@ handleIanaTable(
         if (is_iana_addr(index) != TRUE) {
             netsnmp_request_set_error(req, SNMP_NOSUCHINSTANCE);
             AnscTraceError(("Instance number %d are not IA_NA address entry.\n", index));
+			CcspTraceError(("Instance number %d are not IA_NA address entry.\n", index));
             continue;
         }
         
@@ -190,6 +199,7 @@ handleIapdTable(
         if (entry == NULL) {
             netsnmp_request_set_error(req, SNMP_NOSUCHINSTANCE);
             AnscTraceError(("No entry found for IA_PD table.\n"));
+			CcspTraceError(("No entry found for IA_PD table.\n"));
             continue;
         }
 
@@ -201,19 +211,19 @@ handleIapdTable(
             if ((subid == IAPD_PREFIXLENGTH_SUBID) || 
                 (subid == IAPD_PREFIXVALUE_SUBID)) {
                 if(iapd_handler(subid, index, &iapd) != TRUE) {
-                    AnscTraceError(("%s iapd_handler failed.\n"));
+                    CcspTraceError(("%s iapd_handler failed.\n"));
                     netsnmp_set_request_error(reqinfo, req, SNMP_ERR_GENERR);
                     break;
                 }
             }
 
             if (subid == IAPD_PREFIXLENGTH_SUBID){              
-                AnscTraceWarning(("prefix length %d.\n", iapd.prefix_length));
+                CcspTraceInfo(("prefix length %d.\n", iapd.prefix_length));
                 snmp_set_var_typed_value(req->requestvb, (u_char)ASN_INTEGER, (u_char *)&iapd.prefix_length, sizeof(iapd.prefix_length));             
                 req->processed = 1;
 
             } else if (subid == IAPD_PREFIXVALUE_SUBID){
-                AnscTraceWarning(("prefix value %s.\n", iapd.prefix_value));
+                CcspTraceInfo(("prefix value %s.\n", iapd.prefix_value));
                 snmp_set_var_typed_value(req->requestvb, (u_char)ASN_OCTET_STR, (u_char *)iapd.prefix_value, strlen(iapd.prefix_value));
                 req->processed = 1;
             }
@@ -319,6 +329,7 @@ static int set_snmp_enable(const char *octet)
 
 #define FactoryReset_lastoid 1002
 #define DeviceReset_lastoid 1003
+#define DeviceResetMode_lastoid 1
 #define FACTORY_RESET_DM 	"Device.X_CISCO_COM_DeviceControl.FactoryReset"
 #define FACTORY_RESET_DM_WIFI	"Device.WiFi.X_CISCO_COM_FactoryResetRadioAndAp"
 
@@ -378,8 +389,9 @@ int handleDeviceMgmtParam(
 
     for (request = requests; request != NULL; request = request->next) {
          requestvb = request->requestvb;
-         subid = requestvb->name[requestvb->name_length - 2];
-
+		 subid = requestvb->name[requestvb->name_length - 2];
+                 CcspTraceInfo((" subid is '%d'\n",subid));
+                 
         switch(reqinfo->mode){
         case MODE_GET:
             if(subid == FactoryReset_lastoid) {
@@ -393,19 +405,27 @@ int handleDeviceMgmtParam(
 	 case MODE_SET_RESERVE1:
                 ret = netsnmp_check_vb_type(requests->requestvb, ASN_INTEGER);
                 if (ret != SNMP_ERR_NOERROR)
-                    netsnmp_set_request_error(reqinfo, requests, ret);
+                netsnmp_set_request_error(reqinfo, requests, ret);
                 request->processed = 1;     /* request->processed will be reset in every step by netsnmp_call_handlers */
                 break;
 	case MODE_SET_RESERVE2:
+              if(subid == DeviceResetMode_lastoid){
+              CcspTraceWarning(("RDKB_REBOOT : Reboot triggered through SNMP MODE Change\n")); 
+              }  
 	      if(subid == FactoryReset_lastoid) {
-                 if (setFactoryReset(*requestvb->val.integer)){
+                if(*requestvb->val.integer==2 || *requestvb->val.integer==1 )
+                {
+                         
+                CcspTraceWarning(("RDKB_REBOOT : Reboot triggered through SNMP Factory Reset\n")); 
+                }  
+                if (setFactoryReset(*requestvb->val.integer)){
                         netsnmp_set_request_error(reqinfo, request, SNMP_ERR_INCONSISTENTVALUE);
                  }
                  request->processed = 1;
               }
-		if(subid == DeviceReset_lastoid){
-			CcspTraceWarning(("RDKB_REBOOT : Reboot triggered through SNMP\n"));
-		}
+	          
+
+
             break;
 	case MODE_SET_ACTION:
                 break;
@@ -470,7 +490,7 @@ handleDeviceConfig(
         case MODE_SET_RESERVE2:
             if(subid == SnmpEnable_lastoid) {
                 if(set_snmp_enable(requestvb->val.string) != TRUE) {
-                    AnscTraceError(("%s set failed.\n", SNMPENABLE_DM));
+                    CcspTraceError(("%s set failed.\n", SNMPENABLE_DM));
                     netsnmp_request_set_error(request, SNMP_ERR_GENERR);
                 }
                 request->processed = 1;

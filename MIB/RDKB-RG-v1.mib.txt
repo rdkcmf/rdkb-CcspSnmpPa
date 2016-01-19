@@ -279,6 +279,31 @@ rdkbRgDeviceIpv6Passthrough OBJECT-TYPE
 
     DEFVAL { 0 }
     ::= { rdkbRgDeviceBase 9 }
+    
+    
+rdkbRgDeviceMocaResetCount OBJECT-TYPE
+        SYNTAX Unsigned32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                "Returns the reset count of Moca per week."
+        ::= { rdkbRgDeviceBase 10 }  
+        
+rdkbRgDeviceFactoryResetCount OBJECT-TYPE
+        SYNTAX Unsigned32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+                "Returns the factoryreset count ."
+        ::= { rdkbRgDeviceBase 11 } 
+        
+rdkbRgDeviceClearResetCount OBJECT-TYPE
+        SYNTAX TruthValue
+        MAX-ACCESS read-write
+        STATUS current
+        DESCRIPTION
+                " True - Clear Reset count."
+        ::= { rdkbRgDeviceBase 12 }                 
 
 
 rdkbRgDeviceFactoryReset	OBJECT-TYPE
@@ -346,6 +371,16 @@ rdkbRgPlatformCapable OBJECT-TYPE
         DEFVAL { true }
     ::= { rdkbRgDeviceBase 1006 }
 
+rdkbRgCaptivePortalEnable OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+                "Indicates whether RDKB device is in captive portal mode.
+                 true: indicates device is in captive portal
+                 false: indicates device is out of captive portal"
+        DEFVAL { true }
+    ::= { rdkbRgDeviceBase 1007 }
             
 -- Node rdkbRgDevice 2,3 removed             
      
@@ -726,7 +761,8 @@ RdkbRgDot11BssEntry ::=
         rdkbRgDot11BssCountStaAsCpe TruthValue,
         rdkbRgDot11BssUserStatus    INTEGER,
         rdkbRgDot11BssHotSpot       TruthValue,
-        rdkbRgDot11BssApIsolation   INTEGER
+        rdkbRgDot11BssApIsolation   INTEGER,
+	rdkbRgDot11BssDefaultSSID   OCTET STRING 
         }
 
 rdkbRgDot11BssId OBJECT-TYPE
@@ -959,6 +995,14 @@ rdkbRgDot11BssApIsolation OBJECT-TYPE
     DEFVAL { 0 }        
     ::= { rdkbRgDot11BssEntry 15 }
 
+rdkbRgDot11BssDefaultSSID OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE(0..32))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Return the Default SSID"
+    ::= { rdkbRgDot11BssEntry 16 }
+
 -- removed node rdkbRgDot11Bss 2
 
 -- removed node rdkbRgDot11Bss 3
@@ -995,7 +1039,8 @@ RdkbRgDot11WpaEntry ::=
     SEQUENCE    {
         rdkbRgDot11WpaAlgorithm          INTEGER,
         rdkbRgDot11WpaPreSharedKey       OCTET STRING,
-        rdkbRgDot11WpaGroupRekeyInterval INTEGER
+        rdkbRgDot11WpaGroupRekeyInterval INTEGER,
+        rdkbRgDot11WpaDefaultPreSharedKey OCTET STRING
     }
 
 rdkbRgDot11WpaAlgorithm OBJECT-TYPE
@@ -1039,6 +1084,13 @@ rdkbRgDot11WpaGroupRekeyInterval OBJECT-TYPE
          The default value for other BSSs is 3600."
     ::= { rdkbRgDot11WpaEntry 3 }
 
+rdkbRgDot11WpaDefaultPreSharedKey OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE(8..64))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "gets the WPA Default Pre-Shared Key (PSK)."
+    ::= { rdkbRgDot11WpaEntry 4 }
 
 -- RADIUS
 
@@ -1354,7 +1406,8 @@ RdkbRgDot11ExtMgmtEntry ::=
                 rdkbRgDot11ExtWmm                     INTEGER,
                 rdkbRgDot11ExtWmmNoAck                INTEGER,
                 rdkbRgDot11ExtMulticastRate           INTEGER,
-                rdkbRgDot11ExtWirelessButtonOperation INTEGER
+                rdkbRgDot11ExtWirelessButtonOperation INTEGER,
+                rdkbRgDot11ExtRadioResetCount         INTEGER
         }
 
 rdkbRgDot11ExtOperMode OBJECT-TYPE
@@ -1719,6 +1772,14 @@ rdkbRgDot11ExtWirelessButtonOperation OBJECT-TYPE
          By default value will be set to enable(1)."
     DEFVAL { 1 }
     ::= { rdkbRgDot11ExtMgmtEntry 23 }
+    
+ rdkbRgDot11ExtRadioResetCount OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Reset count of radio."
+    ::= { rdkbRgDot11ExtMgmtEntry 24 }   
 
 
 ---------------------------------------
@@ -2543,7 +2604,8 @@ RdkbRgIpMgmtLanConnectedClientsEntry ::= SEQUENCE {
 	rdkbRgIpMgmtLanConnectedClientsHostName           SnmpAdminString,
 	rdkbRgIpMgmtLanConnectedClientsInterface           SnmpAdminString,
 	rdkbRgIpMgmtLanConnectedClientsActive       	  TruthValue,
-	rdkbRgIpMgmtLanConnectedClientsComments           SnmpAdminString
+	rdkbRgIpMgmtLanConnectedClientsComments           SnmpAdminString,
+	rdkbRgIpMgmtLanConnectedClientsRSSI               Integer32
     }
 
 rdkbRgIpMgmtLanConnectedClientsIndex    OBJECT-TYPE
@@ -2599,7 +2661,7 @@ rdkbRgIpMgmtLanConnectedClientsActive OBJECT-TYPE
     MAX-ACCESS  read-only
     STATUS      current
     DESCRIPTION
-            "DHCPv4 status of the Hotspot client."
+            "DHCPv4 status of the connected client."
     ::= { rdkbRgIpMgmtLanConnectedClientsEntry 7 }
 
 rdkbRgIpMgmtLanConnectedClientsComments OBJECT-TYPE
@@ -2609,6 +2671,14 @@ rdkbRgIpMgmtLanConnectedClientsComments OBJECT-TYPE
     DESCRIPTION
             "Comments of the connected client ."
     ::= { rdkbRgIpMgmtLanConnectedClientsEntry 8 }
+    
+rdkbRgIpMgmtLanConnectedClientsRSSI OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Signal strength of the connected client in dBm. It is applicable only for wifi clients."
+    ::= { rdkbRgIpMgmtLanConnectedClientsEntry 9 }    
 
 -- Apply setting to activate chagnes:
 rdkbRgIpMgmtApplySettings OBJECT-TYPE

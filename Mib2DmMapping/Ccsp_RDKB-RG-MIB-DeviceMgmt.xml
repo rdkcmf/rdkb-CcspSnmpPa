@@ -94,6 +94,42 @@
                     <dataType>unsignedInt</dataType>
                 </dm>
             </mapping>
+             <mapping>
+                <mib>
+                    <lastOid>10</lastOid>
+                    <name>rdkbRgDeviceMocaResetCount</name>
+                    <access>ReadOnly</access>
+                    <dataType>INTEGER</dataType>
+                </mib>
+                <dm>
+                    <paramName>Device.MoCA.MocaResetCount</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>11</lastOid>
+                    <name>rdkbRgDeviceFactoryResetCount</name>
+                    <access>ReadOnly</access>
+                    <dataType>INTEGER</dataType>
+                </mib>
+                <dm>
+                    <paramName>Device.DeviceInfo.FactoryResetCount</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>12</lastOid>
+                    <name>rdkbRgDeviceClearResetCount</name>
+                    <access>ReadOnly</access>
+                    <dataType>TruthValue</dataType>
+                </mib>
+                <dm>
+                    <paramName>Device.DeviceInfo.ClearResetCount</paramName>
+                    <dataType>boolean</dataType>
+                </dm>
+            </mapping>
             <mapping>
                 <mib>
                     <lastOid>1002</lastOid>
@@ -178,8 +214,24 @@
                     <paramName>Device.DeviceInfo.X_COMCAST-COM_rdkbPlatformCapable</paramName>
                     <dataType>boolean</dataType>
                 </dm>
-            </mapping>
-        </scalarGroup>
+           </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>1007</lastOid>
+                    <name>rdkbRgCaptivePortalEnable</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.DeviceInfo.X_RDKCENTRAL-COM_CaptivePortalEnable</paramName>
+                    <dataType>boolean</dataType>
+                </dm>
+           </mapping> 
+       </scalarGroup>
         <scalarGroup>
             <name>rdkbRgDeviceConfigBackup</name>
             <baseOid>1.3.6.1.4.1.17270.50.2.1.2</baseOid>
