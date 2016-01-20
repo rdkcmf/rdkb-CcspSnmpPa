@@ -31,7 +31,29 @@ AM_LDFLAGS += -lm
 AM_CPPFLAGS = -Wall -Werror
 ACLOCAL_AMFLAGS = -I m4
 hardware_platform = i686-linux-gnu
+
+lib_LTLIBRARIES=libsnmp_plugin.la
 bin_PROGRAMS = snmp_subagnet
+
 snmp_subagnet_CPPFLAGS = -I$(top_srcdir)/source/SnmpPlugin -I$(top_srcdir)/source/include $(CPPFLAGS)
-snmp_subagnet_SOURCES = netSnmpTutorialMIB.c ccsp_mib_utilities.c ccsp_table_helper.c cosa_api.c ccsp_scalar_helper_access.c ccsp_table_helper_control.c ccsp_table_helper_access.c ccsp_mib_helper.c ccsp_scalar_helper_control.c ccsp_scalar_helper.c ccsp_snmp_subagent.c CcspSnmpPlugin.c
-snmp_subagnet_LDFLAGS = -lccsp_common -lnetsnmpmibs -ldl -lnetsnmpagent -lnetsnmp -lm
+snmp_subagnet_SOURCES = ccsp_snmp_subagent.c
+
+snmp_subagnet_LDADD = libsnmp_plugin.la
+
+
+
+libsnmp_plugin_la_CPPFLAGS= -D_ANSC_LINUX -D_ANSC_USER -D_ANSC_LITTLE_ENDIAN_ -I$(top_srcdir)/source/SnmpPlugin -I$(top_srcdir)/source/include
+libsnmp_plugin_la_LDFLAGS= -lccsp_common -lnetsnmpmibs -ldl -lnetsnmpagent -lnetsnmp -lm
+
+libsnmp_plugin_la_SOURCES= \
+	netSnmpTutorialMIB.c \
+	ccsp_mib_utilities.c \
+	ccsp_table_helper.c \
+	cosa_api.c \
+	ccsp_scalar_helper_access.c \
+	ccsp_table_helper_control.c \
+	ccsp_table_helper_access.c \
+	ccsp_mib_helper.c \
+	ccsp_scalar_helper_control.c \
+	ccsp_scalar_helper.c \
+	CcspSnmpPlugin.c
