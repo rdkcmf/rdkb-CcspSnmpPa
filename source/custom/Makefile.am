@@ -33,7 +33,7 @@ hardware_platform = i686-linux-gnu
 
 lib_LTLIBRARIES = libsnmp_custom.la
 libsnmp_custom_la_CPPFLAGS = -I$(top_srcdir)/source/SnmpPlugin -I$(top_srcdir)/source/include $(CPPFLAGS)
-libsnmp_custom_la_SOURCES = rg_hotspot_handler.c rg_firewall_handler.c rg_wifi_handler.c rg_ipmgmt_handler.c ccsp_snmp_common.c rg_devmgmt_handler.c rg_ntpserver_handler.c rg_moca_handler.c rg_wandns_handler.c
+libsnmp_custom_la_SOURCES = rg_hotspot_handler.c rg_firewall_handler.c rg_wifi_handler.c rg_ipmgmt_handler.c ccsp_snmp_common.c rg_devmgmt_handler.c rg_ntpserver_handler.c rg_moca_handler.c rg_wandns_handler.c rg_diag_handler.c
 
 libsnmp_custom_la_DEPENDENCIES= \
       ${top_builddir}/source/SnmpPlugin/libsnmp_plugin.la
