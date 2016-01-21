@@ -29,7 +29,7 @@
 
     <!-- Add the library name if callbacks are needed. -->
 
-    <library>snmp_custom.so</library>
+    <library>libsnmp_custom.so</library>
 
     <scalarGroups>
 

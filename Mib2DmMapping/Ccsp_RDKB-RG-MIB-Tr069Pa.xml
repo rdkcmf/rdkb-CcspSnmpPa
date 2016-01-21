@@ -44,7 +44,7 @@
     <lastUpdate>11/05/2013 13:30</lastUpdate>
     <author>CcspMibHelper Mapping File Generator</author>
     <!-- Add the library name if callbacks are needed. -->
-    <library>snmp_custom.so</library>
+    <library>libsnmp_custom.so</library>
     <scalarGroups>
         <scalarGroup>
             <name>rdkbTR069ClientConfig</name>

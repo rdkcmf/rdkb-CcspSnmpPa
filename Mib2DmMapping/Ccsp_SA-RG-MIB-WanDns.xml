@@ -22,7 +22,7 @@
     <lastUpdate>06/13/2012 14:27</lastUpdate>
     <author>CcspMibHelper Mapping File Generator</author>
     <!-- Add the library name if callbacks are needed. -->
-	<library>snmp_custom.so</library>
+	<library>libsnmp_custom.so</library>
     <scalarGroups>
         <scalarGroup>
             <name>saRgIpMgmtWanAddrBase</name>
