@@ -22,7 +22,7 @@
     <lastUpdate>04/27/2012 17:57</lastUpdate>
     <author>CcspMibHelper Mapping File Generator</author>
     <!-- Add the library name if callbacks are needed. -->
-    	<library>snmp_custom.so</library> 
+    	<library>libsnmp_custom.so</library> 
     <scalarGroups>
         <scalarGroup>
             <name>saRgDot11BssPrimary</name>

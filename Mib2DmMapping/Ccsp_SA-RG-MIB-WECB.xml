@@ -22,7 +22,7 @@
   <lastUpdate>10/21/2013 14:59</lastUpdate>
   <author>CcspMibHelper Mapping File Generator</author>
   <!-- Add the library name if callbacks are needed. -->
-  <!--<library>snmp_custom.so</library> -->
+  <!--<library>libsnmp_custom.so</library> -->
   <mibTables>
     <mibTable>
       <name>saRgNetworkExtenderTable</name>

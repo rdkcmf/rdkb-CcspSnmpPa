@@ -24,7 +24,7 @@
     <!-- Add the library name if callbacks are needed. -->
     <!--	<library>libMibSample.o</library> -->
     <!--<library>libsnmp_plugin.so</library>-->
-    <library>snmp_custom.so</library>
+    <library>libsnmp_custom.so</library>
     <scalarGroups>
         <scalarGroup>
             <name>rdkbRgDeviceTimeSetup</name>
