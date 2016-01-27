@@ -1038,7 +1038,7 @@
                 </mib>
                 <dm>
                     <!-- fill in DM param and type -->
-                    <paramName>Device.WiFi.Radio.%d.X_CISCO_COM_BeaconInterval</paramName>
+                    <paramName>Device.WiFi.Radio.%d.X_COMCAST-COM_BeaconInterval</paramName>
                     <dataType>unsignedInt</dataType>
                 </dm>
             </mapping>
