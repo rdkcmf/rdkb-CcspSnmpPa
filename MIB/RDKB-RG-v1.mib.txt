@@ -2048,7 +2048,6 @@ RdkbRgIpMgmtLanEntry ::= SEQUENCE {
     rdkbRgIpMgmtLanSubnetMask        IpAddress,
     rdkbRgIpMgmtLanGateway           IpAddress,
     rdkbRgIpMgmtLanDhcpServer        INTEGER,
-    rdkbRgIpMgmtLanNapt              INTEGER,
     rdkbRgIpMgmtLanTypeOfService     INTEGER,
     rdkbRgIpMgmtLanDhcp125Option     INTEGER,
     rdkbRgIpMgmtLanHnap                  INTEGER,
@@ -2170,20 +2169,6 @@ rdkbRgIpMgmtLanDhcpServer OBJECT-TYPE
          Enabled by default if interface is in router mode.
          Always disabled if interface is in bridge mode."
     ::= { rdkbRgIpMgmtLanEntry 8 }
-
-rdkbRgIpMgmtLanNapt OBJECT-TYPE
-    SYNTAX INTEGER {
-        disable(0),
-        enable(1)
-        }
-    MAX-ACCESS    read-write
-    STATUS        current
-    DESCRIPTION
-        "The value for primary BSS is stored in non-vol.
-         The default value for other BSSs is:
-         Enabled by default if interface is in router mode.
-         Always disabled if interface is in bridge mode."
-    ::= { rdkbRgIpMgmtLanEntry 9 }
 
 rdkbRgIpMgmtLanTypeOfService OBJECT-TYPE
       SYNTAX      INTEGER

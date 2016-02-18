@@ -204,6 +204,7 @@ limitations under the License.
 					<dataType>boolean</dataType>
                 </dm>
             </mapping>
+<!--
             <mapping>
                 <mib>
                     <lastOid>9</lastOid>
@@ -215,11 +216,11 @@ limitations under the License.
                     </range>
                 </mib>
                 <dm>
-                    <!-- fill in DM param and type -->
                     <paramName>Device.X_CISCO_COM_DeviceControl.LanManagementEntry.%d.LanNapt</paramName>
                     <dataType>boolean</dataType>
                 </dm>
             </mapping>
+-->
             <mapping>
                 <mib>
                     <lastOid>10</lastOid>
