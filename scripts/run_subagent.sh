@@ -47,7 +47,11 @@ cd /usr/ccsp/snmp
 
 export LD_LIBRARY_PATH=$PWD/libs:../:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/ccsp/:/lib/:/usr/lib/
-export SNMPDLMODPATH=$PWD/libs
+export SNMPDLMODPATH=$PWD/libs\
+
+# RDKB-4368 : SNMP agent not logging
+export LOG4C_RCPATH=/fss/gw/rdklogger
+
 # for apps like snmpget... source this file then
 export MIBDIRS=$PWD/mibs
 export MIBS=ALL
