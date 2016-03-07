@@ -286,7 +286,8 @@ rdkbRgDeviceMocaResetCount OBJECT-TYPE
         MAX-ACCESS read-only
         STATUS current
         DESCRIPTION
-                "Returns the reset count of Moca per week."
+                "Returns the reset count of Moca.It includes solicited resets and also the internal resets that
+                 the driver goes through when the MoCA link is not formed within certain time frame."
         ::= { rdkbRgDeviceBase 10 }  
         
 rdkbRgDeviceFactoryResetCount OBJECT-TYPE
@@ -294,7 +295,7 @@ rdkbRgDeviceFactoryResetCount OBJECT-TYPE
         MAX-ACCESS read-only
         STATUS current
         DESCRIPTION
-                "Returns the factoryreset count ."
+                "Counts the factory reset done through GUI,SNMP, TR-069, WebPA, Reset Button ."
         ::= { rdkbRgDeviceBase 11 } 
         
 rdkbRgDeviceClearResetCount OBJECT-TYPE
@@ -302,7 +303,7 @@ rdkbRgDeviceClearResetCount OBJECT-TYPE
         MAX-ACCESS read-write
         STATUS current
         DESCRIPTION
-                " True - Clear Reset count."
+                " True - Clears all the reset counts."
         ::= { rdkbRgDeviceBase 12 }                 
 
 
@@ -668,7 +669,11 @@ rdkbRgDeviceCMResetCount OBJECT-TYPE
         MAX-ACCESS read-only
         STATUS current
         DESCRIPTION
-                "Returns the reset count of cable modem per week."
+                "Incremented every time the unit boots up.
+				counts all resets of the TG1682 unit including:
+				operator initiated resets (SNMP, TR-69, GUI, CLI)
+				user initiated resets (GUI, Reset Button)
+				system initiated resets (SW exceptions)."
         ::= { rdkbRgDeviceCM 1 }
 
 rdkbRgDeviceLocalResetCount OBJECT-TYPE
@@ -676,7 +681,7 @@ rdkbRgDeviceLocalResetCount OBJECT-TYPE
         MAX-ACCESS read-only
         STATUS current
         DESCRIPTION
-                "Returns the local reset count per week."
+                "Incremented every time the local reset button is pressed."
         ::= { rdkbRgDeviceCM 2 }
 
 rdkbRgDeviceDocsisResetCount OBJECT-TYPE
@@ -684,7 +689,8 @@ rdkbRgDeviceDocsisResetCount OBJECT-TYPE
         MAX-ACCESS read-only
         STATUS current
         DESCRIPTION
-                "Returns the reset count of docsis per week."
+                "Incremented every time the DOCSIS system is 
+                	initialized (includes startup, and re-init MAC operations)."
         ::= { rdkbRgDeviceCM 3 }
 
 rdkbRgDeviceErouterResetCount OBJECT-TYPE
@@ -692,7 +698,7 @@ rdkbRgDeviceErouterResetCount OBJECT-TYPE
         MAX-ACCESS read-only
         STATUS current
         DESCRIPTION
-                "Returns the reset count of erouter per week."
+                " Incremented every time the eRouter system is initialized"
         ::= { rdkbRgDeviceCM 4 }
 
 rdkbRgDeviceMTA   OBJECT IDENTIFIER ::=  { rdkbRgDevice 10 }
@@ -702,7 +708,7 @@ rdkbRgDeviceMTAResetCount OBJECT-TYPE
         MAX-ACCESS read-only
         STATUS current
         DESCRIPTION
-                "Returns the reset count of MAT per week."
+                " Incremented every time the eMTA system is initialized."
         ::= { rdkbRgDeviceMTA 1 }
 
 rdkbRgDeviceLineResetCount OBJECT-TYPE
@@ -710,7 +716,7 @@ rdkbRgDeviceLineResetCount OBJECT-TYPE
         MAX-ACCESS read-only
         STATUS current
         DESCRIPTION
-                "Returns the reset count of line per week."
+                " Incremented every time a voice line is reset."
         ::= { rdkbRgDeviceMTA 2 }
 
 
@@ -958,7 +964,7 @@ rdkbRgDot11BssUserStatus OBJECT-TYPE
     DESCRIPTION
         "Provides the BSS Id Web UI or Wireless ON/OFF (if exist) status that
                   is set by the user. If the user can press the Wireless ON/OFF (if
-                  exist) button and it¿s status can be seen in BSS ID Web UI. If user
+                  exist) button and it\BFs status can be seen in BSS ID Web UI. If user
                   changes access point status in Web UI, it will reflect the status of
                   Wireless ON/OFF LED."
     ::= { rdkbRgDot11BssEntry 13 }
@@ -1778,7 +1784,7 @@ rdkbRgDot11ExtWirelessButtonOperation OBJECT-TYPE
     MAX-ACCESS  read-only
     STATUS      current
     DESCRIPTION
-        "Reset count of radio."
+        "Radio reset count."
     ::= { rdkbRgDot11ExtMgmtEntry 24 }   
 
 
