@@ -2129,7 +2129,10 @@ handleExtMgmtTable(
                 } else if (subid == saRgDot11ExtWmm_subid) {
                     if ((retval=netsnmp_check_vb_type(req->requestvb, ASN_INTEGER))!=SNMP_ERR_NOERROR){
                         netsnmp_request_set_error(req, retval);
-                    }
+                    } else if ( *(vb->val.integer) > 1 || *(vb->val.integer) < 0 ) {
+						netsnmp_set_request_error(reqinfo, req, SNMP_ERR_WRONGVALUE);
+                        retval = SNMP_ERR_WRONGVALUE;
+					}
                     req->processed = 1;
                 } else if (subid == saRgDot11ExtWmmNoAck_subid) {
                     if ((retval=netsnmp_check_vb_type(req->requestvb, ASN_INTEGER))!=SNMP_ERR_NOERROR){
