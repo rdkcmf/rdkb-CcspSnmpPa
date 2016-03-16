@@ -329,6 +329,7 @@ static int set_snmp_enable(const char *octet)
 
 #define FactoryReset_lastoid 1002
 #define DeviceReset_lastoid 1003
+#define ConfigureWiFi_lastoid 1005
 #define DeviceResetMode_lastoid 1
 #define FACTORY_RESET_DM 	"Device.X_CISCO_COM_DeviceControl.FactoryReset"
 #define FACTORY_RESET_DM_WIFI	"Device.WiFi.X_CISCO_COM_FactoryResetRadioAndAp"
@@ -403,14 +404,19 @@ int handleDeviceMgmtParam(
             break;
 
 	 case MODE_SET_RESERVE1:
+		if(subid == ConfigureWiFi_lastoid)
+		{
+			CcspTraceError(("Device.DeviceInfo.X_RDKCENTRAL-COM_ConfigureWiFi is not writable\n")); 
+			return SNMP_ERR_NOTWRITABLE;
+		}
                 ret = netsnmp_check_vb_type(requests->requestvb, ASN_INTEGER);
                 if (ret != SNMP_ERR_NOERROR)
                 netsnmp_set_request_error(reqinfo, requests, ret);
                 request->processed = 1;     /* request->processed will be reset in every step by netsnmp_call_handlers */
                 break;
 	case MODE_SET_RESERVE2:
-              if(subid == DeviceResetMode_lastoid){
-              CcspTraceWarning(("RDKB_REBOOT : Reboot triggered through SNMP MODE Change\n")); 
+	      if(subid == DeviceResetMode_lastoid){
+              	CcspTraceWarning(("RDKB_REBOOT : Reboot triggered through SNMP MODE Change\n")); 
               }  
 	      if(subid == FactoryReset_lastoid) {
                 if(*requestvb->val.integer==2 || *requestvb->val.integer==1 )
