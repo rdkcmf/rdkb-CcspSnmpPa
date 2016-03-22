@@ -1994,6 +1994,81 @@ rdkbRgdot11nExtMulticastRate OBJECT-TYPE
     DEFVAL { 0 }
     ::= { rdkbRgDot11nExtEntry 7 }
 
+rdkbRgDot11BandSteering OBJECT IDENTIFIER ::= { rdkbRgDot11 8}
+
+rdkbRgDot11BandSteeringCapability OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Returns whether the device is capable of WiFi Band Steering functionality."
+   ::= { rdkbRgDot11BandSteering 1 }
+   
+   rdkbRgDot11BandSteeringEnable OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Enabled - true , Disabled-false."
+   ::= { rdkbRgDot11BandSteering 2 }
+   
+      rdkbRgDot11BandSteeringHistory OBJECT-TYPE
+    SYNTAX      SnmpAdminString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Returnd steering history"
+   ::= { rdkbRgDot11BandSteering 3 }
+   
+   rdkbRgDot11BandSteeringBSTable  OBJECT-TYPE
+    SYNTAX      SEQUENCE OF RdkbRgDot11BandSteeringBSEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Multiple 802.11n Radio Configuration Table
+                 Index 10001 should be set for Radio 0 -- 2.4 GHz if populated.
+                 Index 10101 should be set for Radio 1"
+    ::= { rdkbRgDot11BandSteering 4 }
+    
+RdkbRgDot11BandSteeringBSEntry OBJECT-TYPE
+    SYNTAX  	RdkbRgDot11BandSteeringBSEntry    
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A row in the table which represents parameters for an 802.11nRadio."
+    INDEX   { ifIndex }
+    ::= { rdkbRgDot11BandSteeringBSTable 1 }
+    
+rdkbRgDot11BandSteeringBSEntry ::= 
+    SEQUENCE {
+        rdkbRgDot11BandSteeringBSUtilizationThreshold     INTEGER,
+        rdkbRgDot11BandSteeringBSRSSIThreshold   INTEGER,
+        rdkbRgDot11BandSteeringBSPhyRateThreshold  INTEGER
+        }
+
+rdkbRgDot11BandSteeringBSUtilizationThreshold OBJECT-TYPE
+    SYNTAX      INTEGER
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Band setting utilization threshhold."
+    ::= { rdkbRgDot11BandSteeringBSEntry 1 }
+    
+rdkbRgDot11BandSteeringBSRSSIThreshold OBJECT-TYPE
+SYNTAX      INTEGER
+MAX-ACCESS  read-write
+STATUS      current
+DESCRIPTION
+    "Band setting RSSI threshhold."
+::= { rdkbRgDot11BandSteeringBSEntry 2 }
+
+rdkbRgDot11BandSteeringBSPhyRateThreshold OBJECT-TYPE
+SYNTAX      INTEGER
+MAX-ACCESS  read-write
+STATUS      current
+DESCRIPTION
+    "Band setting PhyRate Threshold."
+::= { rdkbRgDot11BandSteeringBSEntry 3 }
 
 -- rdkbRgDot11ApplySettings: do 'on the fly' config with settings from above.
 -- This scalar object was placed by itself at ieee802rdkbRgDot11Mgmt 100 because
