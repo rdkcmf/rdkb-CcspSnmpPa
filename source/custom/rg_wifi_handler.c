@@ -956,7 +956,7 @@ static int getDefaultSsid(PCCSP_TABLE_ENTRY pEntry, char *defaultssid)
         return -1;
 
     snprintf(dmStr, sizeof(dmStr), WIFI_DM_DEFAULT_SSID, pEntry->IndexValue[0].Value.uValue);
-    if(get_dm_value(dmStr, defaultssid, 32))
+    if(get_dm_value(dmStr, defaultssid, 33))
        return -1;
     	
 
@@ -972,7 +972,7 @@ static int getSsid(PCCSP_TABLE_ENTRY pEntry, char *ssid)
         return -1;
 
     snprintf(dmStr, sizeof(dmStr), WIFI_DM_SSID, pEntry->IndexValue[0].Value.uValue);
-    if(get_dm_value(dmStr, ssid, 32))
+    if(get_dm_value(dmStr, ssid, 33))
         return -1;
 
     return 0; 
@@ -1235,7 +1235,7 @@ int retval=SNMP_ERR_NOERROR;
 PCCSP_TABLE_ENTRY entry = NULL;
 netsnmp_variable_list *vb = NULL;
 unsigned char mac[6] = {'\0'};
-char ssid[32] = {'\0'}, defaultssid[32] = {'\0'};
+char ssid[33] = {'\0'}, defaultssid[33] = {'\0'};
 
 for (req = requests; req != NULL; req = req->next)
 {
