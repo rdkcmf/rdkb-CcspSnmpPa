@@ -839,11 +839,12 @@ limitations under the License.
           <access>ReadOnly</access>
           <dataType>SnmpAdminString</dataType>
         </mib>
+	<!--
         <dm>
-          <!-- fill in DM param and type -->
           <paramName>Device.Hosts.Host.%d.Layer1Interface</paramName>
           <dataType>string</dataType>
         </dm>
+	-->
       </mapping>
       <mapping>
         <mib>
