@@ -1,0 +1,97 @@
+------------------------------
+------- MDC module -----------
+------------------------------
+
+rdkbMDC MODULE-IDENTITY
+      LAST-UPDATED    "201509280000Z" -- September 28, 2015 
+      ORGANIZATION    "TBD"
+      CONTACT-INFO    "TBD"
+      DESCRIPTION
+       "This MIB module supports the configuration and management of the MDC."
+
+::= { rdkbModules 5 }
+
+rdkbMDCConfig OBJECT IDENTIFIER ::= { rdkbMDC 1 }
+
+rdkbMDCEnable OBJECT-TYPE
+    SYNTAX     TruthValue
+    MAX-ACCESS read-write
+    STATUS     current
+    DESCRIPTION
+        "Enables or disables the MDC."
+    DEFVAL { false }    
+    ::= { rdkbMDCConfig 1 }
+    
+rdkbMDCReset OBJECT-TYPE
+    SYNTAX     TruthValue
+    MAX-ACCESS read-write
+    STATUS     current
+    DESCRIPTION
+        "When set to true,the MDC Reset is initiated: MDC is disabled,
+        IPTable rule to route packets to MDC is disabled, and the MDC
+        processes are restarted and reinitialized."
+    ::= { rdkbMDCConfig 2 }
+          
+rdkbMDCMcrUrl OBJECT-TYPE
+    SYNTAX     SnmpAdminString
+    MAX-ACCESS read-write
+    STATUS     current
+    DESCRIPTION
+        "The URL, as defined in [RFC3986], for the MDC to connect to the
+         Multicast Content Router."
+    ::= { rdkbMDCConfig 3 }
+   
+rdkbMDCCacheSize OBJECT-TYPE
+	SYNTAX     Unsigned32
+	MAX-ACCESS read-write
+	STATUS     current
+	DESCRIPTION
+	    "The memory available for MDC cache in MB." 
+	DEFVAL { 100 }   
+	::= { rdkbMDCConfig 4 }
+	
+rdkbMDCMemoryResourceLimit OBJECT-TYPE
+	SYNTAX     Unsigned32
+	MAX-ACCESS read-write
+	STATUS     current
+	DESCRIPTION
+	    "The MDC's virtual memory resource limit in MB." 
+	DEFVAL { 500 } 
+	::= { rdkbMDCConfig 5 }
+	
+rdkbMDCMemoryUsageWarningThreshold OBJECT-TYPE
+	SYNTAX     Unsigned32 (0..100)
+	MAX-ACCESS read-write
+	STATUS     current
+	DESCRIPTION
+	    "If MDC's memory usage is >= this percentage of
+	     configured memory resource limit then the memory usage
+	     value will be logged as warning." 
+	DEFVAL { 100 }	     
+	::= { rdkbMDCConfig 6 }
+
+rdkbMDCHttpPort OBJECT-TYPE
+	SYNTAX     Unsigned32 (0..65535)
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION
+	    "The HTTP Port used by MDC."
+	DEFVAL { 8000 } 
+	::= { rdkbMDCConfig 7 }
+	
+rdkbMDCMulticastInterface OBJECT-TYPE
+	SYNTAX     SnmpAdminString
+	MAX-ACCESS read-write
+	STATUS     current
+	DESCRIPTION
+	    "The Network interface for NORM to use."
+	::= { rdkbMDCConfig 8 }
+	
+rdkbMDCDscp OBJECT-TYPE
+	SYNTAX     Unsigned32 (0..63)
+	MAX-ACCESS read-write
+	STATUS current
+	DESCRIPTION
+	    "The TOS/DSCP IP marking value in decimal
+	     used on RESTJ and MCR requests."
+	::= { rdkbMDCConfig 9 }

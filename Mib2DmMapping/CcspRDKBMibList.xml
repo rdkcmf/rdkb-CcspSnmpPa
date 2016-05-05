@@ -53,4 +53,5 @@ limitations under the License.
     <mibFile>XOPS-DEVICE-MGMT-MIB.xml</mibFile>
     <mibFile>DEVICE-WEBPA-MIB.xml</mibFile>
     <mibFile>SELFHEAL-DEVICE-MIB.xml</mibFile>
+    <!--<mibFile>MDC-DEVICE-MIB.xml</mibFile>-->
 </ccspRDKBMibList>
