@@ -1184,6 +1184,39 @@ rdkbRgDot11RadiusReAuthInterval OBJECT-TYPE
          The default value for other BSSs is 3600."
     ::= { rdkbRgDot11RadiusEntry 5 }
 
+rdkbRgDot11SecondaryRadiusAddress OBJECT-TYPE
+    SYNTAX      InetAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Sets Secondary RADIUS server IP address.
+         The value for secondary BSS is stored in non-vol and is 0.0.0.0
+         after factory reset.
+         The default value for other BSSs is 0.0.0.0."
+    ::= { rdkbRgDot11RadiusEntry 6 }
+
+rdkbRgDot11SecondaryRadiusPort OBJECT-TYPE
+    SYNTAX      InetPortNumber
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Sets the UDP port used to communicate with the Secondary RADIUS server.
+         The value for secondary BSS is stored in non-vol and is 1645
+         after factory reset.
+         The default value for other BSSs is 1645."
+    ::= { rdkbRgDot11RadiusEntry 7 }
+    
+rdkbRgDot11SecondaryRadiusKey OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Sets or displays the Secondary RADIUS key.
+         The value for secondary BSS is stored in non-vol and is null
+         after factory reset.
+         The default value for other BSSs is null.
+         This object return an empty string when read."
+    ::= { rdkbRgDot11RadiusEntry 8 }
 
 -- WEP
 

@@ -724,6 +724,45 @@ limitations under the License.
                     <paramName>Device.WiFi.AccessPoint.%d.Security.X_CISCO_COM_RadiusReAuthInterval</paramName>
                     <dataType>int</dataType>
                 </dm>
+           </mapping>
+           <mapping>
+                <mib>
+                    <lastOid>6</lastOid>
+                    <name>rdkbRgDot11SecondaryRadiusAddress</name>
+                    <access>ReadWrite</access>
+                    <dataType>InetAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.Security.SecondaryRadiusServerIPAddr</paramName>
+                    <dataType>string</dataType>
+                </dm>
+           </mapping>
+          <mapping>
+                <mib>
+                    <lastOid>7</lastOid>
+                    <name>rdkbRgDot11SecondaryRadiusPort</name>
+                    <access>ReadWrite</access>
+                    <dataType>InetPortNumber</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.Security.SecondaryRadiusServerPort</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+          </mapping>
+          <mapping>
+                <mib>
+                    <lastOid>8</lastOid>
+                    <name>rdkbRgDot11SecondaryRadiusKey</name>
+                    <access>ReadWrite</access>
+                    <dataType>DisplayString</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.WiFi.AccessPoint.%d.Security.SecondaryRadiusSecret</paramName>
+                    <dataType>string</dataType>
+                </dm>
             </mapping>
         </mibTable>
         <mibTable>
