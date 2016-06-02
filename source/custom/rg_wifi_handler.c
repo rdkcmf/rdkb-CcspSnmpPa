@@ -1002,93 +1002,87 @@ static int setBssSsid(PCCSP_TABLE_ENTRY pEntry, const char *ssid)
 
 #define WIFI_DM_BSS_SECURITY_MODE "Device.WiFi.AccessPoint.%d.Security.ModeEnabled"
 #define WIFI_DM_BSS_ENCRYPTION "Device.WiFi.AccessPoint.%d.Security.X_CISCO_COM_EncryptionMethod"
-
-static int getBssSecurityMode(PCCSP_TABLE_ENTRY pEntry)
+static int getBssSecurityMode(PCCSP_TABLE_ENTRY pEntry, char *mode)
 {
+    
     char dmStr[128] = {'\0'};
-    char dmValue[64] = {'\0'};
-    
-    if(!pEntry)
+
+    if(!mode)
         return -1;
 
-    snprintf(dmStr, sizeof(dmStr), WIFI_DM_BSS_SECURITY_MODE, pEntry->IndexValue[0].Value.uValue);
-
-    if(get_dm_value(dmStr, dmValue, sizeof(dmValue)))
+    snprintf(dmStr, sizeof(dmStr),WIFI_DM_BSS_SECURITY_MODE,pEntry->IndexValue[0].Value.uValue);
+    if(get_dm_value(dmStr, mode, 33))
         return -1;
 
-    if(!strcmp(dmValue, "None"))
-        return 0;
-    else if(!strcmp(dmValue, "WEP-128"))
-        return 1;
-    else if (!strcmp(dmValue, "WEP-64"))
-        return 1;
-    else if (!strcmp(dmValue, "WPA-Personal"))
-        return 2;
-    else if (!strcmp(dmValue, "WPA2-Personal"))
-        return 3;
-    else if (!strcmp(dmValue, "WPA-WPA2-Personal"))
-        return 7;
-    else
-        return 0;
+    return 0; 
 }
-
-static int setBssSecurityMode(PCCSP_TABLE_ENTRY pEntry, int mode)
+static int setBssSecurityMode(PCCSP_TABLE_ENTRY pEntry,const char *mode)
 {
-    parameterValStruct_t valStr[2];
-    char str[4][100];
-    valStr[0].parameterName=str[0];
-    valStr[0].parameterValue=str[1];
-    valStr[1].parameterName = str[2];
-    valStr[1].parameterValue = str[3];
-    int valCnt =1;
-    unsigned int algor = 2;
-    char modeStr[64] = {'\0'};
     
-    switch(mode){
-        case 0:
-            _ansc_strcpy(modeStr, "None");
-            break;
-        case 1:
-            _ansc_strcpy(modeStr, "WEP-128");
-            break;
-        case 2:
-            _ansc_strcpy(modeStr, "WPA-Personal");
-            break;
-        case 3:
-            _ansc_strcpy(modeStr, "WPA2-Personal");
-            break;
-        case 7:
-            _ansc_strcpy(modeStr, "WPA-WPA2-Personal");
-            break;
-        default:
-            //TODO: do nothing
-            return 0;
-    }
+    parameterValStruct_t valStr;
+    char str[2][100];
+    valStr.parameterName=str[0];
+    valStr.parameterValue=str[1];
     
-    sprintf(valStr[0].parameterName, WIFI_DM_BSS_SECURITY_MODE, pEntry->IndexValue[0].Value.uValue);
-    sprintf(valStr[0].parameterValue, "%s", modeStr);
-    valStr[0].type = ccsp_string;
-
     FindWifiDestComp(); /*TODO: Handle error*/
-
-    if(mode == 3)
-    {
-		sprintf(valStr[1].parameterValue, "%s", "AES");
-		sprintf(valStr[1].parameterName, WIFI_DM_BSS_ENCRYPTION, pEntry->IndexValue[0].Value.uValue);
-        valStr[1].type = ccsp_string;
-		valCnt = 2;
-    }
-    else if(mode == 7)
-    {	
-		sprintf(valStr[1].parameterValue, "%s", "AES+TKIP");
-		sprintf(valStr[1].parameterName, WIFI_DM_BSS_ENCRYPTION, pEntry->IndexValue[0].Value.uValue);
-        valStr[1].type = ccsp_string;
-		valCnt = 2;
-    }
     
-    if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, valCnt))
+    if(!strcmp(mode,"None"))
     {
-        CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr[0].parameterName));
+       sprintf(valStr.parameterName, WIFI_DM_BSS_SECURITY_MODE, pEntry->IndexValue[0].Value.uValue);
+       sprintf(valStr.parameterValue, "%s", mode);
+       valStr.type = ccsp_string;
+    }           
+    else if(!strcmp(mode, "WEP-128"))
+    {
+        sprintf(valStr.parameterName, WIFI_DM_BSS_SECURITY_MODE, pEntry->IndexValue[0].Value.uValue);
+       sprintf(valStr.parameterValue, "%s", mode);
+       valStr.type = ccsp_string;
+    }         
+    else if (!strcmp(mode, "WEP-64"))
+    {
+       sprintf(valStr.parameterName, WIFI_DM_BSS_SECURITY_MODE, pEntry->IndexValue[0].Value.uValue);
+       sprintf(valStr.parameterValue, "%s", mode);
+       valStr.type = ccsp_string;
+    }
+    else if (!strcmp(mode, "WPA-Personal"))
+    {
+        sprintf(valStr.parameterName, WIFI_DM_BSS_SECURITY_MODE, pEntry->IndexValue[0].Value.uValue);
+       sprintf(valStr.parameterValue, "%s", mode);
+       valStr.type = ccsp_string;
+    } 
+    else if (!strcmp(mode, "WPA2-Personal"))
+    {
+       sprintf(valStr.parameterName,WIFI_DM_BSS_ENCRYPTION,pEntry->IndexValue[0].Value.uValue);
+       sprintf(valStr.parameterValue, "%s", "AES");
+       valStr.type = ccsp_string;
+    } 
+    else if (!strcmp(mode, "WPA-WPA2-Personal"))
+    {    
+    sprintf(valStr.parameterName,WIFI_DM_BSS_ENCRYPTION,pEntry->IndexValue[0].Value.uValue);
+    sprintf(valStr.parameterValue, "%s", "AES+TKIP");
+    valStr.type = ccsp_string;
+    }
+    else if (!strcmp(mode, "WPA-Enterprise"))
+    {    
+    sprintf(valStr.parameterName, WIFI_DM_BSS_SECURITY_MODE, pEntry->IndexValue[0].Value.uValue);
+    sprintf(valStr.parameterValue, "%s", mode);
+    valStr.type = ccsp_string;
+    }
+    else if (!strcmp(mode, "WPA2-Enterprise"))
+    {    
+    sprintf(valStr.parameterName, WIFI_DM_BSS_SECURITY_MODE, pEntry->IndexValue[0].Value.uValue);
+    sprintf(valStr.parameterValue, "%s", mode);
+    valStr.type = ccsp_string;
+    }
+    else if (!strcmp(mode, "WPA-WPA2-Enterprise"))
+    {    
+    sprintf(valStr.parameterName, WIFI_DM_BSS_SECURITY_MODE, pEntry->IndexValue[0].Value.uValue);
+    sprintf(valStr.parameterValue, "%s", mode);
+    valStr.type = ccsp_string;
+    }
+    if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
+    {
+        CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
         return -1;
     }
 
@@ -1228,6 +1222,8 @@ Dot11BssTableHelper(
     netsnmp_request_info		 	*requests
 )
 {
+
+
 netsnmp_request_info* req;
 int subid;
 int intval;
@@ -1236,6 +1232,7 @@ PCCSP_TABLE_ENTRY entry = NULL;
 netsnmp_variable_list *vb = NULL;
 unsigned char mac[6] = {'\0'};
 char ssid[33] = {'\0'}, defaultssid[33] = {'\0'};
+char mode[33]= {'\0'};
 
 for (req = requests; req != NULL; req = req->next)
 {
@@ -1276,7 +1273,11 @@ for (req = requests; req != NULL; req = req->next)
                 req->processed = 1;
                 break;
             } else if (subid == saRgDot11BssSecurityMode_subid){
-                intval = getBssSecurityMode(entry);
+                getBssSecurityMode(entry, mode);
+                snmp_set_var_typed_value(req->requestvb, (u_char)ASN_OCTET_STR, (u_char *)mode, strlen(mode));
+                req->processed = 1;
+                break;
+                
             } else if (subid == saRgDot11BssMaxNumSta_subid){
                 intval = getBssMaxNumSta(entry);
             } else if (subid == saRgDot11BssUserStatus_subid){
@@ -1352,9 +1353,11 @@ for (req = requests; req != NULL; req = req->next)
                 } 
                 req->processed = 1;
             } else if (subid == saRgDot11BssSecurityMode_subid){
-                if ((retval=netsnmp_check_vb_int_range(req->requestvb, 0, 7))!=SNMP_ERR_NOERROR)
+                if ((retval=netsnmp_check_vb_type_and_max_size(req->requestvb, ASN_OCTET_STR, 32))!=SNMP_ERR_NOERROR){
                     netsnmp_set_request_error(reqinfo, req, retval);
-                req->processed = 1;
+                } 
+                req->processed = 1;   
+                
             } else if (subid == saRgDot11BssMaxNumSta_subid){
                 if ((retval=netsnmp_check_vb_int_range(req->requestvb, 1, 128))!=SNMP_ERR_NOERROR)
                     netsnmp_set_request_error(reqinfo, req, retval);
@@ -1384,10 +1387,12 @@ for (req = requests; req != NULL; req = req->next)
             } else if (subid == saRgDot11BssSsid_subid){
                 intval = setBssSsid(entry, vb->val.string);
                 req->processed = 1;
-            } else if (subid == saRgDot11BssSecurityMode_subid){
-                intval = setBssSecurityMode(entry, *(vb->val.integer));
+            }else if (subid == saRgDot11BssSecurityMode_subid){
+                 
+                intval = setBssSecurityMode(entry, vb->val.string);
                 req->processed = 1;
-            } else if (subid == saRgDot11BssMaxNumSta_subid){
+                
+            }else if (subid == saRgDot11BssMaxNumSta_subid){
                 intval = setBssMaxNumSta(entry, *(vb->val.integer));
                 req->processed = 1;
             }
