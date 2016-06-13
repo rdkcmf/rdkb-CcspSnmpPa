@@ -51,6 +51,12 @@
 #define IAPD_PREFIXLENGTH_SUBID 4
 #define IAPD_PREFIXVALUE_SUBID 5
 #define IAPD_PREFIX_DM "Device.IP.Interface.1.IPv6Prefix.%d.Prefix"
+#define DEVICE_REBOOT_REASON "Device.DeviceInfo.X_RDKCENTRAL-COM_LastRebootReason"
+#define RDKB_PAM_COMPONENT_NAME		     "eRT.com.cisco.spvtg.ccsp.pam"
+#define RDKB_PAM_DBUS_PATH		     "/com/cisco/spvtg/ccsp/pam"
+#define DEVICE_REBOOT_COUNTER   "Device.DeviceInfo.X_RDKCENTRAL-COM_LastRebootCounter"
+
+static int setRebootReason(char * paramName,char * paramValue);
 
 typedef union iapd_s {
     char prefix_value[40];
@@ -415,14 +421,19 @@ int handleDeviceMgmtParam(
                 request->processed = 1;     /* request->processed will be reset in every step by netsnmp_call_handlers */
                 break;
 	case MODE_SET_RESERVE2:
+	      
 	      if(subid == DeviceResetMode_lastoid){
-              	CcspTraceWarning(("RDKB_REBOOT : Reboot triggered through SNMP MODE Change\n")); 
+	       
+              	setRebootReason(DEVICE_REBOOT_REASON,"snmp-reboot");
+              	setRebootReason(DEVICE_REBOOT_COUNTER,"1");
+                CcspTraceWarning(("RDKB_REBOOT : Reboot triggered through SNMP MODE Change\n")); 
               }  
 	      if(subid == FactoryReset_lastoid) {
                 if(*requestvb->val.integer==2 || *requestvb->val.integer==1 )
                 {
-                         
-                CcspTraceWarning(("RDKB_REBOOT : Reboot triggered through SNMP Factory Reset\n")); 
+                  
+                CcspTraceWarning(("RDKB_REBOOT : Reboot triggered through SNMP Factory Reset\n"));
+                
                 }  
                 if (setFactoryReset(*requestvb->val.integer)){
                         netsnmp_set_request_error(reqinfo, request, SNMP_ERR_INCONSISTENTVALUE);
@@ -450,6 +461,34 @@ int handleDeviceMgmtParam(
 }
 
 
+static int setRebootReason(char * paramName,char * paramValue) 
+{
+
+    parameterValStruct_t valStr;
+    char str[2][100];
+    valStr.parameterName=str[0];
+    valStr.parameterValue=str[1];
+             
+    sprintf(valStr.parameterName, "%s",paramName);
+    sprintf(valStr.parameterValue, "%s", paramValue);
+       
+    if (strcmp(DEVICE_REBOOT_COUNTER,paramName) == 0) 
+    {
+        valStr.type = ccsp_int;
+    }
+    else
+    {
+        valStr.type = ccsp_string;
+    }
+    
+    if (!Cosa_SetParamValuesNoCommit(RDKB_PAM_COMPONENT_NAME, RDKB_PAM_DBUS_PATH, &valStr, 1))
+    {
+        CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, valStr.parameterName));
+        return -1;
+    }
+
+    return 0;
+}
 
 int
 handleDeviceConfig(
