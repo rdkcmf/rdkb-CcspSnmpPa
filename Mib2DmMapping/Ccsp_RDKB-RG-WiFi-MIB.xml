@@ -1626,12 +1626,15 @@ limitations under the License.
                     <lastOid>1</lastOid>
                     <name>rdkbRgDot11BandSteeringBSUtilizationThreshold</name>
                     <access>ReadWrite</access>
-                    <dataType>Unsigned32</dataType>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>0</min><max>100</max>
+                    </range>
                 </mib>
                 <dm>
                     <!-- fill in DM param and type -->
                     <paramName>Device.WiFi.X_RDKCENTRAL-COM_BandSteering.BandSetting.%d.UtilizationThreshold</paramName>
-                    <dataType>unsignedInt</dataType>
+                    <dataType>int</dataType>
                 </dm>
             </mapping>
             <mapping>
@@ -1639,12 +1642,15 @@ limitations under the License.
                     <lastOid>2</lastOid>
                     <name>rdkbRgDot11BandSteeringBSRSSIThreshold</name>
                     <access>ReadWrite</access>
-                    <dataType>Unsigned32</dataType>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>0</min><max>100</max>
+                    </range>
                 </mib>
                 <dm>
                     <!-- fill in DM param and type -->
                     <paramName>Device.WiFi.X_RDKCENTRAL-COM_BandSteering.BandSetting.%d.RSSIThreshold</paramName>
-                    <dataType>unsignedInt</dataType>
+                    <dataType>int</dataType>
                 </dm>
             </mapping>
             <mapping>
@@ -1652,12 +1658,15 @@ limitations under the License.
                     <lastOid>3</lastOid>
                     <name>rdkbRgDot11BandSteeringBSPhyRateThreshold</name>
                     <access>ReadWrite</access>
-                    <dataType>Unsigned32</dataType>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>0</min><max>100</max>
+                    </range>
                 </mib>
                 <dm>
                     <!-- fill in DM param and type -->
                     <paramName>Device.WiFi.X_RDKCENTRAL-COM_BandSteering.BandSetting.%d.PhyRateThreshold</paramName>
-                    <dataType>unsignedInt</dataType>
+                    <dataType>int</dataType>
                 </dm>
             </mapping>
         </mibTable>
