@@ -421,6 +421,15 @@ int handleDeviceMgmtParam(
                 request->processed = 1;     /* request->processed will be reset in every step by netsnmp_call_handlers */
                 break;
 	case MODE_SET_RESERVE2:
+              //RDKB-6178
+              if(subid == DeviceReset_lastoid){
+                 if(*requestvb->val.integer== 1){
+               	   CcspTraceWarning(("RDKB_ROUTER_RESET : Reset triggered for Router and Wifi\n")); 
+                   //Till deployment team correct the logic for resetting Router
+                   //we will set only router reset
+                   *requestvb->val.integer = 2;
+                  }
+              }
 	      
 	      if(subid == DeviceResetMode_lastoid){
 	       
