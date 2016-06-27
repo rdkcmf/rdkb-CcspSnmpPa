@@ -54,7 +54,7 @@
 #define DEVICE_REBOOT_REASON "Device.DeviceInfo.X_RDKCENTRAL-COM_LastRebootReason"
 #define RDKB_PAM_COMPONENT_NAME		     "eRT.com.cisco.spvtg.ccsp.pam"
 #define RDKB_PAM_DBUS_PATH		     "/com/cisco/spvtg/ccsp/pam"
-#define DEVICE_REBOOT_COUNTER   "Device.DeviceInfo.X_RDKCENTRAL-COM_LastRebootCounter"
+
 
 static int setRebootReason(char * paramName,char * paramValue);
 
@@ -434,8 +434,7 @@ int handleDeviceMgmtParam(
 	      if(subid == DeviceResetMode_lastoid){
 	       
               	setRebootReason(DEVICE_REBOOT_REASON,"snmp-reboot");
-              	setRebootReason(DEVICE_REBOOT_COUNTER,"1");
-                CcspTraceWarning(("RDKB_REBOOT : Reboot triggered through SNMP MODE Change\n")); 
+              	CcspTraceWarning(("RDKB_REBOOT : Reboot triggered through SNMP MODE Change\n")); 
               }  
 	      if(subid == FactoryReset_lastoid) {
                 if(*requestvb->val.integer==2 || *requestvb->val.integer==1 )
@@ -480,15 +479,8 @@ static int setRebootReason(char * paramName,char * paramValue)
              
     sprintf(valStr.parameterName, "%s",paramName);
     sprintf(valStr.parameterValue, "%s", paramValue);
-       
-    if (strcmp(DEVICE_REBOOT_COUNTER,paramName) == 0) 
-    {
-        valStr.type = ccsp_int;
-    }
-    else
-    {
-        valStr.type = ccsp_string;
-    }
+    valStr.type = ccsp_string;
+   
     
     if (!Cosa_SetParamValuesNoCommit(RDKB_PAM_COMPONENT_NAME, RDKB_PAM_DBUS_PATH, &valStr, 1))
     {
