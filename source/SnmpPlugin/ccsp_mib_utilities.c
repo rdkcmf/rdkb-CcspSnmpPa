@@ -96,6 +96,8 @@
 #include "slap_vco_global.h"
 #include "slap_vho_exported_api.h"
 
+#define MAX_OCTET_BUFFER_SIZE 256
+
 /**********************************************************************
 
     prototype:
@@ -2523,11 +2525,11 @@ CcspUtilMIBValueToDM
 		netsnmp_variable_list*		pVb
 	)
 {
-	char							pBuff[64]   = { 0 };
-	ULONG							uType       = pMibMapping->MibInfo.uType;
-	PCCSP_INT_STRING_MAP			pMap        = (PCCSP_INT_STRING_MAP)NULL;
-	parameterValStruct_t*		    pValue		= (parameterValStruct_t*)pVoid;
-	ULONG							uValue      = 0;
+	char					pBuff[MAX_OCTET_BUFFER_SIZE]	= { 0 };
+	ULONG					uType				= pMibMapping->MibInfo.uType;
+	PCCSP_INT_STRING_MAP			pMap				= (PCCSP_INT_STRING_MAP)NULL;
+	parameterValStruct_t*			pValue				= (parameterValStruct_t*)pVoid;
+	ULONG					uValue				= 0;
 
 	if( pMibMapping->MibInfo.bIsRowStatus)
 	{
@@ -2640,7 +2642,17 @@ CcspUtilMIBValueToDM
         }
         else
 		{
-			pValue->parameterValue = AnscCloneString((char*)pVb->val.string);
+			/* ARRISXB6-1543: An Octet String is Binary Data or Text and may not be Null terminated, in addition net-snmp uses a union
+			so next memory block may not be a NULL terminator. Copy based on passed in net-snmp length to prevent extra characters */			
+			if(MAX_OCTET_BUFFER_SIZE > pVb->val_len)
+			{
+				memcpy((char*)pBuff, (char*)pVb->val.string, pVb->val_len);
+				pValue->parameterValue = AnscCloneString(pBuff);
+			}
+			else
+			{
+				AnscTraceError(("Buffer Not Large Enough: Failed to Transfer Value. Buffer Size: %d, Value Size: %d\n", MAX_OCTET_BUFFER_SIZE, pVb->val_len));
+			}
 		}
 	}
 	else if( uType == ASN_INTEGER)
