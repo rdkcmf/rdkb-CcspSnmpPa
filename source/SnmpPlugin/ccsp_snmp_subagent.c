@@ -65,18 +65,29 @@ static void usage(void)
 void parse_arg(int argc, char *argv[])
 {
     int opt;
+    char *pXgentAddr = NULL;
 
     while ((opt = getopt(argc, argv, "x:D:h")) != -1) {
+
         switch (opt) {
         case 'h':
             usage();
             exit(0);
 
         case 'x':
-            xagent_addr = strdup(optarg);
+            if(pXgentAddr) /*RDKB-6910, CID-33279, free unused resources*/
+            {
+                free(pXgentAddr);
+            }
+            pXgentAddr  = strdup(optarg);
+            xagent_addr = pXgentAddr;
             break;
 
         case 'D':
+            if(debug_pat) /*RDKB-6910, CID-33076, free unused resources*/
+            {
+                free(debug_pat);
+            }
             debug_pat = strdup(optarg);
             break;
 
