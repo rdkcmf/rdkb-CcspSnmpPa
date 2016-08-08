@@ -1225,8 +1225,8 @@ Dot11BssTableHelper(
 
 
 netsnmp_request_info* req;
-int subid;
-int intval;
+int subid = 0;
+int intval = -1; /*RDKB-6911, CID-32993, init before use*/
 int retval=SNMP_ERR_NOERROR;
 PCCSP_TABLE_ENTRY entry = NULL;
 netsnmp_variable_list *vb = NULL;
