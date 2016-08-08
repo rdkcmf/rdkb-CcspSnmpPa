@@ -336,7 +336,11 @@ tableGroupSetReserve2
 		pEntry = (PCCSP_TABLE_ENTRY)netsnmp_tdata_extract_entry(request);
 		table_info = netsnmp_extract_table_info(request);
 
-		if( pEntry == NULL)  return SNMP_ERR_NOERROR;
+		if( pEntry == NULL)
+		{
+			AnscFreeMemory(pValueArray);/*RDKB-6909, CID-33559, free unused resource before exit*/
+			return SNMP_ERR_NOERROR;
+		}
 
 		requestvb = request->requestvb;
 		subid     = table_info->colnum;
