@@ -45,7 +45,7 @@
 #include "ccsp_mib_definitions.h"
 
 // Power
-#define MOCA_DM_OBJ                             "Device.MoCA."
+#define MOCA_DM_OBJ                             "Device.MoCA.Interface."
 #define MOCA_DM_TxPowerLimit                    "Device.MoCA.Interface.1.TxPowerLimit"
 #define MOCA_DM_BeaconPowerLimit                "Device.MoCA.Interface.1.BeaconPowerLimit"
 #define MOCA_DM_AutoPowerControlPhyRate         "Device.MoCA.Interface.1.AutoPowerControlPhyRate"
