@@ -2951,7 +2951,7 @@ handleDot11WpaTable(
                     snmp_set_var_typed_value(req->requestvb, (u_char)ASN_OCTET_STR, (u_char *)&value, strlen(value));
                     req->processed = 1;
                 }
-				else if( saRgDot11WpaDefaultPreSharedKey_subid ){
+				else if( subid ==saRgDot11WpaDefaultPreSharedKey_subid ){
 					
 					getWpaDefaultPSK(entry,defpskvalue);
                     snmp_set_var_typed_value(req->requestvb, (u_char)ASN_OCTET_STR, (u_char *)&defpskvalue, strlen(defpskvalue));
