@@ -292,9 +292,9 @@ limitations under the License.
                     <lastOid>4</lastOid>
                     <name>rdkbRgDot11BssSecurityMode</name>
                     <access>ReadWrite</access>
-                    <dataType>OCTET STRING</dataType>
+                    <dataType>INTEGER</dataType>
                     <range>
-                        <min>0</min><max>32</max>
+                        <min>0</min><max>8</max>
                     </range>
                 </mib>
                 <dm>
@@ -305,7 +305,7 @@ limitations under the License.
                          On set make WEP-128 the default and when the key length is set it will fix and change to WEP-64 or WEP-128
                          For GA 1.2 do not support WPA-Enterprise(4), WPA2-Enterprise(5), and WPA-WPA2-Enterprise(8)
                     -->
-      <!--<enumeration>None(0),WEP-128(1),WEP-64(1),WPA-Personal(2),WPA2-Personal(3),WPA-WPA2-Personal(7)</enumeration> -->
+                    <enumeration>None(0),WEP-128(1),WEP-64(1),WPA-Personal(2),WPA2-Personal(3),WPA-WPA2-Personal(7)</enumeration>
                 </dm>
             </mapping>
             <mapping>
