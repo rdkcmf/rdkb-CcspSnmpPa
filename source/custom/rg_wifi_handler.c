@@ -1111,8 +1111,12 @@ static int getBssSecurityMode(PCCSP_TABLE_ENTRY pEntry)
         return 2;
     else if (!strcmp(dmValue, "WPA2-Personal"))
         return 3;
+     else if (!strcmp(dmValue, "WPA2-Enterprise"))
+        return 5;
     else if (!strcmp(dmValue, "WPA-WPA2-Personal"))
         return 7;
+    else if (!strcmp(dmValue, "WPA-WPA2-Enterprise"))
+        return 8;
     else
         return 0;
 }
@@ -1143,8 +1147,14 @@ static int setBssSecurityMode(PCCSP_TABLE_ENTRY pEntry, int mode)
         case 3:
             _ansc_strcpy(modeStr, "WPA2-Personal");
             break;
+	case 5:
+            _ansc_strcpy(modeStr, "WPA2-Enterprise");
+            break;
         case 7:
             _ansc_strcpy(modeStr, "WPA-WPA2-Personal");
+            break;
+	case 8:
+            _ansc_strcpy(modeStr, "WPA-WPA2-Enterprise");
             break;
         default:
             //TODO: do nothing
@@ -1448,7 +1458,7 @@ for (req = requests; req != NULL; req = req->next)
                 } 
                 req->processed = 1;
             } else if (subid == saRgDot11BssSecurityMode_subid){
-                if ((retval=netsnmp_check_vb_int_range(req->requestvb, 0, 7))!=SNMP_ERR_NOERROR)
+                if ((retval=netsnmp_check_vb_int_range(req->requestvb, 0, 8))!=SNMP_ERR_NOERROR)
                     netsnmp_set_request_error(reqinfo, req, retval);
                 req->processed = 1;
             } else if (subid == saRgDot11BssMaxNumSta_subid){
