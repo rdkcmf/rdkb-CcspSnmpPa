@@ -200,6 +200,38 @@ limitations under the License.
                     <dataType>unsignedInt</dataType>
                 </dm>
         </mapping>
+	   <mapping>
+			<mib>
+				<lastOid>12</lastOid>
+				<name>diagMode</name>
+				<access>ReadWrite</access>
+				<dataType>TruthValue</dataType>
+				<range>
+					<min>1</min><max>2</max>
+				</range>
+			</mib>
+			<dm>
+				<!-- fill in DM param and type -->
+				<paramName>Device.SelfHeal.X_RDKCENTRAL-COM_DiagnosticMode</paramName>
+				<dataType>boolean</dataType>
+			</dm>
+	   </mapping>
+		<mapping>
+			   <mib>
+				   <lastOid>13</lastOid>
+				   <name>diagModeLogUploadFrequency</name>
+				   <access>ReadWrite</access>
+				   <dataType>Unsigned32</dataType>
+				   <range>
+					   <min>1</min><max>1440</max>
+				   </range>
+			   </mib>
+				<dm>
+				   <!-- fill in DM param and type -->
+				   <paramName>Device.SelfHeal.X_RDKCENTRAL-COM_DiagMode_LogUploadFrequency</paramName>
+				   <dataType>unsignedInt</dataType>
+			   </dm>
+	   </mapping>
       </scalarGroup>
      </scalarGroups>
      <mibTables>
