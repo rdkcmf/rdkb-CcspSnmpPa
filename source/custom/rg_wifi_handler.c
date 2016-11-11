@@ -3034,4 +3034,199 @@ handleDot11WpaTable(
 */
 }
 
+#define EnableDcs_lastoid 1
+#define WIFI_DM_DCSENABLE24      "Device.WiFi.Radio.1.X_RDKCENTRAL-COM_DCSEnable"
+#define WIFI_DM_DCSENABLE5     "Device.WiFi.Radio.2.X_RDKCENTRAL-COM_DCSEnable"
+
+int getEnableDcs()
+{
+	parameterValStruct_t **valStr;
+    int nval, enabledcs;
+int retval;
+	char str[2][80] ={{0}};
+	char * name[2] = {(char*) str[0], (char*) str[1]}; 
+  
+    retval = FindWifiDestComp(); 
+	
+    CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+    if (retval != TRUE) {
+       return -1;
+    } 
+   snprintf(str[0], sizeof(str[0]),WIFI_DM_DCSENABLE24);
+   snprintf(str[1], sizeof(str[1]),WIFI_DM_DCSENABLE5);
+
+    if (!Cosa_GetParamValues(dstComp, dstPath, &name, 2, &nval, &valStr))
+    {
+        CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
+        return -1;
+    }
+
+    if (nval < 1)
+    {
+        CcspTraceError(("%s: nval < 1 \n", __FUNCTION__));
+        return -1;
+    }
+
+CcspTraceWarning(("%s: valStr[0]->parameterValue %s\n", __FUNCTION__,valStr[0]->parameterValue));
+CcspTraceWarning(("%s: valStr[1]->parameterValue %s\n", __FUNCTION__,valStr[1]->parameterValue));
+   if (!strncmp(valStr[0]->parameterValue, "false", 5 )  && !strncmp(valStr[1]->parameterValue, "false", 5))
+    {
+        enabledcs = 0;
+    }
+	else if (!strncmp(valStr[0]->parameterValue, "true", 4 )  && !strncmp(valStr[1]->parameterValue, "true", 4))
+    {
+        enabledcs = 3;
+    }
+    else if (!strncmp(valStr[0]->parameterValue, "true", 4 )  && !strncmp(valStr[1]->parameterValue, "false", 5))
+    {
+        enabledcs = 1;
+    }
+	else if (!strncmp(valStr[0]->parameterValue, "false", 5)  && !strncmp(valStr[1]->parameterValue, "true", 4))
+    {
+        enabledcs = 2;
+    } 
+    Cosa_FreeParamValues(nval, valStr);
+     return enabledcs;
+
+}
+
+static int setEnableDcs(int val) {
+	int retval;
+	
+    parameterValStruct_t valStr[2] ={{0}};
+    
+    char str[4][100] = {{0}};
+    valStr[0].parameterName=str[0];
+    valStr[0].parameterValue=str[1];
+    valStr[1].parameterName=str[2];
+    valStr[1].parameterValue=str[3];
+    
+    retval = FindWifiDestComp();
+	
+	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+    if (retval != TRUE) {
+       return -1;
+    } 
+    snprintf(valStr[0].parameterName,sizeof(str[0]),WIFI_DM_DCSENABLE24);
+	snprintf(valStr[1].parameterName,sizeof(str[2]),WIFI_DM_DCSENABLE5);
+	if(val == 3)
+   	{
+		valStr[0].parameterValue = AnscCloneString("true");
+		valStr[1].parameterValue = AnscCloneString("true");
+    }
+	else if(val == 2)
+	{
+		valStr[0].parameterValue = AnscCloneString("false");
+		valStr[1].parameterValue = AnscCloneString("true");
+	}
+	else if(val == 1)
+	{
+		valStr[0].parameterValue = AnscCloneString("true");
+		valStr[1].parameterValue = AnscCloneString("false");
+	}
+    else if(val == 0)
+	{
+		valStr[0].parameterValue = AnscCloneString("false");
+		valStr[1].parameterValue = AnscCloneString("false");
+	}
+
+	valStr[0].type = ccsp_boolean;
+	valStr[1].type = ccsp_boolean;
+    if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, 2))
+    {
+        CcspTraceError(("%s: fail to set: %s\n", __FUNCTION__, WIFI_DM_DCSENABLE24));
+        return -1;
+    }
+
+    return 0;
+}
+
+//#if 0
+int
+handleDcs(
+    netsnmp_mib_handler				*handler,
+    netsnmp_handler_registration	*reginfo,
+    netsnmp_agent_request_info		*reqinfo,
+    netsnmp_request_info		 	*requests
+)
+{
+    netsnmp_request_info* req;
+    int subid;
+    int intval;
+    int retval=SNMP_ERR_NOERROR;
+    PCCSP_TABLE_ENTRY entry = NULL;
+//    netsnmp_variable_list *vb = NULL;
+    int value=0;
+    netsnmp_variable_list *requestvb    = NULL;
+
+
+
+    for (req = requests; req != NULL; req = req->next) {
+         requestvb = req->requestvb;
+		 subid = requestvb->name[requestvb->name_length - 2];
+                 CcspTraceInfo((" subid is '%d'\n",subid));
+
+        switch (reqinfo->mode) {
+            case MODE_GET:
+                if (subid == EnableDcs_lastoid) {                  
+		   value = getEnableDcs();
+			snmp_set_var_typed_value(req->requestvb, (u_char)ASN_INTEGER, (u_char *)&value, sizeof(value));
+		req->processed = 1;
+                }	
+                
+                break;
+
+	case MODE_SET_RESERVE1:
+        /* sanity check */
+        	 if (subid == EnableDcs_lastoid) {
+	 		if ((retval=netsnmp_check_vb_type(requests->requestvb, ASN_INTEGER))!=SNMP_ERR_NOERROR){
+		            netsnmp_request_set_error(requests, retval);
+		        } 			
+if ( *(requestvb->val.integer) < 0 || *(requestvb->val.integer) > 3 ) {
+					netsnmp_set_request_error(reqinfo,requests, SNMP_ERR_WRONGVALUE);
+		            retval = SNMP_ERR_WRONGVALUE;
+				}
+			}
+            req->processed = 1;
+            break;
+
+    case MODE_SET_RESERVE2:
+			intval = NOT_IMPLEMENTED;
+        	if (subid == EnableDcs_lastoid) {
+            	intval = setEnableDcs(*(req->requestvb->val.integer)); 
+				if(intval == -1)
+				{
+					 netsnmp_request_set_error(req,SNMP_ERR_GENERR);
+				}      		
+       		}
+			req->processed = 1;
+        break;
+
+            case MODE_SET_ACTION:
+                /* commit */
+                if(FindWifiDestComp() == TRUE)
+            Cosa_SetCommit(dstComp, dstPath, TRUE);
+                break;
+
+            case MODE_SET_FREE:
+                break;
+
+            case MODE_SET_COMMIT:
+        	break;
+
+            case MODE_SET_UNDO:
+                /* nothing */
+                break;
+
+            default:
+                netsnmp_set_request_error(reqinfo, requests, SNMP_ERR_GENERR);
+                return SNMP_ERR_GENERR;
+        }
+    }
+
+    return SNMP_ERR_NOERROR;
+}
+
+//#endif
+
 
