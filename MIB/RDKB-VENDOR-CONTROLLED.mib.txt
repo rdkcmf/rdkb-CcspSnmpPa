@@ -60,8 +60,8 @@ rdkbDocsisMidSplitFilterRange OBJECT-TYPE
      STATUS current
      DESCRIPTION
      "Used to set mid-split filter frequency range for DOCSIS.
-     msfr5-85MHz(1) - DOCSIS 3.1 increased range.
-     msfr5-42MHz(2) - DOCSIS 3.0 maximum range.
+     msfr5-85MHz(1) - Increased Range.
+     msfr5-42MHz(2) - Default Range.
      This SHOULD be set prior to the Cable Modem Ranging.
      If set after the setting won't take effect until a reboot is done."
      ::= { rdkbVcWan 1 }
