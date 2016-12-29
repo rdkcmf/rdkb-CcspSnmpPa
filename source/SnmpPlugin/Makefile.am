@@ -33,12 +33,12 @@ ACLOCAL_AMFLAGS = -I m4
 hardware_platform = i686-linux-gnu
 
 lib_LTLIBRARIES=libsnmp_plugin.la
-bin_PROGRAMS = snmp_subagnet
+bin_PROGRAMS = snmp_subagent
 
-snmp_subagnet_CPPFLAGS = -I$(top_srcdir)/source/SnmpPlugin -I$(top_srcdir)/source/include $(CPPFLAGS)
-snmp_subagnet_SOURCES = ccsp_snmp_subagent.c
+snmp_subagent_CPPFLAGS = -I$(top_srcdir)/source/SnmpPlugin -I$(top_srcdir)/source/include $(CPPFLAGS)
+snmp_subagent_SOURCES = ccsp_snmp_subagent.c
 
-snmp_subagnet_LDADD = libsnmp_plugin.la
+snmp_subagent_LDADD = libsnmp_plugin.la
 
 
 

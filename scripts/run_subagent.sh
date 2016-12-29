@@ -63,14 +63,14 @@ fi
 
 master=$1 # may empty
 
-killall snmp_subagnet ; sleep 1
+killall snmp_subagent ; sleep 1
 
 if [ "x$master" != "x" ]; then
     echo "starting snmp_subagent process with $master"
-    ${BINPATH}/snmp_subagnet -x $master
+    ${BINPATH}/snmp_subagent -x $master
 else
     echo "starting snmp_subagent"
-    ${BINPATH}/snmp_subagnet
+    ${BINPATH}/snmp_subagent
 fi
 
 if [ ! $? -eq 0 ]; then
