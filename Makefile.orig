@@ -26,7 +26,7 @@ ifeq ($(CcspBoard), intel_usg_arm)
 endif
 SNMP_PLUGIN = snmp_plugin
 PLUGIN	= $(ComponentBuildDir)/lib$(SNMP_PLUGIN).so
-SUBAGNT = $(ComponentBuildDir)/snmp_subagnet
+SUBAGNT = $(ComponentBuildDir)/snmp_subagent
 CUSTOM = $(ComponentBuildDir)/snmp_custom.so
 
 SNMP_INSDIR = $(CCSP_OUT_DIR)/snmp
