@@ -2951,7 +2951,12 @@ handleDot11WpaTable(
         switch (reqinfo->mode) {
             case MODE_GET:
                 if (subid == saRgDot11WpaPreSharedKey_subid) {
-                    // This parameter can't be read, but snmp was defined as read/write
+                	if((entry->IndexValue[0].Value.uValue == 3) || (entry->IndexValue[0].Value.uValue == 4))
+                	{
+                	netsnmp_request_set_error(req, SNMP_NOSUCHINSTANCE);
+                	 return SNMP_ERR_GENERR;
+                	}
+                     // This parameter can't be read, but snmp was defined as read/write
                     //unsigned char value = '\0';
 					getWpaPSK(entry,value);
                     snmp_set_var_typed_value(req->requestvb, (u_char)ASN_OCTET_STR, (u_char *)&value, strlen(value));
@@ -2970,13 +2975,21 @@ handleDot11WpaTable(
             case MODE_SET_RESERVE1:
                 /* sanity check */
                 if (subid == saRgDot11WpaPreSharedKey_subid) {
+                	if((entry->IndexValue[0].Value.uValue == 3) || (entry->IndexValue[0].Value.uValue == 4))
+                	{
+                	 netsnmp_request_set_error(req, SNMP_ERR_NOTWRITABLE);
+                	  return SNMP_ERR_GENERR;
+                	} 
+                	else
+                	{
                     // PSK is 64 and must be hex string
                     if ( (req->requestvb->val_len == 64) &&
                          ((retval=netsnmp_check_vb_type(req->requestvb, ASN_OCTET_STR))!=SNMP_ERR_NOERROR) ) {
                         netsnmp_request_set_error(req, retval);
                     }
                     req->processed = 1;
-                } 
+                	}
+                }
                 
                 break;
 
@@ -2984,7 +2997,17 @@ handleDot11WpaTable(
                 /* set value to backend with no commit */
                 intval = NOT_IMPLEMENTED;
                 if (subid == saRgDot11WpaPreSharedKey_subid) {
-                    intval = setWpaPSK(entry, (char *)req->requestvb->val.string, req->requestvb->val_len);
+                	if((entry->IndexValue[0].Value.uValue == 3) || (entry->IndexValue[0].Value.uValue == 4))
+                	{
+                	    netsnmp_request_set_error(req, SNMP_ERR_NOTWRITABLE);
+                	    return SNMP_ERR_GENERR;
+                	    
+                	}
+                	else
+                	{
+                	  intval = setWpaPSK(entry, (char *)req->requestvb->val.string, req->requestvb->val_len);
+                	}
+                    
                 }
                 
                 if (intval) {
