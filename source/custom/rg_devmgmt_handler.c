@@ -357,8 +357,14 @@ Call appropriate DML parameter based on the reset case
 	case 0 :
 		break;
 	case 1 :
+/* Have SNMP Reset To Defaults the same way as Web GUI. XB3 Didn't want the Change
+   Some devices reboot prior to completing FACTORY_RESET_DM_WIFI due to driver */
+#if defined (_COSA_INTEL_XB3_ARM_)
 		if (set_dm_value(FACTORY_RESET_DM_WIFI, "1,2;1,2", strlen("1,2;1,2")) || 
 		    set_dm_value(FACTORY_RESET_DM, "Router,VoIP", strlen("Router,VoIP"))){
+#else
+		if (set_dm_value(FACTORY_RESET_DM, "Router,Wifi,VoIP", strlen("Router,Wifi,VoIP"))){
+#endif
        			return -1;
     		}
     				
