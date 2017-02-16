@@ -142,7 +142,7 @@ static int getNumAPs( ) {
     
     retval = FindWifiDestComp();
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -244,7 +244,7 @@ static int applyDot11Settings(int val) {
     
     retval = FindWifiDestComp();
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -291,7 +291,7 @@ static int getWps(PCCSP_TABLE_ENTRY entry)
     /*Fetching*/
     retval = FindWifiDestComp();
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -342,7 +342,7 @@ int setWps(PCCSP_TABLE_ENTRY entry, int wpsTime)
     
     retval = FindWifiDestComp();
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -555,7 +555,7 @@ static int getBssEnable(PCCSP_TABLE_ENTRY entry) {
     
     retval = FindWifiDestComp();
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+    CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -599,7 +599,7 @@ static int setBssEnable(PCCSP_TABLE_ENTRY entry, int value) {
     
     retval = FindWifiDestComp();
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -631,7 +631,7 @@ static int getBssAccessMode(PCCSP_TABLE_ENTRY entry) {
     
     retval = FindWifiDestComp();
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -681,7 +681,7 @@ static int setBssAccessMode(PCCSP_TABLE_ENTRY entry, int value) {
     
     retval = FindWifiDestComp();
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -727,7 +727,7 @@ static int getBssClosedNetwork(PCCSP_TABLE_ENTRY entry) {
     
     retval = FindWifiDestComp();
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -762,7 +762,7 @@ static int setBssClosedNetwork(PCCSP_TABLE_ENTRY entry, int value) {
     
     retval = FindWifiDestComp();
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -791,7 +791,7 @@ static int getBssHotSpot(PCCSP_TABLE_ENTRY entry) {
     
     retval = FindWifiDestComp();
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -826,7 +826,7 @@ static int setBssHotSpot(PCCSP_TABLE_ENTRY entry, int value) {
     
     retval = FindWifiDestComp();
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -854,7 +854,7 @@ static int getBssIsolationEnable(PCCSP_TABLE_ENTRY entry) {
     
     retval = FindWifiDestComp();
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -889,7 +889,7 @@ static int setBssIsolationEnable(PCCSP_TABLE_ENTRY entry, int value) {
     
     retval = FindWifiDestComp();
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -1067,7 +1067,7 @@ static int setBssSsid(PCCSP_TABLE_ENTRY pEntry, const char *ssid)
     
     retval = FindWifiDestComp();
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -1166,7 +1166,7 @@ static int setBssSecurityMode(PCCSP_TABLE_ENTRY pEntry, int mode)
     valStr[0].type = ccsp_string;
 
     retval = FindWifiDestComp();
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -1218,7 +1218,7 @@ static int setBssMaxNumSta(PCCSP_TABLE_ENTRY pEntry, int num)
     valStr.parameterValue = str[1];
     int valCnt =1;
     
-    CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+    CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -1670,7 +1670,7 @@ static int getCurrentChannel (PCCSP_TABLE_ENTRY entry) {
     
     retval = FindWifiDestComp(); 
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -1713,7 +1713,7 @@ static int getWmm(PCCSP_TABLE_ENTRY entry) {
     
     retval = FindWifiDestComp(); 
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -1749,7 +1749,7 @@ static int getWmmNoAck(PCCSP_TABLE_ENTRY entry){
     
     retval = FindWifiDestComp(); 
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -1785,7 +1785,7 @@ static int getMcastRate(PCCSP_TABLE_ENTRY entry){
     
     retval = FindWifiDestComp(); 
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -1822,7 +1822,7 @@ static int getCountry(PCCSP_TABLE_ENTRY entry){
     
     retval = FindWifiDestComp(); 
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -1862,7 +1862,7 @@ static int getMbssUserControl(PCCSP_TABLE_ENTRY entry)
     
     retval = FindWifiDestComp(); 
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -1900,7 +1900,7 @@ static int getMbssAdminControl(PCCSP_TABLE_ENTRY entry)
     
     retval = FindWifiDestComp(); 
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -1936,7 +1936,7 @@ static int getOperMode(PCCSP_TABLE_ENTRY entry){
     /*Fetching*/
     retval = FindWifiDestComp(); 
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -1982,7 +1982,7 @@ static int setCurrentChannel(PCCSP_TABLE_ENTRY entry, int val){
     
     retval = FindWifiDestComp(); 
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -2019,7 +2019,7 @@ static int setWmm(PCCSP_TABLE_ENTRY entry, int val){
     
     retval = FindWifiDestComp(); 
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -2080,7 +2080,7 @@ static int setWmmNoAck(PCCSP_TABLE_ENTRY entry, int val){
     
     retval = FindWifiDestComp(); 
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -2107,7 +2107,7 @@ static int setMcastRate(PCCSP_TABLE_ENTRY entry, int val){
     
     retval = FindWifiDestComp(); 
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -2136,7 +2136,7 @@ static int setMbssUserControl(PCCSP_TABLE_ENTRY entry, int val)
     
     retval = FindWifiDestComp(); 
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -2165,7 +2165,7 @@ static int setMbssAdminControl(PCCSP_TABLE_ENTRY entry, int val)
     
     retval = FindWifiDestComp(); 
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -2192,7 +2192,7 @@ static int setOperMode(PCCSP_TABLE_ENTRY entry, int val){
     
     retval = FindWifiDestComp(); 
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -2523,7 +2523,7 @@ int getNMode(PCCSP_TABLE_ENTRY entry)
     
     retval = FindWifiDestComp(); 
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -2587,7 +2587,7 @@ int setNMode(PCCSP_TABLE_ENTRY entry, int val)
     
     retval = FindWifiDestComp(); 
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -2661,7 +2661,7 @@ int getNPhyRate(PCCSP_TABLE_ENTRY entry) {
     
     retval = FindWifiDestComp(); 
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -2696,7 +2696,7 @@ int setNPhyRate(PCCSP_TABLE_ENTRY entry, int val) {
     
     retval = FindWifiDestComp(); 
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -2905,7 +2905,7 @@ int setWpaPSK(PCCSP_TABLE_ENTRY entry, char *key, int keyLen) {
     
     retval = FindWifiDestComp(); 
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
@@ -3071,7 +3071,7 @@ int retval;
   
     retval = FindWifiDestComp(); 
 	
-    CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+    CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     } 
@@ -3126,7 +3126,7 @@ static int setEnableDcs(int val) {
     
     retval = FindWifiDestComp();
 	
-	CcspTraceError(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     } 
