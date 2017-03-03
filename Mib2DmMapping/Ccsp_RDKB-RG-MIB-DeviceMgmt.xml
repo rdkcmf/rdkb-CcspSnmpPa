@@ -415,6 +415,33 @@ limitations under the License.
                     <enumeration>require(0),notRequire(1),notDownload(2)</enumeration>
                 </dm>
             </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>6</lastOid>
+                    <name>rdkbRgDeviceConfigStaticIp</name>
+                    <access>ReadOnly</access>
+                    <dataType>InetAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_TrueStaticIP.IPAddress</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+			<mapping>
+                <mib>
+                    <lastOid>7</lastOid>
+                    <name>rdkbRgDeviceConfigStaticIpv6</name>
+                    <access>ReadOnly</access>
+                    <dataType>InetAddress</dataType>
+				</mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+		     <!-- TBD updating the V4 DM map for V6 for now -->
+                    <paramName>Device.X_CISCO_COM_TrueStaticIP.IPAddress</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
         </scalarGroup>
         <scalarGroup>
             <name>rdkbRgDeviceIanaContent</name>
