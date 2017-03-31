@@ -59,6 +59,11 @@
 #include "CcspSnmpPlugin.h"
 #include "ccsp_mib_helper.h"
 #include "cosa_api.h"
+
+#ifdef INCLUDE_BREAKPAD
+#include "breakpad_wrapper.h"
+#endif /* INCLUDE_BREAKPAD */
+
 #ifdef RDKB_MIB
 #define  CCSP_MIB_MAPPING_LIST_FILE        "CcspRDKBMibList.xml"
 #else
@@ -129,6 +134,14 @@ init_ccsp_snmp_plugin(void)
 
     set_debug_level();
 
+#ifdef FEATURE_SUPPORT_RDKLOG
+	rdk_logger_init(DEBUG_INI_NAME);
+#endif
+
+#ifdef INCLUDE_BREAKPAD
+	breakpad_ExceptionHandler( );
+#endif /* INCLUDE_BREAKPAD */
+
 	/* init the COSA debus */
 	if (!Cosa_Init())
     {
@@ -138,9 +151,6 @@ init_ccsp_snmp_plugin(void)
 
 	printf("****snmp rdklogger init %s\n",pComponentName);
 
-	#ifdef FEATURE_SUPPORT_RDKLOG
-		rdk_logger_init(DEBUG_INI_NAME);
-	#endif
     CcspTraceWarning(("SNMP:snmp initialzed!\n"));
 
 	g_CcspMibHelper = (PCCSP_MIB_HELPER_OBJECT)CcspCreateMibHelper();
