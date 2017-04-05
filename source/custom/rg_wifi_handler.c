@@ -3029,6 +3029,12 @@ handleDot11WpaTable(
                 	    return SNMP_ERR_GENERR;
                 	    
                 	}
+                        if(req->requestvb->val_len < 8 )
+                        {
+                            CcspTraceError(("%s: Length of Passphrase is less than 8\n", __FUNCTION__));
+                            netsnmp_request_set_error(req, SNMP_ERR_INCONSISTENTVALUE);
+                            return SNMP_ERR_GENERR;
+                        }
                 	else
                 	{
                 	  intval = setWpaPSK(entry, (char *)req->requestvb->val.string, req->requestvb->val_len);
