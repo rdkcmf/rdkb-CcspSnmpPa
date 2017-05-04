@@ -106,6 +106,9 @@ void parse_arg(int argc, char *argv[])
 int
 main(int argc, char *argv[])
 {
+    char                            cmd[1024]          = {0};
+    FILE                           *fd                 = NULL;
+	
     parse_arg(argc, argv);
 
     snmp_enable_stderrlog();
@@ -145,6 +148,20 @@ main(int argc, char *argv[])
     keep_running = 1;
     signal(SIGTERM, stop_server);
     signal(SIGINT, stop_server);
+	
+    /*This is used for systemd */
+    fd = fopen("/var/tmp/snmp_subagent.pid", "w+");
+    if ( !fd )
+    {
+        printf("Create /var/tmp/snmp_subagent.pid error. \n");
+        return 1;
+    }
+    else
+    {
+        sprintf(cmd, "%d", getpid());
+        fputs(cmd, fd);
+        fclose(fd);
+    }
 
     snmp_log(LOG_INFO,"%s is up and running.\n", AGNT_NAME);
     system("sysevent set snmp_subagent-status started");
