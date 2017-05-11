@@ -64,7 +64,8 @@ limitations under the License.
                 </mib>
                 <dm>
                     <!-- fill in DM param and type -->
-                    <paramName>Device.DeviceInfo.X_RDKCENTRAL-COM.Ops.UploadLogsNow</paramName>
+                    <!--<paramName>Device.DeviceInfo.X_RDKCENTRAL-COM.Ops.UploadLogsNow</paramName> -->
+		    <paramName>Device.DeviceInfo.X_RDKCENTRAL-COM_xOpsDeviceMgmt.Logging.xOpsDMUploadLogsNow</paramName>
                     <dataType>boolean</dataType>
                 </dm>
            </mapping>
@@ -80,7 +81,8 @@ limitations under the License.
                 </mib>
                  <dm>
                     <!-- fill in DM param and type -->
-                    <paramName>Device.DeviceInfo.X_RDKCENTRAL-COM.Ops.LogsUploadStatus</paramName>
+                    <!--<paramName>Device.DeviceInfo.X_RDKCENTRAL-COM.Ops.LogsUploadStatus</paramName> -->
+		    <paramName>Device.DeviceInfo.X_RDKCENTRAL-COM_xOpsDeviceMgmt.Logging.xOpsDMLogsUploadStatus</paramName>
                     <dataType>string</dataType>
                   <!--  <enumeration>notTriggered(0),triggered(1),in progress(2),uploadfailed(3),complete(4)</enumeration>-->
                 </dm>
