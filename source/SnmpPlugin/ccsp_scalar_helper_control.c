@@ -326,8 +326,8 @@ void
 scalarGroupCacheFree(netsnmp_cache * cache, void *magic)
 {
 	PCCSP_SCALAR_HELPER_OBJECT      pThisObject        = (PCCSP_SCALAR_HELPER_OBJECT)magic;
-
-	pThisObject->ClearCache(magic);
+	if(pThisObject)
+		pThisObject->ClearCache(magic);
 }
 
 void
