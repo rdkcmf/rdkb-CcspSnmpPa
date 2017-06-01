@@ -437,8 +437,8 @@ limitations under the License.
 				</mib>
                 <dm>
                     <!-- fill in DM param and type -->
-		     <!-- TBD updating the V4 DM map for V6 for now -->
-                    <paramName>Device.X_CISCO_COM_TrueStaticIP.IPAddress</paramName>
+					<!-- Populating the delegated prefix for the current OID as per RDKB-9349 -->
+                    <paramName>Device.IP.Interface.1.IPv6Prefix.1.Prefix</paramName>
                     <dataType>string</dataType>
                 </dm>
             </mapping>
