@@ -936,6 +936,7 @@ enum wifi_if_e {
     WIFI2_7 = 14,
     WIFI1_8 = 15,
     WIFI2_8 = 16,
+    WIFI_IF_MAX = 17,
 };
 
 static struct dot11_data_s gDot11Info[] = {
@@ -1325,7 +1326,10 @@ find_retry:
         }
 
         dmIns = insArray[i];
-       
+                   if (WIFI_IF_MAX <= dmIns)
+                   {
+                               goto ret;
+                   }
         // We can do this, 'cause mapping is static
         pEntry = &gDot11Info[dmIns].entry;
 
