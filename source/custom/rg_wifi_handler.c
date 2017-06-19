@@ -1101,6 +1101,16 @@ static int getBssSecurityMode(PCCSP_TABLE_ENTRY pEntry)
     if(get_dm_value(dmStr, dmValue, sizeof(dmValue)))
         return -1;
 
+#ifdef _XB6_PRODUCT_REQ_
+	if(!strcmp(dmValue, "None"))
+        return 0;
+	else if (!strcmp(dmValue, "WPA2-Personal"))
+        return 3;
+    else if (!strcmp(dmValue, "WPA2-Enterprise"))
+        return 5;
+	else
+        return 0;
+#else
     if(!strcmp(dmValue, "None"))
         return 0;
     else if(!strcmp(dmValue, "WEP-128"))
@@ -1119,6 +1129,7 @@ static int getBssSecurityMode(PCCSP_TABLE_ENTRY pEntry)
         return 8;
     else
         return 0;
+#endif
 }
 
 static int setBssSecurityMode(PCCSP_TABLE_ENTRY pEntry, int mode)
@@ -1135,6 +1146,20 @@ static int setBssSecurityMode(PCCSP_TABLE_ENTRY pEntry, int mode)
     char modeStr[64] = {'\0'};
     
     switch(mode){
+#ifdef _XB6_PRODUCT_REQ_
+		case 0:
+            _ansc_strcpy(modeStr, "None");
+            break;
+		case 3:
+            _ansc_strcpy(modeStr, "WPA2-Personal");
+            break;
+		case 5:
+            _ansc_strcpy(modeStr, "WPA2-Enterprise");
+            break;
+		default:
+            //TODO: do nothing
+            return 0;	
+#else
         case 0:
             _ansc_strcpy(modeStr, "None");
             break;
@@ -1159,6 +1184,7 @@ static int setBssSecurityMode(PCCSP_TABLE_ENTRY pEntry, int mode)
         default:
             //TODO: do nothing
             return 0;
+#endif
     }
     
     sprintf(valStr[0].parameterName, WIFI_DM_BSS_SECURITY_MODE, pEntry->IndexValue[0].Value.uValue);
