@@ -301,7 +301,7 @@ limitations under the License.
             <!-- Add filters in the table -->
             <!-- <mapToEntries>Device.RoutingTable.%d.type=static</mapToEntries> -->
             <callbacks>
-                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+                <handleRequests>handleDnsServer</handleRequests>
             </callbacks>
             <index>
                 <mib>
@@ -331,6 +331,20 @@ limitations under the License.
                     <dataType>string</dataType>
                 </dm>
             </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>rdkbRgIpMgmtDnsServerIpv6</name>
+                    <access>ReadWrite</access>
+                    <dataType>InetAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.DNS.Client.Server.%d.DNSServer</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+
         </mibTable>
     </mibTables>
 </mib2DM>

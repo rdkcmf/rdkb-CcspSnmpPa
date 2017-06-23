@@ -37,7 +37,9 @@
 #include <net-snmp/net-snmp-includes.h>
 #include <net-snmp/agent/net-snmp-agent-includes.h>
 
+#include "ansc_platform.h"
 #include "ccsp_snmp_common.h"
+#include "ccsp_mib_definitions.h"
 
 static oid saRgIpMgmtWanMode_lastOid = 1;
 static oid saRgIpMgmtWanMtu_lastOid = 2;
@@ -209,3 +211,76 @@ handleWanDnsRequest(
     return SNMP_ERR_NOERROR;
 }
 
+#define DNSSERVER_DM "Device.DNS.Client.Server.%d.DNSServer"
+#define DnsServerIpv4_lastoid 3
+#define DnsServerIpv6_lastoid 4
+
+static int verifyDNSServerType(PCCSP_TABLE_ENTRY pEntry, oid lastOid)
+{
+    char dmStr[128] = {'\0'};
+    char value[64]={'\0'};
+
+    snprintf(dmStr, sizeof(dmStr), DNSSERVER_DM, pEntry->IndexValue[0].Value.uValue);
+
+    get_dm_value(dmStr, value, 32);
+
+    if (strstr(value,":")) {
+
+        return ( DnsServerIpv6_lastoid == lastOid );
+    }
+    else {
+
+        return ( DnsServerIpv4_lastoid == lastOid );
+   }
+
+}
+
+int
+handleDnsServer(
+    netsnmp_mib_handler			*handler,
+    netsnmp_handler_registration	*reginfo,
+    netsnmp_agent_request_info		*reqinfo,
+    netsnmp_request_info		*requests
+)
+{
+    netsnmp_request_info   *request     = NULL;
+    netsnmp_variable_list  *requestvb   = NULL;
+    oid                     subid       = 0;
+    PCCSP_TABLE_ENTRY entry 		= NULL;
+
+
+    for (request = requests; request != NULL; request = request->next) {
+
+        requestvb = request->requestvb;
+
+        subid = requestvb->name[requestvb->name_length - 2];
+
+        entry = (PCCSP_TABLE_ENTRY)netsnmp_tdata_extract_entry(request);
+        if (entry == NULL) {
+	    netsnmp_request_set_error(request, SNMP_NOSUCHINSTANCE);
+	    CcspTraceError(("No entry found for DNS Servers!\n"));
+	    continue;
+        }
+
+        switch (reqinfo->mode){
+
+            case MODE_GET:
+		if ((subid == DnsServerIpv4_lastoid) ||
+		     (subid == DnsServerIpv6_lastoid)) {
+
+		     if (!verifyDNSServerType(entry,subid)) {
+
+		         netsnmp_tdata_row* row = netsnmp_tdata_extract_row(request);
+			 netsnmp_remove_tdata_row(request,row);
+		     }
+		}
+		break;
+	    default:
+		break;
+	}
+
+    }
+
+    return SNMP_ERR_NOERROR;
+
+}
