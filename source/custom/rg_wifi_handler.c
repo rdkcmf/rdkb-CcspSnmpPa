@@ -3101,7 +3101,7 @@ handleDot11WpaTable(
 int getEnableDcs()
 {
 	parameterValStruct_t **valStr;
-    int nval, enabledcs;
+    int nval, enabledcs = 0;
 int retval;
 	char str[2][80] ={{0}};
 	char * name[2] = {(char*) str[0], (char*) str[1]}; 
