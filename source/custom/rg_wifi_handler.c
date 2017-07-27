@@ -1243,7 +1243,8 @@ static int setBssMaxNumSta(PCCSP_TABLE_ENTRY pEntry, int num)
     valStr.parameterName = str[0];
     valStr.parameterValue = str[1];
     int valCnt =1;
-    
+
+    retval = FindWifiDestComp();
     CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
