@@ -1686,9 +1686,6 @@ limitations under the License.
                     <name>rdkbRgDot11BandSteeringBSPhyRateThreshold</name>
                     <access>ReadWrite</access>
                     <dataType>INTEGER</dataType>
-                    <range>
-                        <min>0</min><max>100</max>
-                    </range>
                 </mib>
                 <dm>
                     <!-- fill in DM param and type -->
