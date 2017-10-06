@@ -47,7 +47,6 @@ limitations under the License.
     <mibFile>Ccsp_RDKB-RG-MIB-MoCA.xml</mibFile>
     <mibFile>Ccsp_RDKB-RG-MIB-Hotspot.xml</mibFile>
     <mibFile>Ccsp_COMCAST-MIB-StaticIp.xml</mibFile>
-    <mibFile>Ccsp_RDKB-RG-MIB-WECB.xml</mibFile>
     <mibFile>Ccsp_RDKB-RG-MIB-Tr069Pa.xml</mibFile>
     <mibFile>XOPS-DEVICE-MGMT-MIB.xml</mibFile>
     <mibFile>DEVICE-WEBPA-MIB.xml</mibFile>
