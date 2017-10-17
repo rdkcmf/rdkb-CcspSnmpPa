@@ -249,6 +249,20 @@ limitations under the License.
                     <dataType>boolean</dataType>
                 </dm>
            </mapping> 
+            <mapping>
+                <mib>
+                    <lastOid>1008</lastOid>
+                    <name>rdkbRgDeviceFWupdateAndFactoryReset</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.DeviceInfo.X_RDKCENTRAL-COM_FirmwareDownloadAndFactoryReset</paramName>
+                    <dataType>int</dataType>
+                    <enumeration>false(0),routerAndWifi(1)</enumeration>
+                </dm>
+           </mapping>
        </scalarGroup>
         <scalarGroup>
             <name>rdkbRgDeviceConfigBackup</name>

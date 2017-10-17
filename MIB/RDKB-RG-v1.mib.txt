@@ -382,6 +382,20 @@ rdkbRgCaptivePortalEnable OBJECT-TYPE
                  false: indicates device is out of captive portal"
         DEFVAL { true }
     ::= { rdkbRgDeviceBase 1007 }
+
+rdkbRgDeviceFWupdateAndFactoryReset OBJECT-TYPE
+    SYNTAX INTEGER {
+        false(0),
+        routerAndWifi(1),
+        }
+        MAX-ACCESS      read-write
+        STATUS          current
+        DESCRIPTION
+        "Combine Firmware Update and Factory Reset to avoid extra reboot after  FW update. Use Docsis FW download OIDs to prepare for firmware download.
+                Set routerAndWifi(1) to restore default settings of both the router and wifi.
+                Return false(0) when read."
+        DEFVAL { 0 }
+        ::= { rdkbRgDeviceBase 1008 }
             
 -- Node rdkbRgDevice 2,3 removed             
      
