@@ -2969,7 +2969,10 @@ handleDot11WpaTable(
     PCCSP_TABLE_ENTRY entry = NULL;
     netsnmp_variable_list *vb = NULL;
     char value[64]={'\0'},defpskvalue[64]={'\0'};
-
+    char buf[10]={'\0'};
+    
+    //Initializing syscfg here
+    syscfg_init();
     for (req = requests; req != NULL; req = req->next)
     {
         vb = req->requestvb;
@@ -2980,18 +2983,31 @@ handleDot11WpaTable(
             continue;
         }
         switch (reqinfo->mode) {
+            
             case MODE_GET:
                 if (subid == saRgDot11WpaPreSharedKey_subid) {
-                	if((entry->IndexValue[0].Value.uValue == 3) || (entry->IndexValue[0].Value.uValue == 4))
-                	{
-                	netsnmp_request_set_error(req, SNMP_NOSUCHINSTANCE);
-                	 return SNMP_ERR_GENERR;
+                	if((entry->IndexValue[0].Value.uValue == 3) || 
+                           (entry->IndexValue[0].Value.uValue == 4) || 
+                           (entry->IndexValue[0].Value.uValue == 7) ||
+                           (entry->IndexValue[0].Value.uValue == 8)) //added LNF index for get exemptions
+                	{     
+                              syscfg_get( NULL, "SNMPPSWDCTRLFLAG", buf, sizeof(buf));
+                              if( buf != NULL )
+                              {
+                                     // if SNMPPSWDCTRLFLAG == true then the Password Control feature is enabled
+                                     if (strcmp(buf, "true") == 0)
+                                     {
+                                       netsnmp_request_set_error(req, SNMP_NOSUCHINSTANCE);
+                                       return SNMP_ERR_GENERR;
+                                     }
+                              }
+                           
                 	}
                      // This parameter can't be read, but snmp was defined as read/write
                     //unsigned char value = '\0';
-					getWpaPSK(entry,value);
-                    snmp_set_var_typed_value(req->requestvb, (u_char)ASN_OCTET_STR, (u_char *)&value, strlen(value));
-                    req->processed = 1;
+                 	getWpaPSK(entry,value);
+                        snmp_set_var_typed_value(req->requestvb, (u_char)ASN_OCTET_STR, (u_char *)&value, strlen(value));
+                        req->processed = 1;
                 }
 				else if( subid ==saRgDot11WpaDefaultPreSharedKey_subid ){
 					
@@ -3006,10 +3022,22 @@ handleDot11WpaTable(
             case MODE_SET_RESERVE1:
                 /* sanity check */
                 if (subid == saRgDot11WpaPreSharedKey_subid) {
-                	if((entry->IndexValue[0].Value.uValue == 3) || (entry->IndexValue[0].Value.uValue == 4))
+                	if((entry->IndexValue[0].Value.uValue == 3) ||
+                           (entry->IndexValue[0].Value.uValue == 4) ||
+                           (entry->IndexValue[0].Value.uValue == 7) ||
+                           (entry->IndexValue[0].Value.uValue == 8)) //added LNF index for set exemptions
                 	{
-                	 netsnmp_request_set_error(req, SNMP_ERR_NOTWRITABLE);
-                	  return SNMP_ERR_GENERR;
+                              syscfg_get( NULL, "SNMPPSWDCTRLFLAG", buf, sizeof(buf));
+                              if( buf != NULL )
+                              {
+                                     // if SNMPPSWDCTRLFLAG == true then the Password Control feature is enabled
+                                     if (strcmp(buf, "true") == 0)
+                                     {
+                                       netsnmp_request_set_error(req, SNMP_ERR_NOTWRITABLE);
+                	               return SNMP_ERR_GENERR;
+                                     }
+                              }
+                           
                 	} 
                 	else
                 	{
@@ -3028,12 +3056,23 @@ handleDot11WpaTable(
                 /* set value to backend with no commit */
                 intval = NOT_IMPLEMENTED;
                 if (subid == saRgDot11WpaPreSharedKey_subid) {
-                	if((entry->IndexValue[0].Value.uValue == 3) || (entry->IndexValue[0].Value.uValue == 4))
+                	if((entry->IndexValue[0].Value.uValue == 3) ||
+                           (entry->IndexValue[0].Value.uValue == 4) || 
+                           (entry->IndexValue[0].Value.uValue == 7) ||
+                           (entry->IndexValue[0].Value.uValue == 8))
                 	{
-                	    netsnmp_request_set_error(req, SNMP_ERR_NOTWRITABLE);
-                	    return SNMP_ERR_GENERR;
-                	    
-                	}
+                              syscfg_get( NULL, "SNMPPSWDCTRLFLAG", buf, sizeof(buf));
+                              if( buf != NULL )
+                              {
+                                     // if SNMPPSWDCTRLFLAG == true then the Password Control feature is enabled
+                                     if (strcmp(buf, "true") == 0)
+                                     {
+                                       netsnmp_request_set_error(req, SNMP_ERR_NOTWRITABLE);
+                	               return SNMP_ERR_GENERR;
+                                     }
+                              }
+                           
+                	} 
                         if(req->requestvb->val_len < 8 )
                         {
                             CcspTraceError(("%s: Length of Passphrase is less than 8\n", __FUNCTION__));
