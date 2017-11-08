@@ -167,10 +167,17 @@ BOOL Cosa_SetParamValuesNoCommit
 {
 	int                        iStatus     = 0;
 	char                       *faultParam = NULL;
-    CCSP_MESSAGE_BUS_INFO *bus_info = (CCSP_MESSAGE_BUS_INFO *)bus_handle;
-	
-    CcspTraceInfo(("RDKB_SNMP : SNMP SET called for param '%s' with value '%s'\n",val->parameterName,val->parameterValue)); 
 
+    CCSP_MESSAGE_BUS_INFO *bus_info = (CCSP_MESSAGE_BUS_INFO *)bus_handle;
+        /*Removing Logging of Password values due to Security Requirement*/
+	if(NULL != strstr(val->parameterName,".Security.X_COMCAST-COM_KeyPassphrase"))
+	{
+		CcspTraceInfo(("RDKB_SNMP : SNMP SET called for param '%s'\n",val->parameterName));
+	}
+	else
+	{
+		CcspTraceInfo(("RDKB_SNMP : SNMP SET called for param '%s' with value '%s'\n",val->parameterName,val->parameterValue));
+	}
     iStatus = CcspBaseIf_setParameterValues
 				(
 					bus_handle, 

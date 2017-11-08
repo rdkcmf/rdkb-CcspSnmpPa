@@ -2994,8 +2994,8 @@ handleDot11WpaTable(
                               syscfg_get( NULL, "SNMPPSWDCTRLFLAG", buf, sizeof(buf));
                               if( buf != NULL )
                               {
-                                     // if SNMPPSWDCTRLFLAG == true then the Password Control feature is enabled
-                                     if (strcmp(buf, "true") == 0)
+                                     // if SNMPPSWDCTRLFLAG == false, then Get is not allowed
+                                     if (strcmp(buf, "false") == 0)
                                      {
                                        netsnmp_request_set_error(req, SNMP_NOSUCHINSTANCE);
                                        return SNMP_ERR_GENERR;
@@ -3030,8 +3030,8 @@ handleDot11WpaTable(
                               syscfg_get( NULL, "SNMPPSWDCTRLFLAG", buf, sizeof(buf));
                               if( buf != NULL )
                               {
-                                     // if SNMPPSWDCTRLFLAG == true then the Password Control feature is enabled
-                                     if (strcmp(buf, "true") == 0)
+                                     // if SNMPPSWDCTRLFLAG == false, Set is not allowed
+                                     if (strcmp(buf, "false") == 0)
                                      {
                                        netsnmp_request_set_error(req, SNMP_ERR_NOTWRITABLE);
                 	               return SNMP_ERR_GENERR;
@@ -3064,8 +3064,8 @@ handleDot11WpaTable(
                               syscfg_get( NULL, "SNMPPSWDCTRLFLAG", buf, sizeof(buf));
                               if( buf != NULL )
                               {
-                                     // if SNMPPSWDCTRLFLAG == true then the Password Control feature is enabled
-                                     if (strcmp(buf, "true") == 0)
+                                     // if SNMPPSWDCTRLFLAG == false, Set is not allowed
+                                     if (strcmp(buf, "false") == 0)
                                      {
                                        netsnmp_request_set_error(req, SNMP_ERR_NOTWRITABLE);
                 	               return SNMP_ERR_GENERR;
