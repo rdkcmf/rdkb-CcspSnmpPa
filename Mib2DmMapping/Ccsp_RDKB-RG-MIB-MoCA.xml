@@ -603,6 +603,56 @@ limitations under the License.
             </mapping>
 
         </scalarGroup>
+	
+	<scalarGroup>
+
+            <name>rdkbMocaForceEnable</name>
+
+            <baseOid>1.3.6.1.4.1.17270.50.4.1.4</baseOid>
+
+            <enabled>true</enabled>
+
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+
+            <callbacks>
+
+               <!--  <handleRequests>handleMocaForceEnable</handleRequests> -->
+
+            </callbacks>
+
+            <mapping>
+
+                <mib>
+
+                    <lastOid>1</lastOid>
+
+                    <name>rdkbMocaForceEnable</name>
+
+                    <access>ReadWrite</access>
+
+                    <dataType>TruthValue</dataType>
+
+                    <range>
+
+                        <min>1</min><max>2</max>
+
+                    </range>
+
+                </mib>
+
+                <dm>
+
+                    <!-- fill in DM param and type -->
+
+                    <paramName>Device.MoCA.X_RDKCENTRAL-COM_ForceEnable</paramName>
+
+                    <dataType>boolean</dataType>
+
+                </dm>
+
+            </mapping>
+
+        </scalarGroup>
 
     </scalarGroups>
 
