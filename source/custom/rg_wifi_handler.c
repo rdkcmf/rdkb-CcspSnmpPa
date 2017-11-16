@@ -2986,11 +2986,16 @@ handleDot11WpaTable(
             
             case MODE_GET:
                 if (subid == saRgDot11WpaPreSharedKey_subid) {
-                	if((entry->IndexValue[0].Value.uValue == 3) || 
-                           (entry->IndexValue[0].Value.uValue == 4) || 
-                           (entry->IndexValue[0].Value.uValue == 7) ||
-                           (entry->IndexValue[0].Value.uValue == 8)) //added LNF index for get exemptions
-                	{     
+                        /*SNMP set or get should not be re-enabled XH WiFi password even via RFC*/
+                        if((entry->IndexValue[0].Value.uValue == 3) || 
+                           (entry->IndexValue[0].Value.uValue == 4))
+                        {
+                            netsnmp_request_set_error(req, SNMP_NOSUCHINSTANCE);
+                            return SNMP_ERR_GENERR;
+                        }
+                        else if((entry->IndexValue[0].Value.uValue == 7) ||
+                             (entry->IndexValue[0].Value.uValue == 8)) //added LNF index for get exemptions
+                        {     
                               syscfg_get( NULL, "SNMPPSWDCTRLFLAG", buf, sizeof(buf));
                               if( buf != NULL )
                               {
@@ -3022,11 +3027,16 @@ handleDot11WpaTable(
             case MODE_SET_RESERVE1:
                 /* sanity check */
                 if (subid == saRgDot11WpaPreSharedKey_subid) {
-                	if((entry->IndexValue[0].Value.uValue == 3) ||
-                           (entry->IndexValue[0].Value.uValue == 4) ||
-                           (entry->IndexValue[0].Value.uValue == 7) ||
-                           (entry->IndexValue[0].Value.uValue == 8)) //added LNF index for set exemptions
-                	{
+                        /*SNMP set or get should not be re-enabled XH WiFi password even via RFC*/
+                        if((entry->IndexValue[0].Value.uValue == 3) ||
+                           (entry->IndexValue[0].Value.uValue == 4))
+                        {
+                            netsnmp_request_set_error(req, SNMP_ERR_NOTWRITABLE);
+                            return SNMP_ERR_GENERR;
+                        }
+                        else if((entry->IndexValue[0].Value.uValue == 7) ||
+                                (entry->IndexValue[0].Value.uValue == 8)) //added LNF index for set exemptions
+                        {
                               syscfg_get( NULL, "SNMPPSWDCTRLFLAG", buf, sizeof(buf));
                               if( buf != NULL )
                               {
@@ -3034,7 +3044,7 @@ handleDot11WpaTable(
                                      if (strcmp(buf, "false") == 0)
                                      {
                                        netsnmp_request_set_error(req, SNMP_ERR_NOTWRITABLE);
-                	               return SNMP_ERR_GENERR;
+                                       return SNMP_ERR_GENERR;
                                      }
                               }
                            
@@ -3056,11 +3066,16 @@ handleDot11WpaTable(
                 /* set value to backend with no commit */
                 intval = NOT_IMPLEMENTED;
                 if (subid == saRgDot11WpaPreSharedKey_subid) {
-                	if((entry->IndexValue[0].Value.uValue == 3) ||
-                           (entry->IndexValue[0].Value.uValue == 4) || 
-                           (entry->IndexValue[0].Value.uValue == 7) ||
-                           (entry->IndexValue[0].Value.uValue == 8))
-                	{
+                        /*SNMP set or get should not be re-enabled XH WiFi password even via RFC*/
+                        if((entry->IndexValue[0].Value.uValue == 3) ||
+                           (entry->IndexValue[0].Value.uValue == 4))
+                        {
+                            netsnmp_request_set_error(req, SNMP_ERR_NOTWRITABLE);
+                            return SNMP_ERR_GENERR;
+                        }
+                        else if((entry->IndexValue[0].Value.uValue == 7) ||
+                                (entry->IndexValue[0].Value.uValue == 8))
+                        {
                               syscfg_get( NULL, "SNMPPSWDCTRLFLAG", buf, sizeof(buf));
                               if( buf != NULL )
                               {
@@ -3068,7 +3083,7 @@ handleDot11WpaTable(
                                      if (strcmp(buf, "false") == 0)
                                      {
                                        netsnmp_request_set_error(req, SNMP_ERR_NOTWRITABLE);
-                	               return SNMP_ERR_GENERR;
+                                       return SNMP_ERR_GENERR;
                                      }
                               }
                            
