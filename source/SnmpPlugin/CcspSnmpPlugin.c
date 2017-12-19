@@ -135,7 +135,7 @@ init_ccsp_snmp_plugin(void)
     set_debug_level();
 
 #ifdef FEATURE_SUPPORT_RDKLOG
-	rdk_logger_init(DEBUG_INI_NAME);
+    RDK_LOGGER_INIT();
 #endif
 
 #ifdef INCLUDE_BREAKPAD
