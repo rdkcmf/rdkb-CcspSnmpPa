@@ -9,7 +9,7 @@ Type=forking
 WorkingDirectory=/usr/ccsp/snmp
 Environment="LOG4C_RCPATH=/etc"
 Environment="MIBS=ALL"
-ExecStart=/usr/bin/snmp_subagent
+ExecStart=/usr/bin/snmp_subagent -x tcp:127.0.0.1:705
 RemainAfterExit=yes
 Restart=always
 StandardOutput=syslog
