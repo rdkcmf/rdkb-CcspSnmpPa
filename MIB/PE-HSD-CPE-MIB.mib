@@ -783,6 +783,44 @@
 				default this value is false and the feature is disabled."
 			::= { atm 1 }
 
+
+-- xOpsDMObjs feature objects
+		-- 1.3.6.1.4.1.17270.43.1.2
+		xOpsDMObjs OBJECT IDENTIFIER ::= { peHSDCPEMIBObjects 4 }
+
+		
+		-- 1.3.6.1.4.1.17270.43.1.2.1
+		xOpsDMUploadLogsNow OBJECT-TYPE
+			SYNTAX TruthValue
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"Flag to Upload the logs from device."
+			::= { xOpsDMObjs 1 }
+
+		
+		-- 1.3.6.1.4.1.17270.43.1.2.2
+		xOpsDMLogsUploadStatus OBJECT-TYPE
+			SYNTAX DisplayString
+			MAX-ACCESS read-only
+			STATUS current
+			DESCRIPTION
+				"Provides  Status of the log upload. NotTriggered(0),triggered(1),in progress(2),uploadfailed(3),complete(4)."
+			::= { xOpsDMObjs 2 }
+
+-- flatFileBase feature objects
+		-- 1.3.6.1.4.1.17270.4.1.2
+		flatFileBase OBJECT IDENTIFIER ::= { peHSDCPEMIBObjects 5 }
+
+		
+		-- 1.3.6.1.4.1.17270.4.1.2.1
+		flatFilePrivateKey OBJECT-TYPE
+			SYNTAX DisplayString
+			MAX-ACCESS read-write
+			STATUS current
+			DESCRIPTION
+				"The RIPv2 key for static IP on WAN."
+			::= { flatFileBase 1 }
 		
 		-- 1.3.6.1.4.1.17270.44.3
 		peHSDCPENotification OBJECT IDENTIFIER ::= { peHSDCPE 3 }
@@ -827,12 +865,30 @@
 				"Description."
 			::= { peHSDCPEGroups 3 }
 
+
+		-- 1.3.6.1.4.1.17270.44.4.1.4
+		xOpsDMObjsGroup OBJECT-GROUP
+			OBJECTS { xOpsDMUploadLogsNow, xOpsDMLogsUploadStatus }
+			STATUS current
+			DESCRIPTION 
+				"Manual Upload of Logs."
+			::= { peHSDCPEGroups 4 }
+
+
+		-- 1.3.6.1.4.1.17270.44.4.1.5
+		flatFileBaseGroup OBJECT-GROUP
+			OBJECTS { flatFilePrivateKey }
+			STATUS current
+			DESCRIPTION 
+				"Description."
+			::= { peHSDCPEGroups 5 }
+
 		
 	
 	END
 -- This MIB contains the diagnostic OIDs for the High Speed Data (HSD) CPEs for PE 
 -- defined features of Self-Heal, Dynamic Channel Selection (DCS), Air Time Management 
--- (ATM)
+-- (ATM),xOpsDMObjs, flatFileBase
 
 --
 -- PE-HSD-CPE-MIB.mib
