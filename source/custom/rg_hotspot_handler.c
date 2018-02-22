@@ -48,6 +48,7 @@
 
 #define TRUE 1
 #define FALSE 0
+#define MAX_STRING_SIZE 64
 //zqiu>>
 //#define HOTSPOT_DM_OPTION82_CURCUIT_ID "Device.X_COMCAST_COM_GRE.Interface.1.DHCPCircuitIDSSID"
 //#define HOTSPOT_DM_OPTION82_REMOTE_ID "Device.X_COMCAST_COM_GRE.Interface.1.DHCPRemoteID"
@@ -659,7 +660,8 @@ handleL2ogreBase(
             case MODE_SET_RESERVE1:
             /* sanity check */
             if (subid == PriEpAddr_lastOid || subid == SecEpAddr_lastOid) {
-                if ((retval=netsnmp_check_vb_type(req->requestvb, ASN_OCTET_STR))!=SNMP_ERR_NOERROR){
+                if (((retval=netsnmp_check_vb_type(req->requestvb, ASN_OCTET_STR))!=SNMP_ERR_NOERROR) ||
+                    ((retval=netsnmp_check_vb_max_size(req->requestvb, MAX_STRING_SIZE))!=SNMP_ERR_NOERROR)){
                     netsnmp_set_request_error(reqinfo, req, retval);
                 }
                 
