@@ -37,7 +37,7 @@
 #include <net-snmp/net-snmp-config.h>
 #include <net-snmp/net-snmp-includes.h>
 #include <net-snmp/agent/net-snmp-agent-includes.h>
-
+#include <unistd.h>
 #include "CcspSnmpPlugin.h"
 
 #ifdef USE_PCD_API_EXCEPTION_HANDLING
@@ -165,6 +165,10 @@ main(int argc, char *argv[])
 
     snmp_log(LOG_INFO,"%s is up and running.\n", AGNT_NAME);
     system("sysevent set snmp_subagent-status started");
+    if (access("/tmp/snmp_subagent_initialized", F_OK) != 0)
+    {
+       system("print_uptime \"boot_to_snmp_subagent_uptime\"");
+    }
     system("touch /tmp/snmp_subagent_initialized");
 
     /* main loop */
