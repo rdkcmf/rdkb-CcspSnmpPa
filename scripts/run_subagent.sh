@@ -63,7 +63,9 @@ fi
 
 master=$1 # may empty
 
-killall snmp_subagent ; sleep 1
+if [ "$2" != "selfheal_snmpv2" ];then
+	killall snmp_subagent ; sleep 1
+fi
 
 if [ "x$master" != "x" ]; then
     echo "starting snmp_subagent process with $master"
