@@ -386,7 +386,7 @@ rdkbRgCaptivePortalEnable OBJECT-TYPE
 rdkbRgDeviceFWupdateAndFactoryReset OBJECT-TYPE
     SYNTAX INTEGER {
         false(0),
-        routerAndWifi(1),
+        routerAndWifi(1)
         }
         MAX-ACCESS      read-write
         STATUS          current
@@ -2041,7 +2041,7 @@ rdkbRgdot11nExtMulticastRate OBJECT-TYPE
     DEFVAL { 0 }
     ::= { rdkbRgDot11nExtEntry 7 }
 
-rdkbRgDot11BandSteering OBJECT IDENTIFIER ::= { rdkbRgDot11 8}
+rdkbRgDot11BandSteering OBJECT IDENTIFIER ::= { rdkbRgDot11 8 }
 
 rdkbRgDot11BandSteeringCapability OBJECT-TYPE
     SYNTAX      TruthValue
@@ -2051,7 +2051,7 @@ rdkbRgDot11BandSteeringCapability OBJECT-TYPE
         "Returns whether the device is capable of WiFi Band Steering functionality."
    ::= { rdkbRgDot11BandSteering 1 }
    
-   rdkbRgDot11BandSteeringEnable OBJECT-TYPE
+rdkbRgDot11BandSteeringEnable OBJECT-TYPE
     SYNTAX      TruthValue
     MAX-ACCESS  read-write
     STATUS      current
@@ -2059,7 +2059,7 @@ rdkbRgDot11BandSteeringCapability OBJECT-TYPE
         "Enabled - true , Disabled-false."
    ::= { rdkbRgDot11BandSteering 2 }
    
-      rdkbRgDot11BandSteeringHistory OBJECT-TYPE
+rdkbRgDot11BandSteeringHistory OBJECT-TYPE
     SYNTAX      SnmpAdminString
     MAX-ACCESS  read-only
     STATUS      current
@@ -2067,7 +2067,7 @@ rdkbRgDot11BandSteeringCapability OBJECT-TYPE
         "Returnd steering history"
    ::= { rdkbRgDot11BandSteering 3 }
    
-   rdkbRgDot11BandSteeringBSTable  OBJECT-TYPE
+rdkbRgDot11BandSteeringBSTable  OBJECT-TYPE
     SYNTAX      SEQUENCE OF RdkbRgDot11BandSteeringBSEntry
     MAX-ACCESS  not-accessible
     STATUS      current
@@ -2076,17 +2076,17 @@ rdkbRgDot11BandSteeringCapability OBJECT-TYPE
                  Index 10001 should be set for Radio 0 -- 2.4 GHz if populated.
                  Index 10101 should be set for Radio 1"
     ::= { rdkbRgDot11BandSteering 4 }
-    
-RdkbRgDot11BandSteeringBSEntry OBJECT-TYPE
-    SYNTAX  	RdkbRgDot11BandSteeringBSEntry    
+
+rdkbRgDot11BandSteeringBSEntry OBJECT-TYPE
+    SYNTAX      RdkbRgDot11BandSteeringBSEntry
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
         "A row in the table which represents parameters for an 802.11nRadio."
     INDEX   { ifIndex }
     ::= { rdkbRgDot11BandSteeringBSTable 1 }
-    
-rdkbRgDot11BandSteeringBSEntry ::= 
+
+RdkbRgDot11BandSteeringBSEntry ::=
     SEQUENCE {
         rdkbRgDot11BandSteeringBSUtilizationThreshold     INTEGER,
         rdkbRgDot11BandSteeringBSRSSIThreshold   INTEGER,
