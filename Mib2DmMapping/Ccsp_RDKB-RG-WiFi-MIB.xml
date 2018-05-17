@@ -1551,14 +1551,14 @@ limitations under the License.
                     <access>ReadWrite</access>
                     <dataType>INTEGER</dataType>
                     <range>
-                        <min>1</min><max>3</max>
+                        <min>1</min><max>4</max>
                     </range>
                 </mib>
                 <dm>
                     <!-- TYPECHECK. Do we need to support auto? Can Auto ever be read back? -->
                     <paramName>Device.WiFi.Radio.%d.OperatingChannelBandwidth</paramName>
                     <dataType>string</dataType>
-                    <enumeration>20MHz(1),40MHz(2),80MHz(3)</enumeration> 
+                    <enumeration>20MHz(1),40MHz(2),80MHz(3),160MHz(4)</enumeration> 
                 </dm>
             </mapping>
             <mapping>

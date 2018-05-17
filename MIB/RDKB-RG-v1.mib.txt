@@ -1970,7 +1970,8 @@ rdkbRgdot11nExtBandWidth OBJECT-TYPE
     SYNTAX INTEGER {
         width-20MHz(1),
         width-40MHz(2),
-        width-80MHz(3)
+        width-80MHz(3),
+	width-160MHz(4)
         }
     MAX-ACCESS  read-write
     STATUS      current
@@ -1978,7 +1979,8 @@ rdkbRgdot11nExtBandWidth OBJECT-TYPE
         "Determines which Band Width that we will be operating in. Either the 20MHz or the 40MHz.
          Note: This is for N cards only, and this also affect other MIB selections such as rdkbRgdot11nSideBand.
          The 80 MHz channel width is only applicable for 802.11ac capable cards. If a user sets this to 80 MHz, SNMPset would fail for non-802.11ac cards
-         This object is stored in non-vol and defaults to ? after factory reset."
+         This object is stored in non-vol and defaults to ? after factory reset.
+	     The 160MHz channel width is only applicable for XB6."
     ::= { rdkbRgDot11nExtEntry 4 }
 
 rdkbRgdot11nExtSideBand OBJECT-TYPE
