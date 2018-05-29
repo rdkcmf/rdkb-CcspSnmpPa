@@ -822,38 +822,6 @@ CcspUtilLoadMibInfo
 		pInfo->bWritable = FALSE;
 	}
 
-	/* get the range */
-	AnscZeroMemory(buffer, 256);
-	uSize = 255;
-	pChildNode = (PANSC_XML_DOM_NODE_OBJECT)pRootNode->GetChildByName(pRootNode, CCSP_XML_MibInfo_range);
-	pInfo->uMaskLimit = CCSP_MIB_NO_LIMIT;
-
-	if( pChildNode != NULL)
-	{
-		pChildNode2 = (PANSC_XML_DOM_NODE_OBJECT)pChildNode->GetChildByName(pChildNode, CCSP_XML_MibInfo_min);
-		pChildNode3 = (PANSC_XML_DOM_NODE_OBJECT)pChildNode->GetChildByName(pChildNode, CCSP_XML_MibInfo_max);		
-
-		if( pChildNode2 != NULL)
-		{
-			pChildNode2->GetDataUlong(pChildNode2, NULL, (ULONG*)&pInfo->nMin);
-
-			if( pChildNode3 != NULL)
-			{
-				pChildNode3->GetDataUlong(pChildNode3, NULL, (ULONG*)&pInfo->nMax);
-				pInfo->uMaskLimit = CCSP_MIB_LIMIT_BOTH;
-			}
-			else
-			{
-				pInfo->uMaskLimit = CCSP_MIB_LIMIT_MIN;
-			}
-		}
-		else if( pChildNode3 != NULL)
-		{
-			pChildNode3->GetDataUlong(pChildNode3, NULL, (ULONG*)&pInfo->nMax);
-			pInfo->uMaskLimit = CCSP_MIB_LIMIT_MAX;
-		}
-	}
-
 	/* get the dataType */
 	AnscZeroMemory(buffer, 256);
 	uSize = 255;
@@ -867,6 +835,59 @@ CcspUtilLoadMibInfo
 	}
 
 	pChildNode->GetDataString(pChildNode, NULL, buffer, &uSize);
+
+	/* get the range */
+	pChildNode = (PANSC_XML_DOM_NODE_OBJECT)pRootNode->GetChildByName(pRootNode, CCSP_XML_MibInfo_range);
+	pInfo->uMaskLimit = CCSP_MIB_NO_LIMIT;
+
+	if( pChildNode != NULL)
+	{
+		pChildNode2 = (PANSC_XML_DOM_NODE_OBJECT)pChildNode->GetChildByName(pChildNode, CCSP_XML_MibInfo_min);
+		pChildNode3 = (PANSC_XML_DOM_NODE_OBJECT)pChildNode->GetChildByName(pChildNode, CCSP_XML_MibInfo_max);		
+
+		if( pChildNode2 != NULL)
+		{
+			if( AnscEqualString(buffer, "INTEGER", FALSE) || AnscEqualString(buffer, "Integer32", TRUE) )
+			{
+				pChildNode2->GetDataLong(pChildNode2, NULL, (LONG*)&pInfo->nMin);
+			}
+			else
+			{				
+				pChildNode2->GetDataUlong(pChildNode2, NULL, (ULONG*)&pInfo->nMin);
+			}
+			
+			if( pChildNode3 != NULL)
+			{
+				if( AnscEqualString(buffer, "INTEGER", FALSE) || AnscEqualString(buffer, "Integer32", TRUE) )
+				{
+					pChildNode3->GetDataLong(pChildNode3, NULL, (LONG*)&pInfo->nMax);
+				}
+				else
+				{				
+					pChildNode3->GetDataUlong(pChildNode3, NULL, (ULONG*)&pInfo->nMax);
+				}
+			
+				pInfo->uMaskLimit = CCSP_MIB_LIMIT_BOTH;
+			}
+			else
+			{
+				pInfo->uMaskLimit = CCSP_MIB_LIMIT_MIN;
+			}
+		}
+		else if( pChildNode3 != NULL)
+		{
+			if( AnscEqualString(buffer, "INTEGER", FALSE) || AnscEqualString(buffer, "Integer32", TRUE) )
+			{
+				pChildNode3->GetDataLong(pChildNode3, NULL, (ULONG*)&pInfo->nMax);
+			}
+			else
+			{				
+				pChildNode3->GetDataUlong(pChildNode3, NULL, (ULONG*)&pInfo->nMax);
+			}
+		
+			pInfo->uMaskLimit = CCSP_MIB_LIMIT_MAX;
+		}
+	}
 
 	/* check the MIB data type limitations */
 	checkMibDataType(buffer, pInfo, pQueue);

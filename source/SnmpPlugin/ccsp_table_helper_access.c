@@ -239,7 +239,11 @@ verifyTypeAndValueInSetReserved1
 	}
 	else if( pMapping->MibInfo.uMaskLimit == CCSP_MIB_LIMIT_BOTH)
 	{
-		if( pMapping->MibInfo.uType == ASN_INTEGER || pMapping->MibInfo.uType == ASN_UNSIGNED)
+		if( pMapping->MibInfo.uType == ASN_INTEGER )
+		{
+			ret = netsnmp_check_vb_int_range(pVb, pMapping->MibInfo.nMin, pMapping->MibInfo.nMax);
+		}
+		else if ( pMapping->MibInfo.uType == ASN_UNSIGNED )
 		{
 			ret = netsnmp_check_vb_range(pVb, pMapping->MibInfo.nMin, pMapping->MibInfo.nMax);
 		}
