@@ -66,4 +66,19 @@ rdkbDocsisMidSplitFilterRange OBJECT-TYPE
      If set after the setting won't take effect until a reboot is done."
      ::= { rdkbVcWan 1 }
 
+rdkbDocsisDisableOFDM OBJECT-TYPE
+     SYNTAX INTEGER {
+        enable(0),
+        disable(1)
+     }
+     MAX-ACCESS read-write
+     STATUS current
+     DESCRIPTION
+     "Used to enable or disable OFDM DS tuners.
+     enable(0) - Enable OFDM DS.
+     disbale(1) - Disable OFDM DS.
+     This SHOULD be set prior to the Cable Modem Initialization.
+     If set after the setting won't take effect until a reboot is done."
+     ::= { rdkbVcWan 2 }
+
 END
