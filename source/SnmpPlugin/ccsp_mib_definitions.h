@@ -116,6 +116,8 @@
 #define  CCSP_MIB_LIMIT_MAX         2
 #define  CCSP_MIB_LIMIT_BOTH        3
 
+typedef void (* CCSP_CLEAN_MIB_VAL_QUEUE_FUN_PTR)(void *);
+
 /* Counter64 defintion */
 typedef  struct
 _CCSP_U64
@@ -298,6 +300,7 @@ CCSP_MIB_VALUE,  *PCCSP_MIB_VALUE;
 typedef  struct
 _CCSP_TABLE_ENTRY
 {
+	CCSP_CLEAN_MIB_VAL_QUEUE_FUN_PTR CleanMibValueQueueFunctionPtr;
 	CCSP_MIB_INDEX_VALUE            IndexValue[MAXI_MIB_INDEX_COUNT];
 	ULONG							IndexCount;
 	QUEUE_HEADER                    MibValueQueue;
