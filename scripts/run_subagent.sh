@@ -71,7 +71,8 @@ fi
 
 master=$1 # may empty
 
-killall snmp_subagent ; sleep 1
+SNMP_PID=`ps -ww | grep snmp_subagent | grep -v cm_snmp_ma_2 | grep -v grep | awk '{print $1}'`
+kill -9 $SNMP_PID
 
 if [ "x$master" != "x" ]; then
       if [[ "$BOX_TYPE" = "XB3" && "$ENABLE_SNMPv2" = "true" || "$BOX_TYPE" != "XB3" ]]; then
