@@ -2970,6 +2970,7 @@ handleDot11WpaTable(
     netsnmp_variable_list *vb = NULL;
     char value[64]={'\0'},defpskvalue[64]={'\0'};
     char buf[10]={'\0'};
+    char emptyString[] = {'\0'};
 
     //Initializing syscfg here
     syscfg_init();
@@ -2986,15 +2987,24 @@ handleDot11WpaTable(
         switch (reqinfo->mode) {
             case MODE_GET:
                 if (subid == saRgDot11WpaPreSharedKey_subid) {
-                    /*SNMP set or get should not be re-enabled XH WiFi password even via RFC*/
+                    /*SNMP set or get should not be re-enabled for XH, xfinity-open and xfinity-secure WiFi password even via RFC*/
                     if((entry->IndexValue[0].Value.uValue == 3) || 
-                       (entry->IndexValue[0].Value.uValue == 4))
+                       (entry->IndexValue[0].Value.uValue == 4) ||
+                       (entry->IndexValue[0].Value.uValue == 5) ||
+                       (entry->IndexValue[0].Value.uValue == 6) ||
+                       (entry->IndexValue[0].Value.uValue == 9) ||
+                       (entry->IndexValue[0].Value.uValue == 10))
                     {
-                        netsnmp_request_set_error(req, SNMP_NOSUCHINSTANCE);
-                        return SNMP_ERR_GENERR;
+                        snmp_set_var_typed_value(req->requestvb, (u_char)ASN_OCTET_STR, (u_char *)&emptyString, strlen(emptyString));
                     }
+                    /* Get exemption for Mesh Backhaul/LnF SSIDs when SNMPPSWDCTRLFLAG is
+                       false */
                     else if((entry->IndexValue[0].Value.uValue == 7) ||
-                            (entry->IndexValue[0].Value.uValue == 8)) //added LNF index for get exemptions
+                            (entry->IndexValue[0].Value.uValue == 8) ||
+                            (entry->IndexValue[0].Value.uValue == 11) ||
+                            (entry->IndexValue[0].Value.uValue == 12) ||
+                            (entry->IndexValue[0].Value.uValue == 13) ||
+                            (entry->IndexValue[0].Value.uValue == 14))
                     {
                         syscfg_get( NULL, "SNMPPSWDCTRLFLAG", buf, sizeof(buf));
                         if( buf != NULL )
@@ -3002,15 +3012,21 @@ handleDot11WpaTable(
                             // if SNMPPSWDCTRLFLAG == false, then Get is not allowed
                             if (strcmp(buf, "false") == 0)
                             {
-                                netsnmp_request_set_error(req, SNMP_NOSUCHINSTANCE);
-                                return SNMP_ERR_GENERR;
+                                snmp_set_var_typed_value(req->requestvb, (u_char)ASN_OCTET_STR, (u_char *)&emptyString, strlen(emptyString));
+                            }
+                            else
+                            {
+                                getWpaPSK(entry,value);
+                                snmp_set_var_typed_value(req->requestvb, (u_char)ASN_OCTET_STR, (u_char *)&value, strlen(value));
                             }
                         }
                     }
                      // This parameter can't be read, but snmp was defined as read/write
                     //unsigned char value = '\0';
-					getWpaPSK(entry,value);
-                    snmp_set_var_typed_value(req->requestvb, (u_char)ASN_OCTET_STR, (u_char *)&value, strlen(value));
+                    else {
+                        getWpaPSK(entry,value);
+                        snmp_set_var_typed_value(req->requestvb, (u_char)ASN_OCTET_STR, (u_char *)&value, strlen(value));
+                    }
                     req->processed = 1;
                 }
 				else if( subid ==saRgDot11WpaDefaultPreSharedKey_subid ){
@@ -3026,15 +3042,25 @@ handleDot11WpaTable(
             case MODE_SET_RESERVE1:
                 /* sanity check */
                 if (subid == saRgDot11WpaPreSharedKey_subid) {
-                    /*SNMP set or get should not be re-enabled XH WiFi password even via RFC*/
+                    /*SNMP set or get should not be re-enabled for XH, xfinity-open and xfinity-secure WiFi password even via RFC*/
                     if((entry->IndexValue[0].Value.uValue == 3) || 
-                       (entry->IndexValue[0].Value.uValue == 4))
+                       (entry->IndexValue[0].Value.uValue == 4) ||
+                       (entry->IndexValue[0].Value.uValue == 5) ||
+                       (entry->IndexValue[0].Value.uValue == 6) ||
+                       (entry->IndexValue[0].Value.uValue == 9) ||
+                       (entry->IndexValue[0].Value.uValue == 10))
                     {
                         netsnmp_request_set_error(req, SNMP_ERR_NOTWRITABLE);
                         return SNMP_ERR_GENERR;
                     }
+                    /* Set exemption for Mesh Backhaul/LnF SSIDs when SNMPPSWDCTRLFLAG is
+                       false */
                     else if((entry->IndexValue[0].Value.uValue == 7) ||
-                            (entry->IndexValue[0].Value.uValue == 8)) //added LNF index for set exemptions
+                            (entry->IndexValue[0].Value.uValue == 8) ||
+                            (entry->IndexValue[0].Value.uValue == 11) |
+                            (entry->IndexValue[0].Value.uValue == 12) |
+                            (entry->IndexValue[0].Value.uValue == 13) ||
+                            (entry->IndexValue[0].Value.uValue == 14))
                     {
                         syscfg_get( NULL, "SNMPPSWDCTRLFLAG", buf, sizeof(buf));
                         if( buf != NULL )
@@ -3064,15 +3090,25 @@ handleDot11WpaTable(
                 /* set value to backend with no commit */
                 intval = NOT_IMPLEMENTED;
                 if (subid == saRgDot11WpaPreSharedKey_subid) {
-                    /*SNMP set or get should not be re-enabled XH WiFi password even via RFC*/
+                    /*SNMP set or get should not be re-enabled for XH, xfinity-open and xfinity-secure WiFi password even via RFC*/
                     if((entry->IndexValue[0].Value.uValue == 3) ||
-                       (entry->IndexValue[0].Value.uValue == 4))
+                       (entry->IndexValue[0].Value.uValue == 4) ||
+                       (entry->IndexValue[0].Value.uValue == 5) ||
+                       (entry->IndexValue[0].Value.uValue == 6) ||
+                       (entry->IndexValue[0].Value.uValue == 9) ||
+                       (entry->IndexValue[0].Value.uValue == 10))
                     {
                         netsnmp_request_set_error(req, SNMP_ERR_NOTWRITABLE);
                         return SNMP_ERR_GENERR;
                     }
+                    /* Set exemption for Mesh Backhaul/LnF SSIDs when SNMPPSWDCTRLFLAG is
+                       false */
                     else if((entry->IndexValue[0].Value.uValue == 7) ||
-                            (entry->IndexValue[0].Value.uValue == 8))
+                            (entry->IndexValue[0].Value.uValue == 8) ||
+                            (entry->IndexValue[0].Value.uValue == 11) ||
+                            (entry->IndexValue[0].Value.uValue == 12) ||
+                            (entry->IndexValue[0].Value.uValue == 13) ||
+                            (entry->IndexValue[0].Value.uValue == 14))
                     {
                         syscfg_get( NULL, "SNMPPSWDCTRLFLAG", buf, sizeof(buf));
                         if( buf != NULL )
