@@ -1,0 +1,84 @@
+--#######################################################################
+--#   Copyright [2014] [Cisco Systems, Inc.]
+--# 
+--#   Licensed under the Apache License, Version 2.0 (the \"License\");
+--#   you may not use this file except in compliance with the License.
+--#   You may obtain a copy of the License at
+--# 
+--#       http://www.apache.org/licenses/LICENSE-2.0
+--# 
+--#   Unless required by applicable law or agreed to in writing, software
+--#   distributed under the License is distributed on an \"AS IS\" BASIS,
+--#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+--#   See the License for the specific language governing permissions and
+--#   limitations under the License.
+--#######################################################################
+
+RDKB-VENDOR-CONTROLLED-MIB DEFINITIONS ::= BEGIN
+IMPORTS
+        MODULE-IDENTITY, OBJECT-TYPE,
+        OBJECT-IDENTITY,
+        enterprises                           FROM SNMPv2-SMI
+        TEXTUAL-CONVENTION                    FROM SNMPv2-TC
+        MODULE-COMPLIANCE, OBJECT-GROUP       FROM SNMPv2-CONF;
+
+rdkb           OBJECT IDENTIFIER ::= { enterprises 17270 }
+rdkbModules    OBJECT IDENTIFIER ::= { rdkb 50 }
+
+rdkbVendorControlled    MODULE-IDENTITY
+        LAST-UPDATED    "201611090000Z"
+        ORGANIZATION    "TBD"
+        CONTACT-INFO    "TBD"
+        DESCRIPTION
+            "RDKB configuration that is implemented by the vendors due to needing 
+             the information prior to RDKB components initializing. Example is
+             WAN boot file configuration"
+
+        ::= { rdkbModules 100 } 
+
+rdkbVcSecurity   OBJECT IDENTIFIER ::=  { rdkbVendorControlled 1 }
+rdkbVcWan   OBJECT IDENTIFIER ::=  { rdkbVendorControlled 2 }
+
+rdkbEncryptedClientSeed OBJECT-TYPE
+     SYNTAX OCTET STRING (SIZE (8 | 32))
+     MAX-ACCESS read-write
+     STATUS current
+     DESCRIPTION
+     "The DES encoded seed--provided by the user--that will be used
+      to generate the password for access to the MSO.
+      When read, this object MUST return a zero-length string.
+      This object MUST only be set through WAN Boot File, and return
+      error if set after boot."
+     ::= { rdkbVcSecurity 1 }
+
+rdkbDocsisMidSplitFilterRange OBJECT-TYPE
+     SYNTAX INTEGER {
+        msfr5-85MHz(1),
+        msfr5-42MHz(2)
+     }
+     MAX-ACCESS read-write
+     STATUS current
+     DESCRIPTION
+     "Used to set mid-split filter frequency range for DOCSIS.
+     msfr5-85MHz(1) - Increased Range.
+     msfr5-42MHz(2) - Default Range.
+     This SHOULD be set prior to the Cable Modem Ranging.
+     If set after the setting won't take effect until a reboot is done."
+     ::= { rdkbVcWan 1 }
+
+rdkbDocsisDisableOFDM OBJECT-TYPE
+     SYNTAX INTEGER {
+        enable(0),
+        disable(1)
+     }
+     MAX-ACCESS read-write
+     STATUS current
+     DESCRIPTION
+     "Used to enable or disable OFDM DS tuners.
+     enable(0) - Enable OFDM DS.
+     disbale(1) - Disable OFDM DS.
+     This SHOULD be set prior to the Cable Modem Initialization.
+     If set after the setting won't take effect until a reboot is done."
+     ::= { rdkbVcWan 2 }
+
+END

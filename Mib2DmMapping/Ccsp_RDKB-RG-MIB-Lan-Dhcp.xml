@@ -1,0 +1,890 @@
+<?xml version="1.0"  encoding="UTF-8" ?>
+
+<!--
+If not stated otherwise in this file or this component's Licenses.txt
+file the following copyright and licenses apply:
+
+Copyright 2015 RDK Management
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<!--
+   Copyright [2014] [Cisco Systems, Inc.]
+
+   Licensed under the Apache License, Version 2.0 (the \"License\");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an \"AS IS\" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+
+<mib2DM xml="http://www.w3.org/XML/1998/namespace">
+    <version>1</version>
+    <name>RDKB-RG-MIB</name>
+    <lastUpdate>05/09/2012 12:58</lastUpdate>
+    <author>CcspMibHelper Mapping File Generator</author>
+    <!-- Add the library name if callbacks are needed. -->
+    <library>libsnmp_custom.so</library>
+    <scalarGroups>
+        <scalarGroup>
+            <name>rdkbRgIpMgmt</name>
+            <baseOid>1.3.6.1.4.1.17270.50.2.3</baseOid>
+            <!--  'enabled' can be set to 'false' if this set of mibs are not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- <mapToEntry>Wifi.Radio.%d.Frequency=2.4</mapToEntry> -->
+            <callbacks>
+                <handleRequests>handleIpMgmtRequests</handleRequests>
+            </callbacks>
+            <mapping>
+                <mib>
+                    <lastOid>1001</lastOid>
+                    <name>rdkbRgIpMgmtApplySettings</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcd.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+        </scalarGroup>
+    </scalarGroups>
+    <mibTables>
+        <mibTable>
+            <name>rdkbRgIpMgmtLanTable</name>
+            <tableOid>1.3.6.1.4.1.17270.50.2.3.2</tableOid>
+            <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <writable>false</writable>
+            <maxEntries>16</maxEntries>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- Add filters in the table -->
+            <!-- <mapToEntries>Device.X_CISCO_COM_DeviceControl.LanManagementEntry.</mapToEntries> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <index>
+                <mib>
+                    <lastOid>0</lastOid><!-- It's no in the table -->
+                    <name>ifIndex</name>
+                    <access>NoAccess</access>
+                    <dataType>unsigned32</dataType>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.X_CISCO_COM_DeviceControl.LanManagementEntry.</tableObj>
+                    <!-- If index maps to a different value, use <map> to add the mapping below. -->
+                    <map> <from>32</from> <to>1</to> </map>     
+                    <map> <from>112</from> <to>2</to> </map>  
+                    <map> <from>33</from> <to>3</to> </map>     
+                    <map> <from>34</from> <to>4</to> </map>  
+                    <map> <from>35</from> <to>5</to> </map>     
+                    <map> <from>113</from> <to>6</to> </map>  
+                    <map> <from>114</from> <to>7</to> </map>     
+                    <map> <from>115</from> <to>8</to> </map>  
+                    <map> <from>36</from> <to>9</to> </map>     
+                    <map> <from>37</from> <to>10</to> </map>  
+                    <map> <from>38</from> <to>11</to> </map>     
+                    <map> <from>39</from> <to>12</to> </map>  
+                    <map> <from>116</from> <to>13</to> </map>     
+                    <map> <from>117</from> <to>14</to> </map>  
+                    <map> <from>118</from> <to>15</to> </map>     
+                    <map> <from>119</from> <to>16</to> </map>
+                </mapToInsNumber>
+            </index>
+            <mapping>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>rdkbRgIpMgmtLanMode</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>1</min><max>5</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_DeviceControl.LanManagementEntry.%d.LanMode</paramName>
+                    <dataType>string</dataType>
+                    <enumeration>bridge-static(1),router(2),l2tpv2-client(3),mixed(4),vlan(5)</enumeration>
+                    <background/>
+                    <!-- mib values<enumeration>bridge(1),router(2),l2tpv2-client(3),mixed(4),vlan(5)</enumeration>-->
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>rdkbRgIpMgmtLanNetwork</name>
+                    <access>ReadWrite</access>
+                    <dataType>IpAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_DeviceControl.LanManagementEntry.%d.LanNetwork</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>rdkbRgIpMgmtLanNetworksAllow</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>0</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_DeviceControl.LanManagementEntry.%d.LanNetworksAllow</paramName>
+                    <dataType>string</dataType>
+                    <enumeration>default(0),anyPrivateClass(1),anyClass(2)</enumeration>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>rdkbRgIpMgmtLanSubnetMask</name>
+                    <access>ReadWrite</access>
+                    <dataType>IpAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_DeviceControl.LanManagementEntry.%d.LanSubnetMask</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>7</lastOid>
+                    <name>rdkbRgIpMgmtLanGateway</name>
+                    <access>ReadWrite</access>
+                    <dataType>IpAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_DeviceControl.LanManagementEntry.%d.LanIPAddress</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>8</lastOid>
+                    <name>rdkbRgIpMgmtLanDhcpServer</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>0</min><max>1</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.DHCPv4.Server.Enable</paramName>
+					<dataType>boolean</dataType>
+                </dm>
+            </mapping>
+<!--
+            <mapping>
+                <mib>
+                    <lastOid>9</lastOid>
+                    <name>rdkbRgIpMgmtLanNapt</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>0</min><max>1</max>
+                    </range>
+                </mib>
+                <dm>
+                    <paramName>Device.X_CISCO_COM_DeviceControl.LanManagementEntry.%d.LanNapt</paramName>
+                    <dataType>boolean</dataType>
+                </dm>
+            </mapping>
+-->
+            <mapping>
+                <mib>
+                    <lastOid>10</lastOid>
+                    <name>rdkbRgIpMgmtLanTypeOfService</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_DeviceControl.LanManagementEntry.%d.LanTos</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+			<!-- Not required for comcast
+            <mapping>
+                <mib>
+                    <lastOid>11</lastOid>
+                    <name>rdkbRgIpMgmtLanDhcp125Option</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>0</min><max>1</max>
+                    </range>
+                </mib>
+                <dm>
+                    <paramName>Device.X_CISCO_COM_DeviceControl.LanManagementEntry.%d.LanDhcp125</paramName>
+                    <dataType>boolean</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>12</lastOid>
+                    <name>rdkbRgIpMgmtLanHnap</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>0</min><max>1</max>
+                    </range>
+                </mib>
+                <dm>
+                    <paramName>Device.X_CISCO_COM_DeviceControl.LanManagementEntry.%d.LanHnap</paramName>
+                    <dataType>boolean</dataType>
+                </dm>
+            </mapping>
+			-->
+            <mapping>
+                <mib>
+                    <lastOid>13</lastOid>
+                    <name>rdkbRgIpMgmtLanUpnp</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>0</min><max>1</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.UPnP.Device.UPnPIGD</paramName>
+                    <dataType>boolean</dataType>
+                </dm>
+            </mapping>
+        </mibTable>
+        <mibTable>
+            <name>rdkbRgIpMgmtLanDhcpServerTable</name>
+            <tableOid>1.3.6.1.4.1.17270.50.2.3.3</tableOid>
+            <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <writable>false</writable>
+            <maxEntries>16</maxEntries>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- Add filters in the table -->
+            <!-- <mapToEntries>Device.DHCPv4.Server.Pool</mapToEntries> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <index>
+                <mib>
+                    <lastOid>0</lastOid><!-- It's no in the table -->
+                    <name>ifIndex</name>
+                    <access>NoAccess</access>
+                    <dataType>unsigned32</dataType>
+                </mib>
+                    <!-- If index maps to a different value, use <map> to add the mapping below. -->
+                    <mapToInsNumber>
+                    <tableObj>Device.DHCPv4.Server.Pool.</tableObj>
+                    <!-- If index maps to a different value, use <map> to add the mapping below. -->
+                    <map> <from>32</from> <to>1</to> </map>     
+                    <map> <from>112</from> <to>2</to> </map>  
+                    <map> <from>33</from> <to>3</to> </map>     
+                    <map> <from>34</from> <to>4</to> </map>  
+                    <map> <from>35</from> <to>5</to> </map>     
+                    <map> <from>113</from> <to>6</to> </map>  
+                    <map> <from>114</from> <to>7</to> </map>     
+                    <map> <from>115</from> <to>8</to> </map>  
+                    <map> <from>36</from> <to>9</to> </map>     
+                    <map> <from>37</from> <to>10</to> </map>  
+                    <map> <from>38</from> <to>11</to> </map>     
+                    <map> <from>39</from> <to>12</to> </map>  
+                    <map> <from>116</from> <to>13</to> </map>     
+                    <map> <from>117</from> <to>14</to> </map>  
+                    <map> <from>118</from> <to>15</to> </map>     
+                    <map> <from>119</from> <to>16</to> </map>
+                </mapToInsNumber>
+            </index>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>rdkbRgIpMgmtLanDhcpServerPoolStart</name>
+                    <access>ReadWrite</access>
+                    <dataType>IpAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.DHCPv4.Server.Pool.%d.MinAddress</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>rdkbRgIpMgmtLanDhcpServerPoolEnd</name>
+                    <access>ReadWrite</access>
+                    <dataType>IpAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.DHCPv4.Server.Pool.%d.MaxAddress</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>rdkbRgIpMgmtLanDhcpServerLeaseTime</name>
+                    <access>ReadWrite</access>
+                    <dataType>Unsigned32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.DHCPv4.Server.Pool.%d.LeaseTime</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>6</lastOid>
+                    <name>rdkbRgIpMgmtLanDhcpServerTimeOffset</name>
+                    <access>ReadWrite</access>
+                    <dataType>Integer32</dataType>
+                    <range>
+                        <min>-86400</min><max>86400</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.DHCPv4.Server.Pool.%d.X_CISCO_COM_TimeOffset</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>7</lastOid>
+                    <name>rdkbRgIpMgmtLanDhcpServerDomainName</name>
+                    <access>ReadWrite</access>
+                    <dataType>DisplayString</dataType>
+                    <range>
+                        <min>0</min><max>255</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.DHCPv4.Server.Pool.%d.DomainName</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+        </mibTable>
+        <mibTable>
+            <name>rdkbRgIpMgmtLanAddrTable</name>
+            <tableOid>1.3.6.1.4.1.17270.50.2.3.4</tableOid>
+            <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <writable>false</writable>
+            <maxEntries>16</maxEntries>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- Add filters in the table -->
+            <!-- <mapToEntries>Device.DHCPv4.Server.Pool.%d.Client.</mapToEntries> -->
+            <callbacks>
+                <handleRequests>handlerIpMgntLanAddrTable</handleRequests>
+            </callbacks>
+            <index>
+                <mib>
+                    <lastOid>0</lastOid><!-- It's no in the table -->
+                    <name>ifIndex</name>
+                    <access>NoAccess</access>
+                    <dataType>unsigned32</dataType>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.DHCPv4.Server.Pool.</tableObj>
+                    <!-- If index maps to a different value, use <map> to add the mapping below. -->
+                    <map> <from>32</from> <to>1</to> </map>     
+                    <map> <from>112</from> <to>2</to> </map>  
+                    <map> <from>33</from> <to>3</to> </map>     
+                    <map> <from>34</from> <to>4</to> </map>  
+                    <map> <from>35</from> <to>5</to> </map>     
+                    <map> <from>113</from> <to>6</to> </map>  
+                    <map> <from>114</from> <to>7</to> </map>     
+                    <map> <from>115</from> <to>8</to> </map>  
+                    <map> <from>36</from> <to>9</to> </map>     
+                    <map> <from>37</from> <to>10</to> </map>  
+                    <map> <from>38</from> <to>11</to> </map>     
+                    <map> <from>39</from> <to>12</to> </map>  
+                    <map> <from>116</from> <to>13</to> </map>     
+                    <map> <from>117</from> <to>14</to> </map>  
+                    <map> <from>118</from> <to>15</to> </map>     
+                    <map> <from>119</from> <to>16</to> </map>
+                </mapToInsNumber>
+            </index>
+            <index>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>rdkbRgIpMgmtLanAddrIndex</name>
+                    <access>NoAccess</access>
+                    <dataType>INTEGER</dataType>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.DHCPv4.Server.Pool.%d.Client.</tableObj>
+                    <!-- If index maps to a different value, use <map> to add the mapping below. -->
+                </mapToInsNumber>
+            </index>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>rdkbRgIpMgmtLanAddrIp</name>
+                    <access>ReadOnly</access>
+                    <dataType>IpAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.DHCPv4.Server.Pool.%d.Client.%d.IPv4Address.1.IPAddress</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>rdkbRgIpMgmtLanAddrPhysAddr</name>
+                    <access>ReadOnly</access>
+                    <dataType>PhysAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.DHCPv4.Server.Pool.%d.Client.%d.Chaddr</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>rdkbRgIpMgmtLanAddrLeaseCreateTime</name>
+                    <access>ReadOnly</access>
+                    <dataType>DateAndTime</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.DHCPv4.Server.Pool.%d.Client.%d.IPv4Address.1.X_CISCO_COM_LeaseTimeCreation</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>6</lastOid>
+                    <name>rdkbRgIpMgmtLanAddrLeaseExpireTime</name>
+                    <access>ReadOnly</access>
+                    <dataType>DateAndTime</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.DHCPv4.Server.Pool.%d.Client.%d.IPv4Address.1.LeaseTimeRemaining</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>7</lastOid>
+                    <name>rdkbRgIpMgmtLanAddrHostName</name>
+                    <access>ReadOnly</access>
+                    <dataType>SnmpAdminString</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.DHCPv4.Server.Pool.%d.Client.%d.X_CISCO_COM_HostName</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>8</lastOid>
+                    <name>rdkbRgIpMgmtLanAddrClientId</name>
+                    <access>ReadOnly</access>
+                    <dataType>SnmpAdminString</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.DHCPv4.Server.Pool.%d.Client.%d.ClassId</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>9</lastOid>
+                    <name>rdkbRgIpMgmtLanAddrInterface</name>
+                    <access>ReadOnly</access>
+                    <dataType>SnmpAdminString</dataType>
+                </mib>
+                <dm>
+                    <paramName>Device.DHCPv4.Server.Pool.%d.Client.%d.X_CISCO_COM_Interface</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>10</lastOid>
+                    <name>rdkbRgIpMgmtLanAddrClientNotes</name>
+                    <access>ReadOnly</access>
+                    <dataType>SnmpAdminString</dataType>
+                </mib>
+                <dm>
+                    <paramName>Device.DHCPv4.Server.Pool.%d.Client.%d.X_CISCO_COM_Comment</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>11</lastOid>
+                    <name>rdkbRgIpMgmtLanAddrCpeStatus</name>
+                    <access>ReadOnly</access>
+                    <dataType>INTEGER</dataType>
+                </mib>
+                <dm>
+                    <paramName>Device.DHCPv4.Server.Pool.%d.Client.%d.Active</paramName>
+                    <dataType>boolean</dataType>
+                </dm>
+            </mapping>
+        </mibTable>
+        <mibTable>
+            <name>rdkbRgIpMgmtDhcpFixedIpTable</name>
+            <tableOid>1.3.6.1.4.1.17270.50.2.3.6</tableOid>
+            <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <writable>true</writable>
+            <maxEntries>16</maxEntries>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- Add filters in the table -->
+            <!-- <mapToEntries>Device.DHCPv4.Server.Pool.%d.StaticAddress.</mapToEntries> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <index>
+                <mib>
+                    <lastOid>0</lastOid><!-- It's no in the table -->
+                    <name>ifIndex</name>
+                    <access>NoAccess</access>
+                    <dataType>unsigned32</dataType>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.DHCPv4.Server.Pool.</tableObj>
+                    <map> <from>32</from> <to>1</to> </map>     
+                    <map> <from>112</from> <to>2</to> </map>  
+                    <map> <from>33</from> <to>3</to> </map>     
+                    <map> <from>34</from> <to>4</to> </map>  
+                    <map> <from>35</from> <to>5</to> </map>     
+                    <map> <from>113</from> <to>6</to> </map>  
+                    <map> <from>114</from> <to>7</to> </map>     
+                    <map> <from>115</from> <to>8</to> </map>  
+                    <map> <from>36</from> <to>9</to> </map>     
+                    <map> <from>37</from> <to>10</to> </map>  
+                    <map> <from>38</from> <to>11</to> </map>     
+                    <map> <from>39</from> <to>12</to> </map>  
+                    <map> <from>116</from> <to>13</to> </map>     
+                    <map> <from>117</from> <to>14</to> </map>  
+                    <map> <from>118</from> <to>15</to> </map>     
+                    <map> <from>119</from> <to>16</to> </map>
+                    <!-- If index maps to a different value, use <map> to add the mapping below. -->
+                </mapToInsNumber>
+            </index>
+            <index>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>rdkbRgIpMgmtDhcpFixedIpIndex</name>
+                    <access>NoAccess</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>1</min><max>16</max>
+                    </range>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.DHCPv4.Server.Pool.%d.StaticAddress.</tableObj>
+                    <!-- If index maps to a different value, use <map> to add the mapping below. -->
+                </mapToInsNumber>
+            </index>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>rdkbRgIpMgmtDhcpFixedIpRowStatus</name>
+                    <access>WriteOnly</access>
+                    <dataType>RowStatus</dataType>
+                </mib>
+                <!-- It's Rowstatus and has no mapping. -->
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.DHCPv4.Server.Pool.%d.StaticAddress.%d.Enable</paramName>
+                    <dataType>boolean</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>rdkbRgIpMgmtDhcpFixedIpAddress</name>
+                    <access>ReadWrite</access>
+                    <dataType>IpAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.DHCPv4.Server.Pool.%d.StaticAddress.%d.Yiaddr</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>rdkbRgIpMgmtDhcpFixedIpPhysAddr</name>
+                    <access>ReadWrite</access>
+                    <dataType>PhysAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.DHCPv4.Server.Pool.%d.StaticAddress.%d.Chaddr</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>6</lastOid>
+                    <name>rdkbRgIpMgmtDhcpFixedIpHostName</name>
+                    <access>ReadWrite</access>
+                    <dataType>SnmpAdminString</dataType>
+                    <range>
+                        <min>0</min><max>80</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.DHCPv4.Server.Pool.%d.StaticAddress.%d.X_CISCO_COM_DeviceName</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+        </mibTable>
+		<mibTable>
+            <name>rdkbRgIpMgmtLanExtraSubnetTable</name>
+            <tableOid>1.3.6.1.4.1.17270.50.2.3.11</tableOid>
+            <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+            <enabled>false</enabled>
+            <writable>true</writable>
+            <maxEntries>16</maxEntries>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- Add filters in the table -->
+            <!-- <mapToEntries>Device.DHCPv4.Server.Pool.%d.StaticAddress.</mapToEntries> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <index>
+                <mib>
+                    <lastOid>1</lastOid><!-- It's no in the table -->
+                    <name>rdkbRgIpMgmtLanExtraSubnetIndex</name>
+                    <access>NoAccess</access>
+                    <dataType>INTEGER</dataType>
+					<range>
+                        <min>1</min><max>3</max>
+                    </range>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.abc.xyz</tableObj>
+                </mapToInsNumber>
+            </index>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>rdkbRgIpMgmtLanExtraSubnetRowStatus</name>
+                    <access>WriteOnly</access>
+                    <dataType>RowStatus</dataType>
+                </mib>
+                <!-- It's Rowstatus and has no mapping. -->
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>rdkbRgIpMgmtLanExtraSubnetIpAddress</name>
+                    <access>ReadWrite</access>
+                    <dataType>IpAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abc.xyz</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>rdkbRgIpMgmtLanExtraSubnetSubnetMask</name>
+                    <access>ReadWrite</access>
+                    <dataType>IpAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abc.xyz</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>rdkbRgIpMgmtLanExtraSubnetGateway</name>
+                    <access>ReadWrite</access>
+                    <dataType>IpAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abc.xyz</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+        </mibTable>
+	<mibTable>
+      <name>rdkbRgIpMgmtLanConnectedClientsTable</name>
+      <tableOid>1.3.6.1.4.1.17270.50.2.3.16</tableOid>
+      <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+      <enabled>true</enabled>
+      <writable>false</writable>
+      <maxEntries>16</maxEntries>
+      <cacheTimeout>30</cacheTimeout>
+      <!-- in seconds -->
+      <!-- Add filters in the table -->
+      <!-- <mapToEntries>Device.RoutingTable.%d.type=static</mapToEntries> -->
+      <callbacks>                
+          <handleRequests>handleConnectedDevices</handleRequests>
+      </callbacks>
+      <index>
+        <mib>                    
+          <lastOid>1</lastOid>                    
+          <name>rdkbRgIpMgmtLanConnectedClientsIndex</name>                    
+          <access>NoAccess</access>                    
+          <dataType>INTEGER</dataType>                
+        </mib>
+        <mapToInsNumber>
+          <tableObj>Device.Hosts.Host.%d</tableObj>
+          <!-- If index maps to a different value, use <map> to add the mapping below. -->
+        </mapToInsNumber>
+      </index>
+      <mapping>
+        <mib>
+          <lastOid>2</lastOid>
+          <name>rdkbRgIpMgmtLanConnectedClientsPhysAddr</name>
+          <access>ReadOnly</access>
+          <dataType>PhysAddress</dataType>
+        </mib>
+        <dm>
+          <!-- fill in DM param and type -->
+          <paramName>Device.Hosts.Host.%d.PhysAddress</paramName>
+          <dataType>string</dataType>
+        </dm>
+      </mapping>
+      <mapping>
+        <mib>
+          <lastOid>3</lastOid>
+          <name>rdkbRgIpMgmtLanConnectedClientsAddressSource</name>
+          <access>ReadOnly</access>
+          <dataType>SnmpAdminString</dataType>
+        </mib>
+        <dm>
+          <!-- fill in DM param and type -->
+          <paramName>Device.Hosts.Host.%d.AddressSource</paramName>
+          <dataType>string</dataType>
+        </dm>
+      </mapping>
+      <mapping>
+        <mib>
+          <lastOid>4</lastOid>
+          <name>rdkbRgIpMgmtLanConnectedClientsIpv4Addr</name>
+          <access>ReadOnly</access>
+          <dataType>IpAddress</dataType>
+        </mib>
+        <dm>
+          <!-- fill in DM param and type -->
+          <paramName>Device.Hosts.Host.%d.IPAddress</paramName>
+          <dataType>string</dataType>
+        </dm>
+      </mapping>
+      <mapping>
+        <mib>
+          <lastOid>5</lastOid>
+          <name>rdkbRgIpMgmtLanConnectedClientsHostName</name>
+          <access>ReadOnly</access>
+          <dataType>SnmpAdminString</dataType>
+        </mib>
+        <dm>
+          <!-- fill in DM param and type -->
+          <paramName>Device.Hosts.Host.%d.HostName</paramName>
+          <dataType>string</dataType>
+        </dm>
+      </mapping>
+	  <mapping>
+        <mib>
+          <lastOid>6</lastOid>
+          <name>rdkbRgIpMgmtLanConnectedClientsInterface</name>
+          <access>ReadOnly</access>
+          <dataType>SnmpAdminString</dataType>
+        </mib>
+	<!--
+        <dm>
+          <paramName>Device.Hosts.Host.%d.Layer1Interface</paramName>
+          <dataType>string</dataType>
+        </dm>
+	-->
+      </mapping>
+      <mapping>
+        <mib>
+          <lastOid>7</lastOid>
+          <name>rdkbRgIpMgmtLanConnectedClientsActive</name>
+          <access>ReadOnly</access>
+          <dataType>TruthValue</dataType>
+        </mib>
+        <dm>
+          <!-- fill in DM param and type -->
+          <paramName>Device.Hosts.Host.%d.Active</paramName>
+          <dataType>boolean</dataType>
+        </dm>
+      </mapping>
+	  	  <mapping>
+        <mib>
+          <lastOid>8</lastOid>
+          <name>rdkbRgIpMgmtLanConnectedClientsComments</name>
+          <access>ReadOnly</access>
+          <dataType>SnmpAdminString</dataType>
+        </mib>
+        <dm>
+          <!-- fill in DM param and type -->
+          <paramName>Device.Hosts.Host.%d.Comments</paramName>
+          <dataType>string</dataType>
+        </dm>
+      </mapping>
+      <mapping>
+        <mib>
+          <lastOid>9</lastOid>
+          <name>rdkbRgIpMgmtLanConnectedClientsRSSI</name>
+          <access>ReadOnly</access>
+          <dataType>Integer32</dataType>
+        </mib>
+        <dm>
+          <!-- fill in DM param and type -->
+          <paramName>Device.Hosts.Host.%d.X_CISCO_COM_RSSI</paramName>
+          <dataType>int</dataType>
+        </dm>
+      </mapping>
+    </mibTable>
+    </mibTables>
+</mib2DM>

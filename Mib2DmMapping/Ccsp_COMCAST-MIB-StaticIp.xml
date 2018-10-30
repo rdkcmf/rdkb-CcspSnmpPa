@@ -1,0 +1,71 @@
+<?xml version="1.0"  encoding="UTF-8" ?>
+<!--
+If not stated otherwise in this file or this component's Licenses.txt
+file the following copyright and licenses apply:
+
+Copyright 2015 RDK Management
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<!--
+   Copyright [2014] [Cisco Systems, Inc.]
+
+   Licensed under the Apache License, Version 2.0 (the \"License\");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an \"AS IS\" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+
+<mib2DM xml="http://www.w3.org/XML/1998/namespace">
+    <version>1</version>
+    <name>COMCAST-MIB</name>
+    <lastUpdate>16/09/2013 10:03</lastUpdate>
+    <author>CcspMibHelper Mapping File Generator</author>
+    <!-- Add the library name if callbacks are needed. -->
+    <!--	<library>libMibSample.o</library> -->
+    <!--<library>libsnmp_plugin.so</library>-->
+    <scalarGroups>
+        <scalarGroup>
+            <name>flatFileBase</name>
+            <baseOid>1.3.6.1.4.1.17270.4.1.2</baseOid>
+            <!--  'enabled' can be set to 'false' if this set of mibs are not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- <mapToEntry>Device.Time</mapToEntry> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <mapping>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>flatFilePrivateKey</name>
+                    <access>ReadWrite</access>
+                    <dataType>OCTET STRING</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_TrueStaticIP.ConfigEncryptKey</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+        </scalarGroup>
+    </scalarGroups>
+</mib2DM>

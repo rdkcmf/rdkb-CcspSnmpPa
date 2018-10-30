@@ -1,0 +1,8 @@
+Mib2DmMapping/
+- move arch/intel_usg/boards/arm_shared/config/comcast/Ccsp_COMCAST-MIB-StaticIp.xml to
+       Mib2DmMapping
+- move arch/intel_usg/boards/rdkb_arm/config/comcast/Ccsp_SA-RG-MIB-Firewall.xml to
+       Mib2DmMapping
+- remove arch directory
+- move Makefile Makefile.orig
+- add ChangeLog file

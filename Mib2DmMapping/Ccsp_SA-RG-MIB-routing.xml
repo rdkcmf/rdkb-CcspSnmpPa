@@ -1,0 +1,293 @@
+<?xml version="1.0"  encoding="UTF-8" ?>
+
+<!--
+   Copyright [2014] [Cisco Systems, Inc.]
+
+   Licensed under the Apache License, Version 2.0 (the \"License\");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an \"AS IS\" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+
+<mib2DM xml="http://www.w3.org/XML/1998/namespace">
+    <version>1</version>
+    <name>SA-RG-MIB</name>
+    <lastUpdate>05/03/2012 15:04</lastUpdate>
+    <author>CcspMibHelper Mapping File Generator</author>
+    <!-- Add the library name if callbacks are needed. -->
+    <!--	<library>libMibSample.o</library> -->
+    <scalarGroups>
+        <scalarGroup>
+            <name>saRgRip</name>
+            <baseOid>1.3.6.1.4.1.1429.79.2.5.1</baseOid>
+            <!--  'enabled' can be set to 'false' if this set of mibs are not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- <mapToEntry>Device.Routing</mapToEntry> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <mapping>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>saRgRipEnabled</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.Routing.RIP.Enable</paramName>
+                    <dataType>boolean</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>saRgRipMd5KeyId</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>0</min><max>255</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.Routing.RIP.InterfaceSetting.1.X_CISCO_COM_Md5KeyID</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>saRgRipMd5KeyValue</name>
+                    <access>ReadWrite</access>
+                    <dataType>OCTET STRING</dataType>
+                    <range>
+                        <min>0</min><max>16</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.Routing.RIP.InterfaceSetting.1.X_CISCO_COM_Md5KeyValue</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>saRgRipInterval</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>10</min><max>600</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.Routing.RIP.X_CISCO_COM_UpdateInterval</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>6</lastOid>
+                    <name>saRgRipDestIpAddressType</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>1</min><max>3</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.Routing.RIP.InterfaceSetting.1.ReportIPAddressType</paramName>
+                    <dataType>string</dataType>
+                    <enumeration>Unicast(1),Multicast(2),Broadcast(3)</enumeration>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>7</lastOid>
+                    <name>saRgRipDestIpAddress</name>
+                    <access>ReadWrite</access>
+                    <dataType>InetAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.Routing.RIP.InterfaceSetting.1.X_CISCO_COM_Neighbor</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>8</lastOid>
+                    <name>saRgRipAuthType</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>1</min><max>3</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.Routing.RIP.InterfaceSetting.1.X_CISCO_COM_AuthenticationType</paramName>
+                    <dataType>string</dataType>
+                    <enumeration>NoAuth(1),SimplePassword(2),MD5(3)</enumeration>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>9</lastOid>
+                    <name>saRgRipAuthSimplePassword</name>
+                    <access>ReadWrite</access>
+                    <dataType>OCTET STRING</dataType>
+                    <range>
+                        <min>0</min><max>16</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.Routing.RIP.InterfaceSetting.1.X_CISCO_COM_SimplePassword</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+        </scalarGroup>
+        <scalarGroup>
+            <name>saRgQosLanBase</name>
+            <baseOid>1.3.6.1.4.1.1429.79.2.8.1.1</baseOid>
+            <!--  'enabled' can be set to 'false' if this set of mibs are not ready at back-end yet or deprecated -->
+            <enabled>false</enabled>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- <mapToEntry>Wifi.Radio.%d.Frequency=2.4</mapToEntry> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <mapping>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>saRgQosLanIgmpSnooping</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>0</min><max>1</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_IGMP.SnoopingEnable</paramName>
+                    <dataType>boolean</dataType>
+                </dm>
+            </mapping>
+        </scalarGroup>
+    </scalarGroups>
+    <mibTables>
+        <mibTable>
+            <name>saRgIpMgmtStaticRouteTable</name>
+            <tableOid>1.3.6.1.4.1.1429.79.2.3.8</tableOid>
+            <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <writable>true</writable>
+            <maxEntries>16</maxEntries>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- Add filters in the table -->
+            <!-- <mapToEntries>Device.Routing.Router.1.IPv4Forwarding.%d.type=static</mapToEntries> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <index>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>saRgIpMgmtStaticRouteIndex</name>
+                    <access>NoAccess</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>1</min><max>16</max>
+                    </range>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.Routing.Router.1.IPv4Forwarding.</tableObj>
+                    <!-- If index maps to a different value, use <map> to add the mapping below. -->
+                </mapToInsNumber>
+            </index>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>saRgIpMgmtStaticRouteRowStatus</name>
+                    <access>WriteOnly</access>
+                    <dataType>RowStatus</dataType>
+                </mib>
+                <!-- It's Rowstatus and has no mapping. -->
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.Routing.Router.1.IPv4Forwarding.%d.Enable</paramName>
+                    <dataType>boolean</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>saRgIpMgmtStaticRouteNetwork</name>
+                    <access>ReadWrite</access>
+                    <dataType>IpAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.Routing.Router.1.IPv4Forwarding.%d.DestIPAddress</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>saRgIpMgmtStaticRouteSubnetMask</name>
+                    <access>ReadWrite</access>
+                    <dataType>IpAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.Routing.Router.1.IPv4Forwarding.%d.DestSubnetMask</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>saRgIpMgmtStaticRouteGateway</name>
+                    <access>ReadWrite</access>
+                    <dataType>IpAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.Routing.Router.1.IPv4Forwarding.%d.GatewayIPAddress</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>6</lastOid>
+                    <name>saRgIpMgmtStaticRouteRipAdvertise</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.Routing.Router.1.IPv4Forwarding.%d.X_CISCO_COM_RIPAdvertise</paramName>
+                    <dataType>boolean</dataType>
+                </dm>
+            </mapping>
+        </mibTable>
+    </mibTables>
+</mib2DM>

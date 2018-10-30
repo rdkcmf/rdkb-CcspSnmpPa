@@ -1,0 +1,545 @@
+<?xml version="1.0"  encoding="UTF-8" ?>
+
+<!--
+   Copyright [2014] [Cisco Systems, Inc.]
+
+   Licensed under the Apache License, Version 2.0 (the \"License\");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an \"AS IS\" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+
+<mib2DM xml="http://www.w3.org/XML/1998/namespace">
+    <version>1</version>
+    <name>SA-RG-MIB</name>
+    <lastUpdate>05/07/2012 16:40</lastUpdate>
+    <author>CcspMibHelper Mapping File Generator</author>
+    <!-- Add the library name if callbacks are needed. -->
+        <library>libsnmp_custom.so</library>
+    <scalarGroups>
+        <scalarGroup>
+            <name>saRgDeviceBase</name>
+            <baseOid>1.3.6.1.4.1.1429.79.2.1.1</baseOid>
+            <!--  'enabled' can be set to 'false' if this set of mibs are not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- <mapToEntry>Wifi.Radio.%d.Frequency=2.4</mapToEntry> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <mapping>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>saRgDeviceMode</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>0</min><max>5</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_DeviceControl.DeviceMode</paramName>
+                    <dataType>string</dataType>
+                    <enumeration>Bridge(0),multiSsid(1),cableHome11(2),Ipv4(3),Ipv6(4),Dualstack(5)</enumeration>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>saRgDeviceResetDefaultEnable</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_DeviceControl.ResetDefaultEnable</paramName>
+                    <dataType>boolean</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>saRgDeviceRemoteWebAccessEnable</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <paramName>Device.UserInterface.X_CISCO_COM_RemoteAccess.HttpEnable</paramName>
+                    <dataType>boolean</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>saRgDeviceRemoteWebAccessPort</name>
+                    <access>ReadWrite</access>
+                    <dataType>InetPortNumber</dataType>
+                </mib>
+                <dm>
+                    <paramName>Device.X_CISCO_COM_DeviceControl.HTTPPort</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>1002</lastOid>
+                    <name>saRgDeviceFactoryReset</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>0</min><max>3</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_DeviceControl.FactoryReset</paramName>
+                    <dataType>string</dataType>
+                    <enumeration>Router,Wifi(1),Router(2),Wifi(3)</enumeration> 
+                    <!-- mib values <enumeration>false(0),routerAndWifi(1),routerOnly(2),wifi(3)</enumeration>-->
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>1003</lastOid>
+                    <name>saRgDeviceReset</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>0</min><max>3</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_DeviceControl.RebootDevice</paramName>
+                    <dataType>string</dataType>
+                    <enumeration>Router,Wifi(1),Router(2),Wifi(3)</enumeration> 
+                    <background/>
+                    <!-- mib values <enumeration>false(0),routerAndWifi(1),routerOnly(2),wifi(3)</enumeration>-->
+                </dm>
+            </mapping>
+        </scalarGroup>
+        <scalarGroup>
+            <name>saRgDeviceConfigBackup</name>
+            <baseOid>1.3.6.1.4.1.1429.79.2.1.2</baseOid>
+            <!--  'enabled' can be set to 'false' if this set of mibs are not ready at back-end yet or deprecated -->
+            <enabled>false</enabled> <!-- MIB requirement to be finished -->
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- <mapToEntry>Wifi.Radio.%d.Frequency=2.4</mapToEntry> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <mapping>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>saRgDevConfBackupServerType</name>
+                    <access>ReadWrite</access>
+                    <dataType>InetAddressType</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcd.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>saRgDevConfBackupServer</name>
+                    <access>ReadWrite</access>
+                    <dataType>InetAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcd.xyz</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>saRgDevConfBackupFilename</name>
+                    <access>ReadWrite</access>
+                    <dataType>SnmpAdminString</dataType>
+                    <range>
+                        <min>0</min><max>64</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcd.xyz</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>saRgDevConfBackupOperStatus</name>
+                    <access>ReadOnly</access>
+                    <dataType>INTEGER</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcd.xyz</paramName>
+                    <dataType>int</dataType>
+                    <enumeration>inProgress(1),complete(2),failed(3),other(4)</enumeration>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>saRgDevConfBackupAdminStatus</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcd.xyz</paramName>
+                    <dataType>int</dataType>
+                    <enumeration>download(1),upload(2)</enumeration>
+                </dm>
+            </mapping>
+        </scalarGroup>
+        <scalarGroup>
+            <name>saRgDeviceConfiguration</name>
+            <baseOid>1.3.6.1.4.1.1429.79.2.1.4</baseOid>
+            <!--  'enabled' can be set to 'false' if this set of mibs are not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- <mapToEntry>Wifi.Radio.%d.Frequency=2.4</mapToEntry> -->
+            <callbacks>
+                <handleRequests>handleDeviceConfig</handleRequests>
+            </callbacks>
+            <mapping>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>saRgDeviceConfigFilename</name>
+                    <access>ReadWrite</access>
+                    <dataType>SnmpAdminString</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.DHCPv4.Client.1.X_CISCO_COM_BootFileName</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>saRgDeviceConfigStatus</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>1</min><max>7</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_DeviceControl.DeviceConfigStatus</paramName>
+                    <dataType>string</dataType>
+                    <enumeration>notSpecified(1),inProgress(2),success(3),errorServer(4),errorFileNotFound(5),errorBadFile(6),download(7)</enumeration>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>saRgDeviceUserChangedFlag</name>
+                    <access>ReadWrite</access>
+                    <dataType>SnmpAdminString</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_DeviceControl.UserChangedFlags</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>saRgDeviceConfigSnmpEnable</name>
+                    <access>ReadWrite</access>
+                    <dataType>BITS</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_DeviceControl.SNMPEnable</paramName>
+                    <dataType>string</dataType>
+                    <bitmask>rgWan(0),rgDualIp(1),rgLanIp(2)</bitmask>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>saRgDeviceConfigIgnore</name>
+                    <access>ReadOnly</access>
+                    <dataType>INTEGER</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_DeviceControl.DeviceConfigIgnore</paramName>
+                    <dataType>string</dataType>
+                    <enumeration>require(0),notRequire(1),notDownload(2)</enumeration>
+                </dm>
+            </mapping>
+        </scalarGroup>
+        <scalarGroup>
+            <name>saRgDeviceIanaContent</name>
+            <baseOid>1.3.6.1.4.1.1429.79.2.1.7</baseOid>
+            <!--  'enabled' can be set to 'false' if this set of mibs are not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- <mapToEntry>Wifi.Radio.%d.Frequency=2.4</mapToEntry> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <mapping>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>saRgDeviceIanaIAID</name>
+                    <access>ReadOnly</access>
+                    <dataType>Unsigned32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.IP.Interface.1.X_CISCO_COM_IPv6_IANA_IAID</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>saRgDeviceIanaT1</name>
+                    <access>ReadOnly</access>
+                    <dataType>INTEGER</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.IP.Interface.1.X_CISCO_COM_IPv6_IANA_T1</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>saRgDeviceIanaT2</name>
+                    <access>ReadOnly</access>
+                    <dataType>INTEGER</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.IP.Interface.1.X_CISCO_COM_IPv6_IANA_T2</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+        </scalarGroup>
+        <scalarGroup>
+            <name>saRgDeviceIapdContent</name>
+            <baseOid>1.3.6.1.4.1.1429.79.2.1.8</baseOid>
+            <!--  'enabled' can be set to 'false' if this set of mibs are not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- <mapToEntry>Wifi.Radio.%d.Frequency=2.4</mapToEntry> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <mapping>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>saRgDeviceIapdIAID</name>
+                    <access>ReadOnly</access>
+                    <dataType>Unsigned32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.IP.Interface.1.X_CISCO_COM_IPv6_IAPD_IAID</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>saRgDeviceIapdT1</name>
+                    <access>ReadOnly</access>
+                    <dataType>INTEGER</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.IP.Interface.1.X_CISCO_COM_IPv6_IAPD_T1</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>saRgDeviceIapdT2</name>
+                    <access>ReadOnly</access>
+                    <dataType>INTEGER</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.IP.Interface.1.X_CISCO_COM_IPv6_IAPD_T2</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+        </scalarGroup>
+    </scalarGroups>
+    <mibTables>
+        <mibTable>
+            <name>saRgDeviceIanaTable</name>
+            <tableOid>1.3.6.1.4.1.1429.79.2.1.7.4</tableOid>
+            <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <writable>false</writable>
+            <maxEntries>4</maxEntries>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- Add filters in the table -->
+            <!-- <mapToEntries>Device.Routing.Router.1.IPv4Forwarding.%d.type=static</mapToEntries> -->
+            <callbacks>
+                <handleRequests>handleIanaTable</handleRequests>
+            </callbacks>
+            <index>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>saRgDeviceIanaIndex</name>
+                    <access>NoAccess</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>1</min><max>4</max>
+                    </range>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.IP.Interface.1.IPv6Address.%d</tableObj>
+                    <!-- If index maps to a different value, use <map> to add the mapping below. -->
+                </mapToInsNumber>
+            </index>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>saRgDeviceIanaValue</name>
+                    <access>ReadOnly</access>
+                    <dataType>InetAddress</dataType>
+                </mib>
+                <!-- It's Rowstatus and has no mapping. -->
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.IP.Interface.1.IPv6Address.%d.IPAddress</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>saRgDeviceIanaPreferredLifetime</name>
+                    <access>ReadOnly</access>
+                    <dataType>INTEGER</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.IP.Interface.1.IPv6Address.%d.X_CISCO_COM_PreferredLifetime</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>saRgDeviceIanaValidLifetime</name>
+                    <access>ReadOnly</access>
+                    <dataType>INTEGER</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.IP.Interface.1.IPv6Address.%d.X_CISCO_COM_ValidLifetime</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+        </mibTable>
+        <mibTable>
+            <name>saRgDeviceIapdTable</name>
+            <tableOid>1.3.6.1.4.1.1429.79.2.1.8.4</tableOid>
+            <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <writable>false</writable>
+            <maxEntries>4</maxEntries>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- Add filters in the table -->
+            <!-- <mapToEntries>Device.Routing.Router.1.IPv4Forwarding.%d.type=static</mapToEntries> -->
+            <callbacks>
+                <handleRequests>handleIapdTable</handleRequests>
+            </callbacks>
+            <index>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>saRgDeviceIapdIndex</name>
+                    <access>NoAccess</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>1</min><max>4</max>
+                    </range>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.IP.Interface.1.IPv6Prefix.%d</tableObj>
+                    <!-- If index maps to a different value, use <map> to add the mapping below. -->
+                </mapToInsNumber>
+            </index>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>saRgDeviceIapdPreferredLifetime</name>
+                    <access>ReadOnly</access>
+                    <dataType>INTEGER</dataType>
+                </mib>
+                <!-- It's Rowstatus and has no mapping. -->
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.IP.Interface.1.IPv6Prefix.%d.X_CISCO_COM_PreferredLifetime</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>saRgDeviceIapdValidLifetime</name>
+                    <access>ReadOnly</access>
+                    <dataType>INTEGER</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.IP.Interface.1.IPv6Prefix.%d.X_CISCO_COM_ValidLifetime</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>saRgDeviceIapdPrefixLength</name>
+                    <access>ReadOnly</access>
+                    <dataType>INTEGER</dataType>
+                </mib>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>saRgDeviceIapdPrefixValue</name>
+                    <access>ReadOnly</access>
+                    <dataType>InetAddress</dataType>
+                </mib>
+            </mapping>
+        </mibTable>
+    </mibTables>
+</mib2DM>

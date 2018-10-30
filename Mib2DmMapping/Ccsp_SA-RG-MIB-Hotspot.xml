@@ -1,0 +1,525 @@
+<?xml version="1.0"  encoding="UTF-8" ?>
+
+<!--
+   Copyright [2014] [Cisco Systems, Inc.]
+
+   Licensed under the Apache License, Version 2.0 (the \"License\");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an \"AS IS\" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+
+<mib2DM xml="http://www.w3.org/XML/1998/namespace">
+  <version>1</version>
+  <name>SA-RG-MIB</name>
+  <lastUpdate>28/05/2013 16:49</lastUpdate>
+  <author>CcspMibHelper Mapping File Generator</author>
+  <!-- Add the library name if callbacks are needed. -->
+  <library>libsnmp_custom.so</library>
+  <scalarGroups>
+    <scalarGroup>
+      <name>saRgWifiHotspotBase</name>
+      <baseOid>1.3.6.1.4.1.1429.79.2.13.1</baseOid>
+      <!--  'enabled' can be set to 'false' if this set of mibs are not ready at back-end yet or deprecated -->
+      <enabled>true</enabled>
+      <cacheTimeout>30</cacheTimeout>
+      <!-- in seconds -->
+      <!-- <mapToEntry>Wifi.Radio.%d.Frequency=2.4</mapToEntry> -->
+      <callbacks>                
+      <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->            
+      </callbacks>
+      <mapping>
+        <mib>
+          <lastOid>1</lastOid>
+          <name>saRgWifiHotspotEnabled</name>
+          <access>ReadWrite</access>
+          <dataType>TruthValue</dataType>
+          <range>
+            <min>1</min>
+            <max>2</max>
+          </range>
+        </mib>
+        <dm>
+          <!-- fill in DM param and type -->
+          <paramName>Device.DeviceInfo.X_COMCAST_COM_xfinitywifiEnable</paramName>
+          <dataType>boolean</dataType>
+        </dm>
+      </mapping>
+      <mapping>
+        <mib>
+          <lastOid>7</lastOid>
+          <name>saRgWifiHotspotCapable</name>
+          <access>ReadOnly</access>
+          <dataType>TruthValue</dataType>
+          <range>
+            <min>1</min>
+            <max>2</max>
+          </range>
+        </mib>
+        <dm>
+          <!-- fill in DM param and type -->
+          <paramName>Device.DeviceInfo.X_COMCAST-COM_xfinitywifiCapable</paramName>
+          <dataType>boolean</dataType>
+        </dm>
+      </mapping>
+    </scalarGroup>
+    <scalarGroup>
+      <name>saRgL2ogreBase</name>
+      <baseOid>1.3.6.1.4.1.1429.79.2.14.1</baseOid>
+      <!--  'enabled' can be set to 'false' if this set of mibs are not ready at back-end yet or deprecated -->
+      <enabled>true</enabled>
+      <cacheTimeout>30</cacheTimeout>
+      <!-- in seconds -->
+      <!-- <mapToEntry>Wifi.Radio.%d.Frequency=2.4</mapToEntry> -->
+      <callbacks>
+                <handleRequests>handleL2ogreBase</handleRequests>
+      </callbacks>
+      <mapping>
+        <mib>
+          <lastOid>2</lastOid>
+          <name>saRgL2ogrePriRemoteAddressType</name>
+          <access>ReadWrite</access>
+          <dataType>InetAddressType</dataType>
+        </mib>
+        <!-- CUSTOM LOGIC
+        <dm>
+          <paramName>Device.X_COMCAST_COM_GRE.Interface.1.RemoteEndpoints</paramName>
+          <dataType>string</dataType>
+        </dm>
+        -->
+      </mapping>
+      <mapping>
+        <mib>
+          <lastOid>3</lastOid>
+          <name>saRgL2ogrePriRemoteAddress</name>
+          <access>ReadWrite</access>
+          <dataType>InetAddress</dataType>
+        </mib>
+        <!-- CUSTOM LOGIC
+        <dm>
+          <paramName>Device.X_COMCAST_COM_GRE.Interface.1.RemoteEndpoints</paramName>
+          <dataType>string</dataType>
+        </dm>
+        -->
+      </mapping>
+      <mapping>
+        <mib>
+          <lastOid>4</lastOid>
+          <name>saRgL2ogreSecRemoteAddressType</name>
+          <access>ReadWrite</access>
+          <dataType>InetAddressType</dataType>
+        </mib>
+        <!-- CUSTOM LOGIC
+        <dm>
+          <paramName>Device.X_COMCAST_COM_GRE.Interface.1.RemoteEndpoints</paramName>
+          <dataType>string</dataType>
+        </dm>
+        -->
+      </mapping>
+      <mapping>
+        <mib>
+          <lastOid>5</lastOid>
+          <name>saRgL2ogreSecRemoteAddress</name>
+          <access>ReadWrite</access>
+          <dataType>InetAddress</dataType>
+        </mib>
+        <!--    CUTSOM LOGIC
+        <dm>
+          <paramName>Device.X_COMCAST_COM_GRE.Interface.1.RemoteEndpoints</paramName>
+          <dataType>string</dataType>
+        </dm>
+        -->
+      </mapping>
+      <mapping>
+        <mib>
+          <lastOid>6</lastOid>
+          <name>saRgL2ogreDSCP</name>
+          <access>ReadWrite</access>
+          <dataType>Integer32</dataType>
+          <range>
+            <min>0</min>
+            <max>63</max>
+          </range>
+        </mib>
+        <dm>
+          <!-- fill in DM param and type -->
+          <paramName>Device.X_COMCAST_COM_GRE.Interface.1.DSCPMarkPolicy</paramName>
+          <dataType>int</dataType>
+        </dm>
+      </mapping>
+      <mapping>
+        <mib>
+          <lastOid>8</lastOid>
+          <name>saRgL2ogreKeepAliveCount</name>
+          <access>ReadWrite</access>
+          <dataType>Integer32</dataType>
+        </mib>
+        <dm>
+          <!-- fill in DM param and type -->
+          <paramName>Device.X_COMCAST_COM_GRE.Interface.1.KeepAliveCount</paramName>
+          <dataType>unsignedInt</dataType>
+        </dm>
+      </mapping>
+      <mapping>
+        <mib>
+          <lastOid>9</lastOid>
+          <name>saRgL2ogreKeepAliveInterval</name>
+          <access>ReadWrite</access>
+          <dataType>Integer32</dataType>
+        </mib>
+        <dm>
+          <!-- fill in DM param and type -->
+          <paramName>Device.X_COMCAST_COM_GRE.Interface.1.KeepAliveInterval</paramName>
+          <dataType>unsignedInt</dataType>
+        </dm>
+      </mapping>
+      <mapping>
+        <mib>
+          <lastOid>10</lastOid>
+          <name>saRgL2ogreKeepAliveFailureThreshold</name>
+          <access>ReadWrite</access>
+          <dataType>Integer32</dataType>
+        </mib>
+        <dm>
+          <!-- fill in DM param and type -->
+          <paramName>Device.X_COMCAST_COM_GRE.Interface.1.KeepAliveThreshold</paramName>
+          <dataType>unsignedInt</dataType>
+        </dm>
+      </mapping>
+      <mapping>
+        <mib>
+          <lastOid>17</lastOid>
+          <name>saRgL2ogreKeepAliveFailureInterval</name>
+          <access>ReadWrite</access>
+          <dataType>Integer32</dataType>
+        </mib>
+        <dm>
+          <!-- fill in DM param and type -->
+          <paramName>Device.X_COMCAST_COM_GRE.Interface.1.KeepAliveFailInterval</paramName>
+          <dataType>unsignedInt</dataType>
+        </dm>
+      </mapping>
+      <mapping>
+        <mib>
+          <lastOid>18</lastOid>
+          <name>saRgL2ogreKeepAliveReattemptInterval</name>
+          <access>ReadWrite</access>
+          <dataType>Integer32</dataType>
+        </mib>
+        <dm>
+          <!-- fill in DM param and type -->
+          <paramName>Device.X_COMCAST_COM_GRE.Interface.1.ReconnectPrimary</paramName>
+          <dataType>unsignedInt</dataType>
+        </dm>
+      </mapping>
+    </scalarGroup>
+  </scalarGroups>
+  <mibTables>
+    <mibTable>
+      <name>saRgWifiHotspotTable</name>
+      <tableOid>1.3.6.1.4.1.1429.79.2.13.1.2</tableOid>
+      <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+      <enabled>true</enabled>
+      <writable>true</writable>
+      <maxEntries>16</maxEntries>
+      <cacheTimeout>30</cacheTimeout>
+      <!-- in seconds -->
+      <!-- Add filters in the table -->
+      <!-- <mapToEntries>Device.RoutingTable.%d.type=static</mapToEntries> -->
+      <callbacks>
+                <handleRequests>handleHotspotIf</handleRequests> 
+      </callbacks>
+      <index>
+        <mib>
+          <lastOid>2</lastOid>
+          <name>saRgWifiHotspotIf</name>
+          <access>NoAccess</access>
+          <dataType>INTEGER</dataType>
+          <range>
+            <min>1</min>
+            <max>16</max>
+          </range>
+        </mib>
+        <mapToInsNumber>
+          <tableObj>Device.WiFi.SSID.%d</tableObj>
+          <!-- If index maps to a different value, use <map> to add the mapping below. -->
+          <map>
+            <from>1</from>
+            <to>1</to>
+          </map>
+          <map>
+            <from>2</from>
+            <to>3</to>
+          </map>
+          <map>
+            <from>3</from>
+            <to>5</to>
+          </map>
+          <map>
+            <from>4</from>
+            <to>7</to>
+          </map>
+          <map>
+            <from>5</from>
+            <to>9</to>
+          </map>
+          <map>
+            <from>6</from>
+            <to>11</to>
+          </map>
+          <map>
+            <from>7</from>
+            <to>13</to>
+          </map>
+          <map>
+            <from>8</from>
+            <to>15</to>
+          </map>
+          <map>
+            <from>9</from>
+            <to>2</to>
+          </map>
+          <map>
+            <from>10</from>
+            <to>4</to>
+          </map>
+          <map>
+            <from>11</from>
+            <to>6</to>
+          </map>
+          <map>
+            <from>12</from>
+            <to>8</to>
+          </map>
+          <map>
+            <from>13</from>
+            <to>10</to>
+          </map>
+          <map>
+            <from>14</from>
+            <to>12</to>
+          </map>
+          <map>
+            <from>15</from>
+            <to>14</to>
+          </map>
+          <map>
+            <from>16</from>
+            <to>16</to>
+          </map>
+        </mapToInsNumber>
+      </index>
+      <mapping>
+        <mib>
+          <lastOid>11</lastOid>
+          <name>saRgWifiHotspotInsertDhcpOptionsMask</name>
+          <access>ReadWrite</access>
+          <dataType>UNSIGNED32</dataType>
+        </mib>
+      </mapping>
+      <mapping>
+        <mib>
+          <lastOid>12</lastOid>
+          <name>saRgWifiHotspotRowStatus</name>
+          <access>WriteOnly</access>
+          <dataType>RowStatus</dataType>
+        </mib>
+        <dm>
+            <paramName>Device.WiFi.SSID.%d.Enable</paramName>
+            <dataType>boolean</dataType>
+        </dm>
+        <!-- It's Rowstatus and has no mapping. -->
+      </mapping>
+    </mibTable>
+    <mibTable>
+      <name>saRgL2ogreSourceIfTable</name>
+      <tableOid>1.3.6.1.4.1.1429.79.2.14.1.12</tableOid>
+      <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+      <enabled>true</enabled>
+      <writable>true</writable>
+      <maxEntries>16</maxEntries>
+      <cacheTimeout>30</cacheTimeout>
+      <!-- in seconds -->
+      <!-- Add filters in the table -->
+      <!-- <mapToEntries>Device.RoutingTable.%d.type=static</mapToEntries> -->
+      <callbacks>
+        <handleRequests>handleL2ogreSourceIf</handleRequests>
+      </callbacks>
+      <index>
+        <mib>                    
+          <lastOid>1</lastOid>                    
+          <name>saRgL2ogreSourceIfInstance</name>                    
+          <access>NoAccess</access>                    
+          <dataType>Unsigned32</dataType>                    
+        </mib>
+        <mapToInsNumber>
+          <tableObj>Device.WiFi.SSID.%d</tableObj>
+          <!-- If index maps to a different value, use <map> to add the mapping below. -->
+        </mapToInsNumber>
+      </index>
+      <mapping>
+        <mib>
+          <lastOid>2</lastOid>
+          <name>saRgL2ogreSourceIf</name>
+          <access>ReadWrite</access>
+          <dataType>INTEGER</dataType>
+          <range>                        
+            <min>1</min><max>16</max>                    
+          </range>                
+        </mib>
+      </mapping>
+      <mapping>
+        <mib>
+          <lastOid>3</lastOid>
+          <name>saRgL2ogreSourceIfEnabled</name>
+          <access>ReadWrite</access>
+          <dataType>TruthValue</dataType>
+          <range>                        
+            <min>1</min><max>2</max>                    
+          </range>                
+        </mib>
+      </mapping>
+      <mapping>
+        <mib>
+          <lastOid>4</lastOid>
+          <name>saRgL2ogreSourceIfVlanTag</name>
+          <access>ReadWrite</access>
+          <dataType>Integer32</dataType>
+        </mib>
+      </mapping>
+      <mapping>
+        <mib>
+          <lastOid>6</lastOid>
+          <name>saRgL2ogreSourceIfRowStatus</name>
+          <access>WriteOnly</access>
+          <dataType>RowStatus</dataType>
+        </mib>
+        <dm>
+            <paramName>Device.WiFi.SSID.%d.Enable</paramName>
+            <dataType>boolean</dataType>
+        </dm>
+        <!-- It's Rowstatus and has no mapping. -->
+      </mapping>
+    </mibTable>
+    <mibTable>
+      <name>saRgWifiHotspotConnectedClientsTable</name>
+      <tableOid>1.3.6.1.4.1.1429.79.2.13.1.8</tableOid>
+      <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+      <enabled>true</enabled>
+      <writable>false</writable>
+      <maxEntries>16</maxEntries>
+      <cacheTimeout>30</cacheTimeout>
+      <!-- in seconds -->
+      <!-- Add filters in the table -->
+      <!-- <mapToEntries>Device.RoutingTable.%d.type=static</mapToEntries> -->
+      <callbacks>                
+          <!--<handleRequests>handleWifiAssocatedDevice</handleRequests>-->
+      </callbacks>
+      <index>
+        <mib>                    
+          <lastOid>0</lastOid>                    
+          <name>saRgWifiHotspotIf</name>                    
+          <access>NoAccess</access>                    
+          <dataType>INTEGER</dataType>                    
+          <range>                        
+            <min>1</min><max>16</max>                    
+          </range>                
+        </mib>
+        <mapToInsNumber>
+          <tableObj>Device.X_COMCAST_COM_GRE.SSID.%d</tableObj>
+          <!-- If index maps to a different value, use <map> to add the mapping below. -->
+          <map><from>3</from><to>1</to></map>
+          <map><from>11</from><to>2</to></map>
+        </mapToInsNumber>
+      </index>
+      <index>
+        <mib>                    
+          <lastOid>1</lastOid>                    
+          <name>saRgWifiHotspotConnectedClientsIndex</name>                    
+          <access>NoAccess</access>                    
+          <dataType>INTEGER</dataType>                
+        </mib>
+        <mapToInsNumber>
+          <tableObj>Device.X_COMCAST_COM_GRE.SSID.%d.AssociatedDevice.%d</tableObj>
+          <!-- If index maps to a different value, use <map> to add the mapping below. -->
+        </mapToInsNumber>
+      </index>
+      <mapping>
+        <mib>
+          <lastOid>2</lastOid>
+          <name>saRgWifiHotspotConnectedClientsPhysAddr</name>
+          <access>ReadOnly</access>
+          <dataType>PhysAddress</dataType>
+        </mib>
+        <dm>
+          <!-- fill in DM param and type -->
+          <paramName>Device.X_COMCAST_COM_GRE.SSID.%d.AssociatedDevice.%d.MACAddress</paramName>
+          <dataType>string</dataType>
+        </dm>
+      </mapping>
+      <mapping>
+        <mib>
+          <lastOid>3</lastOid>
+          <name>saRgWifiHotspotConnectedClientsRssiLevel</name>
+          <access>ReadOnly</access>
+          <dataType>Integer32</dataType>
+        </mib>
+        <dm>
+          <!-- fill in DM param and type -->
+          <paramName>Device.X_COMCAST_COM_GRE.SSID.%d.AssociatedDevice.%d.RSSILevel</paramName>
+          <dataType>int</dataType>
+        </dm>
+      </mapping>
+      <mapping>
+        <mib>
+          <lastOid>4</lastOid>
+          <name>saRgWifiHotspotConnectedClientsIpv4Addr</name>
+          <access>ReadOnly</access>
+          <dataType>IpAddress</dataType>
+        </mib>
+        <dm>
+          <!-- fill in DM param and type -->
+          <paramName>Device.X_COMCAST_COM_GRE.SSID.%d.AssociatedDevice.%d.IPv4Address</paramName>
+          <dataType>string</dataType>
+        </dm>
+      </mapping>
+      <mapping>
+        <mib>
+          <lastOid>5</lastOid>
+          <name>saRgWifiHotspotConnectedClientsHostName</name>
+          <access>ReadOnly</access>
+          <dataType>SnmpAdminString</dataType>
+        </mib>
+        <dm>
+          <!-- fill in DM param and type -->
+          <paramName>Device.X_COMCAST_COM_GRE.SSID.%d.AssociatedDevice.%d.Hostname</paramName>
+          <dataType>string</dataType>
+        </dm>
+      </mapping>
+      <mapping>
+        <mib>
+          <lastOid>6</lastOid>
+          <name>saRgWifiHotspotConnectedClientsDhcpv4Status</name>
+          <access>ReadOnly</access>
+          <dataType>INTEGER</dataType>
+          <range>
+              <min>1</min><max>5</max>
+          </range>
+        </mib>
+        <dm>
+          <!-- fill in DM param and type -->
+          <paramName>Device.X_COMCAST_COM_GRE.SSID.%d.AssociatedDevice.%d.DHCPv4Status</paramName>
+          <dataType>string</dataType>
+          <enumeration>DISCOVER(1),OFFER(2),REQUEST(3),ACK(4),NACK(5)</enumeration>
+        </dm>
+      </mapping>
+    </mibTable>
+  </mibTables>
+</mib2DM>

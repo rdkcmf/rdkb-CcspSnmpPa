@@ -1,0 +1,92 @@
+<?xml version="1.0"  encoding="UTF-8" ?>
+
+<!--
+If not stated otherwise in this file or this component's Licenses.txt
+file the following copyright and licenses apply:
+
+Copyright 2015 RDK Management
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<!--
+   Copyright [2014] [Cisco Systems, Inc.]
+
+   Licensed under the Apache License, Version 2.0 (the \"License\");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an \"AS IS\" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+
+<mib2DM xml="http://www.w3.org/XML/1998/namespace">
+    <version>1</version>
+    <name>RDK-MIB</name>
+    <lastUpdate>05/07/2012 16:40</lastUpdate>
+    <author>CcspMibHelper Mapping File Generator</author>
+    <!-- Add the library name if callbacks are needed. -->
+        <library>libsnmp_custom.so</library>
+    <scalarGroups>
+        <scalarGroup>
+            <name>xOpsDMObjs</name>
+            <baseOid>1.3.6.1.4.1.17270.43.1.2</baseOid>
+            <!--  'enabled' can be set to 'false' if this set of mibs are not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+           <mapping>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>xOpsDMUploadLogsNow</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <!--<paramName>Device.DeviceInfo.X_RDKCENTRAL-COM.Ops.UploadLogsNow</paramName> -->
+		    <paramName>Device.DeviceInfo.X_RDKCENTRAL-COM_xOpsDeviceMgmt.Logging.xOpsDMUploadLogsNow</paramName>
+                    <dataType>boolean</dataType>
+                </dm>
+           </mapping>
+           <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>xOpsDMLogsUploadStatus</name>
+                    <access>ReadOnly</access>
+                    <dataType>DisplayString</dataType>
+                   <!-- <range>
+                        <min>0</min><max>4</max>
+                    </range>-->
+                </mib>
+                 <dm>
+                    <!-- fill in DM param and type -->
+                    <!--<paramName>Device.DeviceInfo.X_RDKCENTRAL-COM.Ops.LogsUploadStatus</paramName> -->
+		    <paramName>Device.DeviceInfo.X_RDKCENTRAL-COM_xOpsDeviceMgmt.Logging.xOpsDMLogsUploadStatus</paramName>
+                    <dataType>string</dataType>
+                  <!--  <enumeration>notTriggered(0),triggered(1),in progress(2),uploadfailed(3),complete(4)</enumeration>-->
+                </dm>
+           </mapping>   
+        </scalarGroup>
+      </scalarGroups>
+</mib2DM>

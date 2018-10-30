@@ -1,0 +1,318 @@
+<?xml version="1.0"  encoding="UTF-8" ?>
+
+<!--
+   Copyright [2014] [Cisco Systems, Inc.]
+
+   Licensed under the Apache License, Version 2.0 (the \"License\");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an \"AS IS\" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+
+<mib2DM xml="http://www.w3.org/XML/1998/namespace">
+    <version>1</version>
+    <name>SA-RG-MIB</name>
+    <lastUpdate>06/13/2012 14:27</lastUpdate>
+    <author>CcspMibHelper Mapping File Generator</author>
+    <!-- Add the library name if callbacks are needed. -->
+	<library>libsnmp_custom.so</library>
+    <scalarGroups>
+        <scalarGroup>
+            <name>saRgIpMgmtWanAddrBase</name>
+            <baseOid>1.3.6.1.4.1.1429.79.2.3.9.1</baseOid>
+            <!--  'enabled' can be set to 'false' if this set of mibs are not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- <mapToEntry>Wifi.Radio.%d.Frequency=2.4</mapToEntry> -->
+            <callbacks>
+                <handleRequests>handleWanDnsRequest</handleRequests>
+            </callbacks>
+            <mapping>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>saRgIpMgmtWanMode</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>1</min><max>3</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_DeviceControl.WanAddressMode</paramName>
+                    <dataType>string</dataType>
+                    <enumeration>DHCP(1),Static(2),DUALIP(3)</enumeration>
+                </dm>
+            </mapping>
+            <!--
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>saRgIpMgmtWanMtu</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>0</min><max>1500</max>
+                    </range>
+                </mib>
+                <dm>
+                    <paramName>Device.abcd.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>saRgIpMgmtWanTtl</name>
+                    <access>ReadWrite</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>0</min><max>255</max>
+                    </range>
+                </mib>
+                <dm>
+                    <paramName>Device.abcd.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+            -->
+        </scalarGroup>
+        <scalarGroup>
+            <name>saRgIpMgmtWanAddrDynamic</name>
+            <baseOid>1.3.6.1.4.1.1429.79.2.3.9.2</baseOid>
+            <!--  'enabled' can be set to 'false' if this set of mibs are not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <mapping>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>saRgIpMgmtWanAddrDynamicIp</name>
+                    <!-- ReadOnly: SA_CUSTOM_COMCAST -->
+                    <access>ReadOnly</access>
+                    <dataType>IpAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.IP.Interface.1.IPv4Address.1.IPAddress</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>saRgIpMgmtWanAddrDynamicLeaseTime</name>
+                    <access>ReadWrite</access>
+                    <dataType>Unsigned32</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.DHCPv4.Client.1.LeaseTimeRemaining</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+        </scalarGroup>
+        <scalarGroup>
+            <name>saRgIpMgmtWanAddrStatic</name>
+            <baseOid>1.3.6.1.4.1.1429.79.2.3.9.3</baseOid>
+            <!--  'enabled' can be set to 'false' if this set of mibs are not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <mapping>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>saRgIpMgmtWanStaticNetwork</name>
+                    <access>ReadWrite</access>
+                    <dataType>IpAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_DeviceControl.WanStaticIPAddress</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>saRgIpMgmtWanStaticSubnetMask</name>
+                    <access>ReadWrite</access>
+                    <dataType>IpAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.X_CISCO_COM_DeviceControl.WanStaticSubnetMask</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>saRgIpMgmtWanStaticGateway</name>
+                    <access>ReadWrite</access>
+                    <dataType>IpAddress</dataType>
+                </mib>
+                <dm>
+                    <paramName>Device.X_CISCO_COM_DeviceControl.WanStaticGatewayIP</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>4</lastOid>
+                    <name>saRgIpMgmtWanStaticNameServerEnable</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <paramName>Device.X_CISCO_COM_DeviceControl.EnableStaticNameServer</paramName>
+                    <dataType>boolean</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>5</lastOid>
+                    <name>saRgIpMgmtWanStaticHostName</name>
+                    <access>ReadWrite</access>
+                    <dataType>SnmpAdminString</dataType>
+                </mib>
+                <dm>
+                    <paramName>Device.X_CISCO_COM_DeviceControl.HostName</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>6</lastOid>
+                    <name>saRgIpMgmtWanStaticDomainName</name>
+                    <access>ReadWrite</access>
+                    <dataType>SnmpAdminString</dataType>
+                </mib>
+                <dm>
+                    <paramName>Device.X_CISCO_COM_DeviceControl.DomainName</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+        </scalarGroup>
+        <scalarGroup>
+            <name>saRgIpMgmtWanAddrDualIp</name>
+            <baseOid>1.3.6.1.4.1.1429.79.2.3.9.4</baseOid>
+            <!--  'enabled' can be set to 'false' if this set of mibs are not ready at back-end yet or deprecated -->
+            <enabled>false</enabled>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <mapping>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>saRgIpMgmtWanDualIpAddr</name>
+                    <access>ReadOnly</access>
+                    <dataType>IpAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcd.xyz</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+            <mapping>
+                <mib>
+                    <lastOid>2</lastOid>
+                    <name>saRgIpMgmtWanDualIpRipAdvertised</name>
+                    <access>ReadWrite</access>
+                    <dataType>TruthValue</dataType>
+                    <range>
+                        <min>1</min><max>2</max>
+                    </range>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcd.xyz</paramName>
+                    <dataType>int</dataType>
+                </dm>
+            </mapping>
+        </scalarGroup>
+        <scalarGroup>
+            <name>saRgIpMgmtWanAddrBackup</name>
+            <baseOid>1.3.6.1.4.1.1429.79.2.3.9.5</baseOid>
+            <!--  'enabled' can be set to 'false' if this set of mibs are not ready at back-end yet or deprecated -->
+            <enabled>false</enabled>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <mapping>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>saRgIpMgmtWanAddrBackupDefGw</name>
+                    <access>ReadWrite</access>
+                    <dataType>IpAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.abcd.xyz</paramName>
+                    <dataType>unsignedInt</dataType>
+                </dm>
+            </mapping>
+        </scalarGroup>
+    </scalarGroups>
+    <mibTables>
+        <mibTable>
+            <name>saRgIpMgmtDnsServerTable</name>
+            <tableOid>1.3.6.1.4.1.1429.79.2.3.5</tableOid>
+            <!--  'enabled' can be set to 'false' if this table is not ready at back-end yet or deprecated -->
+            <enabled>true</enabled>
+            <writable>false</writable>
+            <maxEntries>16</maxEntries>
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+            <!-- Add filters in the table -->
+            <!-- <mapToEntries>Device.RoutingTable.%d.type=static</mapToEntries> -->
+            <callbacks>
+                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+            </callbacks>
+            <index>
+                <mib>
+                    <lastOid>1</lastOid>
+                    <name>saRgIpMgmtDnsServerOrder</name>
+                    <access>NoAccess</access>
+                    <dataType>INTEGER</dataType>
+                    <range>
+                        <min>1</min><max>3</max>
+                    </range>
+                </mib>
+                <mapToInsNumber>
+                    <tableObj>Device.DNS.Client.Server.</tableObj>
+                    <!-- If index maps to a different value, use <map> to add the mapping below. -->
+                </mapToInsNumber>
+            </index>
+            <mapping>
+                <mib>
+                    <lastOid>3</lastOid>
+                    <name>saRgIpMgmtDnsServerIp</name>
+                    <access>ReadWrite</access>
+                    <dataType>IpAddress</dataType>
+                </mib>
+                <dm>
+                    <!-- fill in DM param and type -->
+                    <paramName>Device.DNS.Client.Server.%d.DNSServer</paramName>
+                    <dataType>string</dataType>
+                </dm>
+            </mapping>
+        </mibTable>
+    </mibTables>
+</mib2DM>

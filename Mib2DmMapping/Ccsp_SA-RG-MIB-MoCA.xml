@@ -1,0 +1,640 @@
+<?xml version="1.0"  encoding="UTF-8" ?>
+
+<!--
+   Copyright [2014] [Cisco Systems, Inc.]
+
+   Licensed under the Apache License, Version 2.0 (the \"License\");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an \"AS IS\" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+
+
+<mib2DM xml="http://www.w3.org/XML/1998/namespace">
+
+    <version>1</version>
+
+    <name>SA-MOCA-MIB</name>
+
+    <lastUpdate>07/25/2012 14:44</lastUpdate>
+
+    <author>CcspMibHelper Mapping File Generator</author>
+
+    <!-- Add the library name if callbacks are needed. -->
+
+    <library>libsnmp_custom.so</library>
+
+    <scalarGroups>
+
+        <scalarGroup>
+
+            <name>saMocaDeviceBase</name>
+
+            <baseOid>1.3.6.1.4.1.1429.79.4.1.1</baseOid>
+
+            <!--  'enabled' can be set to 'false' if this set of mibs are not ready at back-end yet or deprecated -->
+
+            <enabled>true</enabled>
+
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+
+            <!-- <mapToEntry>Wifi.Radio.%d.Frequency=2.4</mapToEntry> -->
+
+            <callbacks>
+
+                <handleRequests>handleMocaDeviceBase</handleRequests> 
+
+            </callbacks>
+
+            <mapping>
+
+                <mib>
+
+                    <lastOid>1</lastOid>
+
+                    <name>saMocaDevEnable</name>
+
+                    <access>ReadWrite</access>
+
+                    <dataType>TruthValue</dataType>
+
+                    <range>
+
+                        <min>1</min><max>2</max>
+
+                    </range>
+
+                </mib>
+
+                <dm>
+
+                    <!-- fill in DM param and type -->
+
+                    <paramName>Device.MoCA.Interface.1.Enable</paramName>
+
+                    <dataType>boolean</dataType>
+
+                </dm>
+
+            </mapping>
+
+            <mapping>
+
+                <mib>
+
+                    <lastOid>2</lastOid>
+
+                    <name>saMocaDevResetNow</name>
+
+                    <access>ReadWrite</access>
+
+                    <dataType>TruthValue</dataType>
+
+                    <range>
+
+                        <min>1</min><max>2</max>
+
+                    </range>
+
+                </mib>
+
+                <dm>
+
+                    <!-- fill in DM param and type -->
+
+                    <paramName>Device.MoCA.Interface.1.X_CISCO_COM_Reset</paramName>
+
+                    <dataType>boolean</dataType>
+
+                </dm>
+
+            </mapping>
+
+            <mapping>
+
+                <mib>
+
+                    <lastOid>3</lastOid>
+
+                    <name>saMocaDevEncryptionEnable</name>
+
+                    <access>ReadWrite</access>
+
+                    <dataType>TruthValue</dataType>
+
+                    <range>
+
+                        <min>1</min><max>2</max>
+
+                    </range>
+
+                </mib>
+
+                <dm>
+
+                    <!-- fill in DM param and type -->
+
+                    <paramName>Device.MoCA.Interface.1.PrivacyEnabledSetting</paramName>
+
+                    <dataType>boolean</dataType>
+
+                </dm>
+
+            </mapping>
+
+            <mapping>
+
+                <mib>
+
+                    <lastOid>4</lastOid>
+
+                    <name>saMocaDevEncryptionPassword</name>
+
+                    <access>ReadWrite</access>
+
+                    <dataType>OCTET STRING</dataType>
+
+                    <range>
+
+                        <max>20</max>
+
+                    </range>
+
+                </mib>
+
+                <dm>
+
+                    <!-- fill in DM param and type -->
+
+                    <paramName>Device.MoCA.Interface.1.KeyPassphrase</paramName>
+
+                    <dataType>string</dataType>
+
+                </dm>
+
+            </mapping>
+
+            <mapping>
+
+                <mib>
+
+                    <lastOid>5</lastOid>
+
+                    <name>saMocaDevPreferred</name>
+
+                    <access>ReadWrite</access>
+
+                    <dataType>TruthValue</dataType>
+
+                    <range>
+
+                        <min>1</min><max>2</max>
+
+                    </range>
+
+                </mib>
+
+                <dm>
+
+                    <!-- fill in DM param and type -->
+
+                    <paramName>Device.MoCA.Interface.1.PreferredNC</paramName>
+
+                    <dataType>boolean</dataType>
+
+                </dm>
+
+            </mapping>
+
+            <mapping>
+
+                <mib>
+
+                    <lastOid>6</lastOid>
+
+                    <name>saMocaDevMixedMode</name>
+
+                    <access>ReadWrite</access>
+
+                    <dataType>TruthValue</dataType>
+
+                    <range>
+
+                        <min>1</min><max>2</max>
+
+                    </range>
+
+                </mib>
+
+                <dm>
+
+                    <!-- fill in DM param and type -->
+
+                    <paramName>Device.MoCA.Interface.1.X_CISCO_COM_MixedMode</paramName>
+
+                    <dataType>boolean</dataType>
+
+                </dm>
+
+            </mapping>
+
+            <mapping>
+
+                <mib>
+
+                    <lastOid>7</lastOid>
+
+                    <name>saMocaDevTabooEnable</name>
+
+                    <access>ReadWrite</access>
+
+                    <dataType>TruthValue</dataType>
+
+                    <range>
+
+                        <min>1</min><max>2</max>
+
+                    </range>
+
+                </mib>
+
+                <dm>
+
+                    <paramName>Device.MoCA.Interface.1.X_CISCO_COM_EnableTabooBit</paramName>
+
+                    <dataType>boolean</dataType>
+
+                </dm>
+
+            </mapping>
+
+            <mapping>
+
+                <mib>
+
+                    <lastOid>8</lastOid>
+
+                    <name>saMocaDevTabooMask</name>
+
+                    <access>ReadWrite</access>
+
+                    <dataType>SaMocaFrequencies</dataType>
+
+                </mib>
+                <!--
+                <dm>
+
+                    <paramName>Device.MoCA.Interface.1.NodeTabooMask</paramName>
+
+                    <dataType>string</dataType>
+
+                </dm>
+                 -->
+            </mapping>
+
+            <mapping>
+
+                <mib>
+
+                    <lastOid>9</lastOid>
+
+                    <name>saMocaDevNcMacAddress</name>
+
+                    <access>ReadOnly</access>
+
+                    <dataType>PhysAddress</dataType>
+
+                </mib>
+
+                <dm>
+
+                    <paramName>Device.MoCA.Interface.1.X_CISCO_NetworkCoordinatorMACAddress</paramName>
+
+                    <dataType>string</dataType>
+
+                </dm>
+
+            </mapping>
+
+        </scalarGroup>
+
+        <scalarGroup>
+
+            <name>saMocaDeviceChannel</name>
+
+            <baseOid>1.3.6.1.4.1.1429.79.4.1.2</baseOid>
+
+            <!--  'enabled' can be set to 'false' if this set of mibs are not ready at back-end yet or deprecated -->
+
+            <enabled>true</enabled>
+
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+
+            <!-- <mapToEntry>Wifi.Radio.%d.Frequency=2.4</mapToEntry> -->
+
+            <callbacks>
+
+                <handleRequests>handleMocaDeviceChannel</handleRequests>
+
+            </callbacks>
+
+            <mapping>
+
+                <mib>
+
+                    <lastOid>1</lastOid>
+
+                    <name>saMocaDevChannelScanning</name>
+
+                    <access>ReadWrite</access>
+
+                    <dataType>TruthValue</dataType>
+
+                    <range>
+
+                        <min>1</min><max>2</max>
+
+                    </range>
+
+                </mib>
+
+                <dm>
+
+                    <!-- fill in DM param and type -->
+
+                    <paramName>Device.MoCA.Interface.1.X_CISCO_COM_ChannelScanning</paramName>
+
+                    <dataType>boolean</dataType>
+
+                </dm>
+
+            </mapping>
+
+            <mapping>
+
+                <mib>
+
+                    <lastOid>3</lastOid>
+
+                    <name>saMocaDevChannelMask</name>
+
+                    <access>ReadWrite</access>
+
+                    <dataType>BITS</dataType>
+
+                </mib>
+               <!--
+                <dm>
+
+                    <paramName>Device.MoCA.Interface.1.FreqCurrentMaskSetting</paramName>
+
+                    <dataType>string</dataType>
+
+                </dm>
+                -->
+            </mapping>
+
+            <mapping>
+
+                <mib>
+
+                    <lastOid>4</lastOid>
+
+                    <name>saMocaDevChannelScanMask</name>
+
+                    <access>ReadWrite</access>
+
+                    <dataType>SaMocaFrequencies</dataType>
+
+                </mib>
+                <!--
+                <dm>
+
+                    <paramName>Device.MoCA.Interface.1.X_CISCO_COM_ChannelScanMask</paramName>
+
+                    <dataType>string</dataType>
+
+                </dm>
+                 -->
+            </mapping>
+
+            <mapping>
+
+                <mib>
+
+                    <lastOid>5</lastOid>
+
+                    <name>saMocaDevChannelLast</name>
+
+                    <access>ReadWrite</access>
+
+                    <dataType>INTEGER</dataType>
+
+                </mib>
+
+                <dm>
+
+                    <!-- fill in DM param and type -->
+
+                    <paramName>Device.MoCA.Interface.1.LastOperFreq</paramName>
+
+                    <dataType>int</dataType>
+
+                </dm>
+
+            </mapping>
+
+        </scalarGroup>
+
+        <scalarGroup>
+
+            <name>saMocaDevicePower</name>
+
+            <baseOid>1.3.6.1.4.1.1429.79.4.1.3</baseOid>
+
+            <!--  'enabled' can be set to 'false' if this set of mibs are not ready at back-end yet or deprecated -->
+
+            <enabled>true</enabled>
+
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+
+            <!-- <mapToEntry>Wifi.Radio.%d.Frequency=2.4</mapToEntry> -->
+
+            <callbacks>
+
+                <handleRequests>handleMocaDevicePower</handleRequests>
+
+            </callbacks>
+
+            <mapping>
+
+                <mib>
+
+                    <lastOid>1</lastOid>
+
+                    <name>saMocaDevPwrAPCEnable</name>
+
+                    <access>ReadWrite</access>
+
+                    <dataType>TruthValue</dataType>
+
+                    <range>
+
+                        <min>1</min><max>2</max>
+
+                    </range>
+
+                </mib>
+
+                <dm>
+
+                    <!-- fill in DM param and type -->
+
+                    <paramName>Device.MoCA.Interface.1.X_CISCO_COM_AutoPowerControlEnable</paramName>
+
+                    <dataType>boolean</dataType>
+
+                </dm>
+
+            </mapping>
+
+            <mapping>
+
+                <mib>
+
+                    <lastOid>2</lastOid>
+
+                    <name>saMocaDevPwrTxMax</name>
+
+                    <access>ReadWrite</access>
+
+                    <dataType>INTEGER</dataType>
+
+                    <range>
+
+                        <min>0</min><max>10</max>
+
+                    </range>
+
+                </mib>
+                <!--
+                <dm>
+
+                    <paramName>Device.MoCA.Interface.1.TxPowerLimit</paramName>
+
+                    <dataType>string</dataType>                   
+                     <enumeration>minus50(0),minus47(1),minus44(2),minus41(3),minus38(4),minus35(5),minus32(6),minus29(7),minus26(8),minus23(9),minus20(10)</enumeration>
+
+                </dm>
+                 -->
+            </mapping>
+
+            <mapping>
+
+                <mib>
+
+                    <lastOid>3</lastOid>
+
+                    <name>saMocaDevPwrCtrlPhyRate</name>
+
+                    <access>ReadWrite</access>
+
+                    <dataType>INTEGER</dataType>
+
+                </mib>
+               <!--
+                <dm>
+
+                   <paramName>Device.MoCA.Interface.1.AutoPowerControlPhyRate</paramName>
+
+                    <dataType>int</dataType>
+
+                </dm>
+                -->
+            </mapping>
+
+            <mapping>
+
+                <mib>
+
+                    <lastOid>4</lastOid>
+
+                    <name>saMocaDevPwrBeaconLevel</name>
+
+                    <access>ReadWrite</access>
+
+                    <dataType>INTEGER</dataType>
+
+                </mib>
+                <!--
+                <dm>
+
+                  <paramName>Device.MoCA.Interface.1.BeaconPowerLimit</paramName>
+
+                    <dataType>int</dataType>
+
+                </dm>
+                  -->
+            </mapping>
+
+        </scalarGroup>
+        
+        <scalarGroup>
+
+            <name>saMocaStatsNodeSummary</name>
+             
+            <baseOid>1.3.6.1.4.1.1429.79.4.2.1.2</baseOid>
+
+            <!--  'enabled' can be set to 'false' if this set of mibs are not ready at back-end yet or deprecated -->
+
+            <enabled>true</enabled>
+
+            <cacheTimeout>30</cacheTimeout><!-- in seconds -->
+
+            <!-- <mapToEntry>Wifi.Radio.%d.Frequency=2.4</mapToEntry> -->
+
+            <callbacks>
+
+                <!--<handleRequests>handleMocaStatsNodeSummary</handleRequests>-->
+
+            </callbacks>
+
+            <mapping>
+
+                <mib>
+
+                    <lastOid>1</lastOid>
+
+                    <name>saMocaStatsTotalNodes</name>
+
+                    <access>ReadOnly</access>
+
+                    <dataType>INTEGER</dataType>
+ 
+                </mib>
+
+                <dm>
+
+                    <!-- fill in DM param and type -->
+
+                    <paramName>Device.MoCA.Interface.1.AssociatedDeviceNumberOfEntries</paramName>
+
+                    <dataType>unsignedInt</dataType>
+
+                </dm>
+
+            </mapping>
+
+        </scalarGroup>
+
+    </scalarGroups>
+
+</mib2DM>
+

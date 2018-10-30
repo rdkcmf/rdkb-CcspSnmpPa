@@ -1,0 +1,206 @@
+COMCAST-SMI DEFINITIONS ::= BEGIN
+
+-- This module tracks the root Comcast OID. The currently known
+-- sub assignments are:
+-- Branch               Owner             Project
+-- 1.3.6.1.4.1.17270.1	Aaron Settles	SAS/DHCP Traps
+-- 1.3.6.1.4.1.17270.2 	Nirmal Mody	Comcast CableHome/Home Networking 
+-- 1.3.6.1.4.1.17270.3	Paul Yarborough	LDAP
+-- 1.3.6.1.4.1.17270.4	Nirmal Mody	Comcast Commerical/Business Services
+-- 1.3.6.1.4.1.17270.5	Pak Siripunkaw	
+-- 1.3.6.1.4.1.17270.6	Steven Fancher	Network Topology Directory
+-- 1.3.6.1.4.1.17270.7	Richard Woundy 	Initial version of the DCAS MIB module
+-- 1.3.6.1.4.1.17270.8	Tim Kalligonis	PKI 
+-- 1.3.6.1.4.1.17270.9	Currently unused
+-- 1.3.6.1.4.1.17270.10	Mark Ellis	Hobbit Traps
+-- 1.3.6.1.4.1.17270.11 Mike Slocombe Boston LMC Monitoring
+-- 1.3.6.1.4.1.17270.12	Max Schubert Nagios NMS related traps
+-- 1.3.6.1.4.1.17270.13 Rich Andreas IPSLA Tool
+-- 1.3.6.1.4.1.17270.14 Ritesh Shah Comcast communication application server
+-- 1.3.6.1.4.1.17270.15 Will Pierce Metro Ethernet Performance Management MIB
+-- 1.3.6.1.4.1.17270.16 Sergey Matochkin Zabbix NMS related traps
+-- 1.3.6.1.4.1.17270.17 Greg Lewis Unified Database Navigation SNMP MIB
+-- 1.3.6.1.4.1.17270.18 Billy Cooper/Josh Seiden National Access Controller SNMP MIB
+-- 1.3.6.1.4.1.17270.19 Michael Kauffman Call Me SNMP MIB
+-- 1.3.6.1.4.1.17270.20 Pablo Averbuj CADA LDAP Schema
+-- 1.3.6.1.4.1.17270.21 John Costello Comcast application instrumentation MIB
+-- 1.3.6.1.4.1.17270.22 Michael Kauffman Eastern Division VXML-based IVR applications, such as Customer Lookup, Pay-By-Phone, etc.
+-- 1.3.6.1.4.1.17270.23 Rich Birkhead telephony testing traps
+-- 1.3.6.1.4.1.17270.24 Weidong Mao Next Generation On Demand NGOD development
+-- 1.3.6.1.4.1.17270.25 Shawn O'Malley Comcast Video Services
+-- 1.3.6.1.4.1.17270.26 Shan Lu Xfinity Mobile (OTT)
+-- 1.3.6.1.4.1.17270.27 E. Nolan/D. Felton mcdv Soft Client Gateway
+-- 1.3.6.1.4.1.17270.50 Sanjay Dwivedi OCG (Gateway) module
+-- 1.3.6.1.4.1.17270.100	Jan Van Doorn	OCAPmonitor/truView 
+-- 1.3.6.1.4.1.17270.101	Michael Okamura truView service monitoring
+-- 1.3.6.1.4.1.17270.102	Timojhen Mark Project Infinity (CCDN VOD) 
+-- 1.3.6.1.4.1.17270.103	Rick Vetter Voice CPE
+-- 1.3.6.1.4.1.17270.104	Satya Dandibhotla Workforce Automation (WFA) traps 
+-- 1.3.6.1.4.1.17270.105	Fred Landers Unified Call Routing project
+-- 1.3.6.1.4.1.17270.106	Maurice Garcia QA Testing MIBs
+-- 1.3.6.1.4.1.17270.9225 Charles Wren Xcalibur
+
+-- ############################################################################
+--
+-- NOTE WELL:
+-- 
+-- The original commentary for this SMI was as follows:
+--
+-- This MIB is not explicitly identifying the above sub-oids at this time
+-- in the true sense of a SMI. Several of the MIBs were written before
+-- this document was created and explicitly defining the sub branch
+-- here would break those MIBs.
+--
+-- Recent projects (ca. 2012) have questioned why this document exists at all
+-- if it is not used to officially declare a specific OID. The keepers of this
+-- document are well aware that such definitions would be trivial, e.g.:
+--	myComcastProject OBJECT IDENTIFIER
+--		::= { comcast 12345 } 
+-- However, as inferred by the original commentary and reinforced explicitly here:
+--
+-- This is meant to be an optional document for Comcast MIB authors.
+--
+-- There were at least 9 existing internal Comcast SNMP MIBs at the time
+-- the original SMI was written. There was no way to enforce upgrading all nine SNMP MIBs
+-- and all potential integrations written for these tools. Therefore, this document
+-- was created to be the least impactful way to track various Comcast enterprise
+-- specific OID assignments without forcing the inclusion of the SMI in the MIBs. By registering
+-- a project's OID here in the comment block, other authors can be aware of extant OIDs
+-- and tool integrators can reference it. There are minimal data structures defined here that 
+-- may be used if desired as well. However, the initial charter of "encourage but do not force inclusion"
+-- remains.
+--
+
+IMPORTS
+    MODULE-IDENTITY, OBJECT-IDENTITY, enterprises
+        FROM SNMPv2-SMI
+    TEXTUAL-CONVENTION
+        FROM SNMPv2-TC;
+
+comcast MODULE-IDENTITY
+    LAST-UPDATED "201402180000Z"
+    ORGANIZATION 
+        "Comcast Cable"
+    CONTACT-INFO 
+        "
+         Paul Schauer
+         Comcast Cable
+         Email: paul_schauer@cable.comcast.com
+         Aaron Settles
+         Comcast Cable
+         Email: aaron_settles@cable.comcast.com"
+  DESCRIPTION
+	"Added .50 OID OCG (Gateway) module"
+    REVISION	"201402180000Z"         
+	DESCRIPTION
+	"Added .106 OID for QA Testing MIBs"
+    REVISION	"201210040000Z"         
+    DESCRIPTION
+	"Explicitly declared the .9225 as an OBJECT-IDENTITY as requested by the Xcalibur program. Added inheritence of OBJECT-IDENTITY
+	from SNMPv2-SMI."
+    REVISION	"201204250000Z"
+    DESCRIPTION
+	"Added .105 OID for Unified Call Routing project."
+    REVISION	"201203050000Z"
+    DESCRIPTION
+	"Added .104 OID for Workforce Automation. Clarified MIB's raison d'etre."
+    REVISION	"201202030000Z"           
+    DESCRIPTION
+	"Added .103 OID for Voice CPE"
+    REVISION	"201202020000Z"           
+    DESCRIPTION
+	"Added .102 OID for Project Infinity"
+    REVISION	"201201110000Z"  
+		DESCRIPTION
+	"Added .9225 OID for Xcalibur"
+    REVISION	"201201040000Z"         
+    DESCRIPTION
+	"Added .27 OID for mcdv Soft Client Gateway"
+    REVISION	"201108230000Z"
+    DESCRIPTION 
+        "Added .26 OID for Xfinity Mobile Services"
+    REVISION    "201104260000Z"
+    DESCRIPTION 
+        "Added .25 OID for Comcast Video Services"
+    REVISION    "201101051200Z"
+    DESCRIPTION 
+        "Added CCastServiceAffect textual convention"
+    REVISION    "201101050000Z"
+    DESCRIPTION 
+        "Added .101 OID for truView service monitoring"
+    REVISION    "201002180000Z"
+    DESCRIPTION 
+        "Added .24 OID for NGOD"
+    REVISION    "201001290000Z"
+    DESCRIPTION 
+        "The structure of management information for Comcast Cable"
+    REVISION    "200912150000Z"
+    DESCRIPTION 
+        "Added .23 OID for telephony testing and instrumentation alarms. Removed
+         single quote from comments that SVN changed to a hex character. Revised
+         timestamps to agree with SVN check in date and SMI semantics."
+    REVISION    "200911300000Z"
+    DESCRIPTION 
+        "Added .22 OID for Eastern Division VXML-based IVR applications"
+    REVISION    "200910260000Z"
+    DESCRIPTION 
+        "Added .21 OID for Comcast application instrumentation"
+    REVISION    "200909100000Z"
+    DESCRIPTION 
+        "Added .19 OID for Call Me MIB and OID .20 for CADA LDAP Schema. Added comments."
+    REVISION    "200908240000Z"
+    DESCRIPTION 
+        "Added .18 OID for NAS MIB. Added comments."
+    REVISION    "200907300000Z"
+    DESCRIPTION 
+        "Added .17 OID for UDB navigation MIB. Added comments."
+    REVISION    "200905210000Z"
+    DESCRIPTION 
+        "Added .16 OID for Zabbix MIB"
+    REVISION    "200905140000Z"
+    DESCRIPTION 
+        "Added .15 OID for Metro Ethernet PM MIB"
+    REVISION    "200903270000Z"
+    DESCRIPTION 
+        "Added .14 OID for application server MIB"
+    REVISION    "200901070000Z"
+    DESCRIPTION 
+        "Corrected .9 to .100 to reflect as-written truView MIB"
+    REVISION    "200901060000Z"
+    DESCRIPTION 
+        "Updated .11 owner and changed previous .11 to .13. Spelling corrections."
+    REVISION    "200901050000Z"
+    DESCRIPTION 
+        "Added .12 reference and added contact information"
+    REVISION    "200812180000Z"
+    DESCRIPTION 
+        "Added .11 reference, updated imports section based on smidump output, and updated comments"
+    REVISION    "200803050000Z"
+    DESCRIPTION 
+        "Initial Revision"
+    ::= { enterprises 17270 }
+
+xcalibur OBJECT-IDENTITY
+    STATUS	current
+    DESCRIPTION
+        "Xcalibur Client Components namespace. Please contact Charles_Wren@cable.comcast.com or Mark_Morehouse@cable.comcast.com."
+    ::= { comcast 9225 } 
+
+CCastAlarmState ::= TEXTUAL-CONVENTION
+    STATUS      current
+    DESCRIPTION 
+        "A generic alarm severity identifier based
+         loosely on industry standards.
+         This may be used in trap varbinds to create or clear alarms."
+    SYNTAX      INTEGER { clear(0), informational(10), warning(20), 
+                    minor(30), major(40), critical(50) }
+
+CCastServiceAffect ::= TEXTUAL-CONVENTION
+    STATUS      current
+    DESCRIPTION 
+        "A generic service impact indentifier based loosely on industry standards.
+         NSA=Non-Service Affecting. SA=Service Affecting.
+         	This may be used in trap varbinds to further qualify the impact of a particular alarm."
+    SYNTAX      INTEGER { nsa(0), sa(1) }
+
+END -- end of module COMCAST-SMI.
