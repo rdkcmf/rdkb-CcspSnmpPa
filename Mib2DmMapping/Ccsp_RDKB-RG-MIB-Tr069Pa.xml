@@ -196,7 +196,7 @@ limitations under the License.
                     <access>ReadWrite</access>
                     <dataType>INTEGER</dataType>
                     <range>
-                        <min>0</min>
+                        <min>1</min>
                         <max>2147483647</max>
                     </range>
                 </mib>
