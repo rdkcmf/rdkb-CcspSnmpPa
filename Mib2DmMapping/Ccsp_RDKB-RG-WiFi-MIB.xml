@@ -846,7 +846,7 @@ limitations under the License.
                     <access>ReadWrite</access>
                     <dataType>DisplayString</dataType>
                     <range>
-                        <min>0</min><max>32</max>
+                        <min>8</min><max>63</max>
                     </range>
                 </mib>
                 <dm>
