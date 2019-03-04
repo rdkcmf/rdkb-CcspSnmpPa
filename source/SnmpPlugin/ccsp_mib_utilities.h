@@ -42,13 +42,6 @@
 
     ---------------------------------------------------------------
 
-    copyright:
-
-        Cisco System  , Inc.,
-        All Rights Reserved.
-
-    ---------------------------------------------------------------
-
     description:
 
         This header file contains utility functions will be used 
