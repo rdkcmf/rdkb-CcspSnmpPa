@@ -42,13 +42,6 @@
 
     ---------------------------------------------------------------
 
-    copyright:
-
-        Cisco System  , Inc.,
-        All Rights Reserved.
-
-    ---------------------------------------------------------------
-
     description:
 
         This header file contains the internal functions used by
