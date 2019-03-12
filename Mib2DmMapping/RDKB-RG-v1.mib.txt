@@ -2825,7 +2825,116 @@ rdkbRgFirewallUrlKeywordFilterBlockDays OBJECT-TYPE
         "BITMAP to indicate which days to block"
     ::= { rdkbRgFirewallUrlKeywordFilterEntry 8 }
 
--- Removed node   rdkbRgFirewall 6,7
+
+rdkbRgFirewallPortFwdTable OBJECT IDENTIFIER ::=  { rdkbRgFirewall 6 }
+
+rdkbRgFirewallPortFwdIndex OBJECT-TYPE SYNTAX      INTEGER
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Firewall Port Fwd-Index" 
+    DEFVAL { false } 
+    ::= { rdkbRgFirewallPortFwdTable 1 }
+
+rdkbRgFirewallPortFwdRowStatus OBJECT-TYPE SYNTAX      RowStatus
+    MAX-ACCESS  write-only
+    STATUS      current
+    DESCRIPTION "Firewall Port Fwd Row-Status" 
+    DEFVAL { false } 
+    ::= { rdkbRgFirewallPortFwdTable 2 }
+
+rdkbRgFirewallPortFwdToAddress OBJECT-TYPE SYNTAX      IpAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "rdkbRgFirew  allPortFwdToAddress" 
+    DEFVAL { false } 
+    ::= { rdkbRgFirewallPortFwdTable 3 }
+
+rdkbRgFirewallPortFwdPortStart OBJECT-TYPE SYNTAX      InetPortNumber
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "rdkbRgFirewallPortFwdPortStart" 
+    DEFVAL { false } 
+    ::= { rdkbRgFirewallPortFwdTable 4 }
+
+rdkbRgFirewallPortFwdPortEnd OBJECT-TYPE SYNTAX      InetPortNumber
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "rdkbRgFirewallPortFwdPortEnd" 
+    DEFVAL { false } 
+    ::= { rdkbRgFirewallPortFwdTable 5 }
+
+rdkbRgFirewallPortFwdProto OBJECT-TYPE SYNTAX      INTEGER
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "rdkbRgFirewallPortFwdProto" 
+    DEFVAL { false } 
+    ::= { rdkbRgFirewallPortFwdTable 6 }
+
+rdkbRgFirewallPortFwdSrvcName OBJECT-TYPE SYNTAX      SnmpAdminString
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "rdkbRgFirewallPortFwdSrvcName" 
+    DEFVAL { false } 
+    ::= { rdkbRgFirewallPortFwdTable 7 }
+
+
+rdkbRgFirewallPortTrigTable OBJECT IDENTIFIER ::=  { rdkbRgFirewall 7 }
+
+rdkbRgFirewallPortTrigIndex OBJECT-TYPE SYNTAX      INTEGER
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION "Firewall Port Trig-Index" 
+    DEFVAL { false } 
+    ::= { rdkbRgFirewallPortTrigTable 1 }
+
+rdkbRgFirewallPortTrigRowStatus OBJECT-TYPE SYNTAX      RowStatus
+    MAX-ACCESS  write-only
+    STATUS      current
+    DESCRIPTION "Firewall Port Trig Row-Status" 
+    DEFVAL { false } 
+    ::= { rdkbRgFirewallPortTrigTable 2 }
+
+rdkbRgFirewallPortTrigTriggerPortStart OBJECT-TYPE SYNTAX      InetPortNumber
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "rdkbRgFirewallPortTrigTriggerPortStart" 
+    DEFVAL { false } 
+    ::= { rdkbRgFirewallPortTrigTable 3 }
+
+rdkbRgFirewallPortTrigTriggerPortEnd OBJECT-TYPE SYNTAX      InetPortNumber
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "rdkbRgFirewallPortTrigTriggerPortEnd" 
+    DEFVAL { false } 
+    ::= { rdkbRgFirewallPortTrigTable 4 }
+
+rdkbRgFirewallPortTrigTargetPortStart OBJECT-TYPE SYNTAX      InetPortNumber
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "rdkbRgFirewallPortTrigTargetPortStart" 
+    DEFVAL { false } 
+    ::= { rdkbRgFirewallPortTrigTable 5 }
+
+rdkbRgFirewallPortTrigTargetPortEnd OBJECT-TYPE SYNTAX      InetPortNumber
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "rdkbRgFirewallPortTrigTargetPortEnd" 
+    DEFVAL { false } 
+    ::= { rdkbRgFirewallPortTrigTable 6 }
+
+rdkbRgFirewallPortTrigProto OBJECT-TYPE SYNTAX      INTEGER
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "rdkbRgFirewallPortTrigProto" 
+    DEFVAL { false } 
+    ::= { rdkbRgFirewallPortTrigTable 7 }
+
+rdkbRgFirewallPortTrigSrvcName OBJECT-TYPE SYNTAX      SnmpAdminString
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION "rdkbRgFirewallPortTrigSrvcName" 
+    DEFVAL { false } 
+    ::= { rdkbRgFirewallPortTrigTable 8 }
 
 
 rdkbRgFirewallHttpBlockingEnable OBJECT-TYPE
@@ -4121,5 +4230,293 @@ rdkbTR069ClientDeviceIdentifier OBJECT-TYPE
        "
    DEFVAL { 0 }
    ::= { rdkbTR069ClientConfig 12 }
+
+
+-- ====================================================
+
+-- Moca Device Mib for Moca specific information
+
+-- ====================================================
+
+rdkbMoCA
+
+		MODULE-IDENTITY
+
+        LAST-UPDATED    "201408130000Z"
+
+        ORGANIZATION    "TBD"
+
+        CONTACT-INFO    "TBD"
+
+        DESCRIPTION
+
+            "Controls the configuration of TR-069 client"
+
+
+
+        ::= { rdkbModules 4 }
+
+
+rdkbMocaDevice   OBJECT IDENTIFIER ::=  { rdkbMoCA 1 }
+
+rdkbMocaDeviceBase   OBJECT IDENTIFIER ::=  { rdkbMocaDevice 1 }
+
+
+rdkbMocaDevEnable OBJECT-TYPE SYNTAX      TruthValue
+
+    MAX-ACCESS  read-write
+
+    STATUS      current
+
+    DESCRIPTION "Enables or disable rdkb Moca in the device."
+
+    DEFVAL { false }
+
+    ::= { rdkbMocaDeviceBase 1 }
+
+
+rdkbMocaDevResetNow OBJECT-TYPE SYNTAX      TruthValue
+
+    MAX-ACCESS  read-write
+
+    STATUS      current
+
+    DESCRIPTION "This MIB value is reset Moca device values." 
+
+    DEFVAL { false }
+
+    ::= { rdkbMocaDeviceBase 2 }
+
+
+
+rdkbMocaDevEncryptionEnable OBJECT-TYPE SYNTAX      TruthValue
+
+    MAX-ACCESS  read-write
+
+    STATUS      current
+
+    DESCRIPTION "Check in Moca Device Encryption is enable or not." 
+
+    DEFVAL { false } 
+
+    ::= { rdkbMocaDeviceBase 3 }
+
+
+
+rdkbMocaDevEncryptionPassword OBJECT-TYPE SYNTAX      OCTET STRING
+
+    MAX-ACCESS  read-write
+
+    STATUS      current
+
+    DESCRIPTION "rdkb Moca Dev Encryption Password." 
+
+    DEFVAL { false } 
+
+    ::= { rdkbMocaDeviceBase 4 }
+
+
+
+rdkbMocaDevPreferred OBJECT-TYPE SYNTAX      TruthValue
+
+    MAX-ACCESS  read-write
+
+    STATUS      current
+
+    DESCRIPTION "Moca Dev Preferred." 
+
+    DEFVAL { false } 
+
+    ::= { rdkbMocaDeviceBase 5 }
+
+
+
+rdkbMocaDevMixedMode OBJECT-TYPE SYNTAX      TruthValue
+
+    MAX-ACCESS  read-write
+
+    STATUS      current
+
+    DESCRIPTION "Moca Dev Mixed Mode." 
+
+    DEFVAL { false } 
+
+    ::= { rdkbMocaDeviceBase 6 }
+
+
+
+rdkbMocaDevTabooEnable OBJECT-TYPE SYNTAX      TruthValue
+
+    MAX-ACCESS  read-write
+
+    STATUS      current
+
+    DESCRIPTION "Moca Dev Taboo Enable." 
+
+    DEFVAL { false } 
+
+    ::= { rdkbMocaDeviceBase 7 }
+
+
+
+rdkbMocaDevTabooMask OBJECT-TYPE SYNTAX      DisplayString
+
+    MAX-ACCESS  read-write
+
+    STATUS      current
+
+    DESCRIPTION "rdkbMocaDevTabooMask." 
+
+    DEFVAL { false } 
+
+    ::= { rdkbMocaDeviceBase 8 }
+
+
+
+rdkbMocaDevNcMacAddress OBJECT-TYPE SYNTAX      PhysAddress
+
+    MAX-ACCESS  read-only
+
+    STATUS      current
+
+    DESCRIPTION "rdkbMocaDevNcMacAddress." 
+
+    DEFVAL { false } 
+
+    ::= { rdkbMocaDeviceBase 9 }    
+
+
+
+
+
+
+rdkbMocaDeviceChannel OBJECT IDENTIFIER ::= { rdkbMocaDevice 2 }
+
+
+
+rdkbMocaDevChannelScanning OBJECT-TYPE SYNTAX      TruthValue
+
+    MAX-ACCESS  read-write
+
+    STATUS      current
+
+    DESCRIPTION "rdkbMocaDevChannelScanning." 
+
+    DEFVAL { false } 
+
+    ::= { rdkbMocaDeviceChannel 1 }
+
+
+
+rdkbMocaDevChannelMask OBJECT-TYPE SYNTAX      BITS
+
+    MAX-ACCESS  read-write
+
+    STATUS      current
+
+    DESCRIPTION "rdkbMocaDevChannelScanning." 
+
+    DEFVAL { false } 
+
+    ::= { rdkbMocaDeviceChannel 3 }
+
+
+
+rdkbMocaDevChannelScanMask OBJECT-TYPE SYNTAX      DisplayString
+
+    MAX-ACCESS  read-write
+
+    STATUS      current
+
+    DESCRIPTION "rdkbMocaDevChannelScanMask." 
+
+    DEFVAL { false } 
+
+    ::= { rdkbMocaDeviceChannel 4 }
+
+
+
+
+
+rdkbMocaDevChannelLast OBJECT-TYPE SYNTAX      INTEGER
+
+    MAX-ACCESS  read-write
+
+    STATUS      current
+
+    DESCRIPTION "rdkbMocaDevChannelLast." 
+
+    DEFVAL { false } 
+
+    ::= { rdkbMocaDeviceChannel 5 }
+
+
+
+
+rdkbMocaDevicePower OBJECT IDENTIFIER ::= { rdkbMocaDevice 3 }
+
+rdkbMocaDevPwrAPCEnable OBJECT-TYPE SYNTAX      TruthValue
+
+    MAX-ACCESS  read-write
+
+    STATUS      current
+
+    DESCRIPTION "rdkbMocaDevicePower." 
+
+    DEFVAL { false } 
+
+    ::= { rdkbMocaDevicePower 1 }
+
+rdkbMocaDevPwrTxMax OBJECT-TYPE SYNTAX      INTEGER
+
+    MAX-ACCESS  read-write
+
+    STATUS      current
+
+    DESCRIPTION "rdkbMocaDevPwrTxMax." 
+
+    DEFVAL { false } 
+
+    ::= { rdkbMocaDevicePower 2 }
+
+rdkbMocaDevPwrCtrlPhyRate OBJECT-TYPE SYNTAX      INTEGER
+
+    MAX-ACCESS  read-write
+
+    STATUS      current
+
+    DESCRIPTION "rdkbMocaDevPwrCtrlPhyRate." 
+
+    DEFVAL { false } 
+
+    ::= { rdkbMocaDevicePower 3 }
+
+rdkbMocaDevPwrBeaconLevel OBJECT-TYPE SYNTAX      INTEGER
+
+    MAX-ACCESS  read-write
+
+    STATUS      current
+
+    DESCRIPTION "rdkbMocaDevPwrBeaconLevel." 
+
+    DEFVAL { false } 
+
+    ::= { rdkbMocaDevicePower 4 }
+
+
+rdkbMocaForce OBJECT IDENTIFIER ::= { rdkbMocaDevice 4 }
+
+rdkbMocaForceEnable OBJECT-TYPE SYNTAX      TruthValue
+
+    MAX-ACCESS  read-write
+
+    STATUS      current
+
+    DESCRIPTION "rdkbMocaForceEnable." 
+
+    DEFVAL { false } 
+
+    ::= { rdkbMocaForce 1 }
+
 
 END
