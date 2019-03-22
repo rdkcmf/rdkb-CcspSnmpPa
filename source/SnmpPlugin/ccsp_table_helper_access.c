@@ -751,6 +751,9 @@ CcspTableHelperSetMibValues
 									AnscTraceWarning(("Failed to delete DM entry.\n"));
 								}
 
+                                                                // remove table_row from request before deleting it
+                                                                netsnmp_remove_tdata_row(request, table_row);
+
 								CcspUtilRemoveMibEntry(table_data,table_row);
 
 								break;
