@@ -312,6 +312,10 @@ static int getWps(PCCSP_TABLE_ENTRY entry)
     // if return val is 0 WPS is off on the 2.4 GHz Primary SSID, check the 5 GHz Primary SSID
     retval = atoi(valStr[0]->parameterValue);
     if (retval == 0) {
+
+        Cosa_FreeParamValues(nval, valStr);
+        nval = 0;
+        valStr = NULL;
         snprintf(str, sizeof(str),WIFI_DM_WPSTIME,2);
         if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
         {
