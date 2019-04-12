@@ -161,8 +161,12 @@ static void getInterface(PCCSP_TABLE_ENTRY entry, char* interface ){
     }else if(strstr(valStr[0]->parameterValue, "MoCA")){
         strcpy(interface, "MoCA");
     }else
-        goto ERR;
+        strcpy(interface, "Unknow");
 
+    if (nval > 0)
+    {
+        Cosa_FreeParamValues(nval, valStr);
+    }
     return;
 
 ERR:

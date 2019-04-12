@@ -1502,6 +1502,7 @@ static int load_trusted_user_entry(netsnmp_tdata *table)
                     return -1;
                 }
             }
+	    if (insArray) free(insArray);
         }else{
             CcspTraceInfo(("%s(%d): No entries for %s.\n", __func__, __LINE__, pTemp));
             return -1;
