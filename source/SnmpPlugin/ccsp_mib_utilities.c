@@ -2819,7 +2819,6 @@ CcspUtilCreateMibEntry
     }
 
 	row->data = entry;
-	entry->CleanMibValueQueueFunctionPtr = CcspUtilCleanMibValueQueue;
 
 	for( i = 0; i < uCount; i ++)
 	{
@@ -2889,19 +2888,16 @@ CcspUtilRemoveMibEntry
 
 	if(entry)
 	{
-		if(entry->CleanMibValueQueueFunctionPtr != NULL){
-			entry->CleanMibValueQueueFunctionPtr(&entry->MibValueQueue);
-		}
+		CcspUtilCleanMibValueQueue(&entry->MibValueQueue);
+
 		AnscFreeMemory(entry);
-		entry = NULL;
 	}
 
-    if (table_data){
-		netsnmp_tdata_remove_and_delete_row(table_data, row);
-	}
-    else{
-		netsnmp_tdata_delete_row(row);
-	}
+    if (table_data)
+        netsnmp_tdata_remove_and_delete_row(table_data, row);
+    else
+        netsnmp_tdata_delete_row(row);
+
 }
 
 

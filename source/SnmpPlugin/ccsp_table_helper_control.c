@@ -462,12 +462,11 @@ tableGroupCacheFree(netsnmp_cache * cache, void *magic)
 	PCCSP_TABLE_HELPER_OBJECT  pThisObject        = (PCCSP_TABLE_HELPER_OBJECT)pMagic->pMibHandler;
     netsnmp_tdata_row*		   pRow				  = NULL;
 
-
 	AnscTraceInfo(("Enter 'tableGroupCacheFree' of table '%s'\n", pThisObject->MibName));
 
 	while ((pRow = netsnmp_tdata_row_first (pTable)))
 	{
-		CcspUtilRemoveMibEntry(pTable, pRow);
+        netsnmp_tdata_remove_and_delete_row(pTable, pRow);
     }
 }
 
