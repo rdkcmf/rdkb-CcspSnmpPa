@@ -2211,6 +2211,24 @@ CcspUtilDMValueToMIB
 			pMibValue->Value.puBuffer = NULL;
 			pMibValue->uSize          = 0;
 		}
+		if( pMibValue->BackValue.pBuffer != NULL)
+		{
+		    AnscFreeMemory(pMibValue->BackValue.pBuffer);
+		    pMibValue->BackValue.pBuffer = NULL;
+		}
+	}
+	else if( pMibValue->uType == ASN_BIT_STR)
+	{
+		if( pMibValue->Value.puBuffer != NULL)
+		{
+		    AnscFreeMemory(pMibValue->Value.puBuffer);
+		    pMibValue->Value.puBuffer = NULL;
+		}
+		if( pMibValue->BackValue.puBuffer != NULL)
+		{
+		    AnscFreeMemory(pMibValue->BackValue.puBuffer);
+		    pMibValue->BackValue.puBuffer = NULL;
+		}
 	}
 
 	if( pMibInfo->bIsRowStatus)
@@ -2891,6 +2909,7 @@ CcspUtilRemoveMibEntry
 		CcspUtilCleanMibValueQueue(&entry->MibValueQueue);
 
 		AnscFreeMemory(entry);
+                row->data = NULL;
 	}
 
     if (table_data)
