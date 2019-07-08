@@ -2029,6 +2029,8 @@ static int setCurrentChannel(PCCSP_TABLE_ENTRY entry, int val){
     if (val == 0) {
         /*Set Autochannel*/
         sprintf(valStr[0].parameterValue, "%s", "true");
+	//Log will be printed inside SNMP.txt in rdklogs//RDKB-23380
+	CcspTraceInfo(("RDKB_SNMP : Autochannel is Enabled through SNMP for Radio %u\n",entry->IndexValue[0].Value.uValue));
     } else {
         /*Explicitly set the channel*/
         sprintf(valStr[0].parameterValue, "%s", "false");
@@ -2036,6 +2038,9 @@ static int setCurrentChannel(PCCSP_TABLE_ENTRY entry, int val){
         valStr[1].type = ccsp_unsignedInt;
         valCnt = 2;
         sprintf(valStr[1].parameterValue, "%u", val);
+	//Log will be printed inside SNMP.txt in rdklogs//RDKB-23380
+	CcspTraceInfo(("RDKB_SNMP : Autochannel is Disabled through SNMP\n"));
+	CcspTraceInfo(("RDKB_SNMP : Channel is Modified for Radio %u and channel selected is %u \n",entry->IndexValue[0].Value.uValue,val));
     }
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, valCnt))
