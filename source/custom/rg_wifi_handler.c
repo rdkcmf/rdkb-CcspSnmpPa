@@ -1322,6 +1322,14 @@ find_retry:
 
     for(i = 0; i < insCount; i++){
 
+        pEntry = (PCCSP_TABLE_ENTRY)AnscAllocateMemory(sizeof(CCSP_TABLE_ENTRY));
+
+        if (!pEntry)
+        {
+            status = -1;
+            goto ret;
+        }
+
         row = netsnmp_tdata_create_row();
         if(!row){
             AnscFreeMemory(pEntry);
@@ -1334,8 +1342,6 @@ find_retry:
                    {
                                goto ret;
                    }
-        // We can do this, 'cause mapping is static
-        pEntry = &gDot11Info[dmIns].entry;
 
 	pEntry->CleanMibValueQueueFunctionPtr = NULL;
 
