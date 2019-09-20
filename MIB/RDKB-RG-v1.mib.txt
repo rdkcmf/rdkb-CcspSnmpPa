@@ -43,7 +43,7 @@ rdkb           OBJECT IDENTIFIER ::= { enterprises 17270 }
 rdkbModules    OBJECT IDENTIFIER ::= { rdkb 50 }
 
 rdkbRg    MODULE-IDENTITY
-        LAST-UPDATED    "201408130000Z"
+        LAST-UPDATED    "201909200000Z"
         ORGANIZATION    "TBD"
         CONTACT-INFO    "TBD"
         DESCRIPTION
@@ -1133,11 +1133,14 @@ rdkbRgDot11RadiusEntry OBJECT-TYPE
 
 RdkbRgDot11RadiusEntry ::= 
     SEQUENCE    {
-        rdkbRgDot11RadiusAddressType    InetAddressType,
-        rdkbRgDot11RadiusAddress        InetAddress,
-        rdkbRgDot11RadiusPort           InetPortNumber,
-        rdkbRgDot11RadiusKey            DisplayString,
-        rdkbRgDot11RadiusReAuthInterval INTEGER
+        rdkbRgDot11RadiusAddressType        InetAddressType,
+        rdkbRgDot11RadiusAddress            InetAddress,
+        rdkbRgDot11RadiusPort               InetPortNumber,
+        rdkbRgDot11RadiusKey                DisplayString,
+        rdkbRgDot11RadiusReAuthInterval     INTEGER,
+        rdkbRgDot11SecondaryRadiusAddress   InetAddress,
+        rdkbRgDot11SecondaryRadiusPort      InetPortNumber,
+        rdkbRgDot11SecondaryRadiusKey       DisplayString
     }
 
 
@@ -4769,77 +4772,5 @@ rdkbMocaForceEnable OBJECT-TYPE SYNTAX      TruthValue
     DEFVAL { false } 
     ::= { rdkbMocaForce 1 }
 
-rdkbWebPA    
-		MODULE-IDENTITY
-        LAST-UPDATED    "201408130000Z"
-        ORGANIZATION    "TBD"
-        CONTACT-INFO    "TBD"
-        DESCRIPTION
-            "Controls the configuration of WEBPA"
-
-        ::= { rdkbModules 4 }
-
-rdkbWebpaObjs   OBJECT IDENTIFIER ::=  { rdkbWebPA 1 }
-
-rdkbRgWebPAEnable OBJECT-TYPE 
-    SYNTAX      TruthValue 
-    MAX-ACCESS  read-write 
-    STATUS      current 
-    DESCRIPTION  
-            "Mib for enabling/disabling WebPA component,1 for true and 2 for false"
-    ::= { rdkbWebpaObjs 1 }
-
-rdkbRgWebPAServerURL OBJECT-TYPE 
-    SYNTAX      DisplayString (SIZE(0..255))
-    MAX-ACCESS  read-write 
-    STATUS      current 
-    DESCRIPTION  
-            "Defines what IP address to use for WebPA server
-             This value is to be stored in non-vol and will persist across reboots.
-             Only a factory reset would clear it"
-    ::= { rdkbWebpaObjs 2 }
-
-rdkbRgWebPAServerPort OBJECT-TYPE 
-    SYNTAX      INTEGER 
-    MAX-ACCESS  read-write 
-    STATUS      current 
-    DESCRIPTION  
-            "Defines what port to use for WebPA server
-             This value is to be stored in non-vol and will persist across reboots.
-             Only a factory reset would clear it"
-    DEFVAL { 8080 }
-    ::= { rdkbWebpaObjs 3 }
-
-rdkbRgWebPANetworkInterface OBJECT-TYPE 
-    SYNTAX      DisplayString (SIZE(0..255))
-    MAX-ACCESS  read-write 
-    STATUS      current 
-    DESCRIPTION  
-            "Defines the network interface to be used by WebPA 
-             This value is to be stored in non-vol and will persist across reboots.
-             Only a factory reset would clear it"
-    ::= { rdkbWebpaObjs 4 }
-
-rdkbRgWebPARetryInterval OBJECT-TYPE 
-    SYNTAX      INTEGER
-    UNITS       "seconds" 
-    MAX-ACCESS  read-write 
-    STATUS      current 
-    DESCRIPTION  
-            "Defines the web PA retry interval in sec
-             This value is to be stored in non-vol and will persist across reboots.
-             Only a factory reset would clear it"
-    ::= { rdkbWebpaObjs 5 }
-
-rdkbRgWebPAPingWaitTime OBJECT-TYPE 
-    SYNTAX      INTEGER
-    UNITS       "seconds" 
-    MAX-ACCESS  read-write 
-    STATUS      current 
-    DESCRIPTION  
-            "Defines the WebPA ping wait time in sec
-             This value is to be stored in non-vol and will persist across reboots.
-             Only a factory reset would clear it"
-   ::= { rdkbWebpaObjs 6 }
 
 END
