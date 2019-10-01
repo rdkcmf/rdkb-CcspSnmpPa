@@ -359,16 +359,16 @@ Call appropriate DML parameter based on the reset case
 	case 1 :
 /* Have SNMP Reset To Defaults the same way as Web GUI.
    Some devices reboot prior to completing FACTORY_RESET_DM_WIFI due to driver */
-#if defined (_XB6_PRODUCT_REQ_)
-		if (set_dm_value(FACTORY_RESET_DM, "Router,Wifi,VoIP,delay", strlen("Router,Wifi,VoIP,delay"))){
+#if defined (INTEL_PUMA7)
+               if (set_dm_value(FACTORY_RESET_DM, "Router,Wifi,VoIP,delay", strlen("Router,Wifi,VoIP,delay"))){
 #else
-		if (set_dm_value(FACTORY_RESET_DM_WIFI, "1,2;1,2", strlen("1,2;1,2")) || 
-		    set_dm_value(FACTORY_RESET_DM, "Router,VoIP", strlen("Router,VoIP"))){
+               /* Discard delay parameter for non Intel platforms */
+               if (set_dm_value(FACTORY_RESET_DM_WIFI, "1,2;1,2", strlen("1,2;1,2")) || 
+                  set_dm_value(FACTORY_RESET_DM, "Router,VoIP", strlen("Router,VoIP"))){
 #endif
-       			return -1;
-    		}
-    				
-		break;
+                        return -1;
+                }
+                break;
 	case 2 :
 		if (set_dm_value(FACTORY_RESET_DM, "Router", strlen("Router"))){
        			return -1;
