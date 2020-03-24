@@ -134,9 +134,10 @@ static int isRadio5GHz(int entry) {
 }
 
 static int getNumAPs( ) {
-    parameterValStruct_t **valStr;
-    int nval, retval;
-    char mystring[80];
+    /*Coverity Fix CID :55100,61897 UnInit var */
+    parameterValStruct_t **valStr = NULL;
+    int nval = 0, retval = 0;
+    char mystring[80]= {0};
     char* name = (char *)mystring;
     
     AnscTraceError(("get number of APs \n" ));
@@ -233,7 +234,7 @@ static BOOL FindWifiDestComp(void)
 }
 
 static int applyDot11Settings(int val) {
-	int retval;
+	int retval = 0;
 	
     parameterValStruct_t valStr[2];
     
@@ -284,9 +285,10 @@ static void* wifiCommitThread(void* arg) {
 
 static int getWps(PCCSP_TABLE_ENTRY entry)
 {
-    parameterValStruct_t **valStr;
-    int nval, retval;
-    char str[80];
+    /* Coverity Fix CID :61965 , 65350 UnInit var */
+    parameterValStruct_t **valStr = NULL;
+    int nval = 0, retval = 0;
+    char str[80]= {0};
     char * name = (char*) str;
 
     /*Fetching*/
@@ -338,7 +340,7 @@ static int getWps(PCCSP_TABLE_ENTRY entry)
 
 int setWps(PCCSP_TABLE_ENTRY entry, int wpsTime)
 {
-    int retval;
+    int retval = 0;
 	
 	parameterValStruct_t valStr;
     char str[2][100];
@@ -551,9 +553,10 @@ netsnmp_request_info* req;
 }
 
 static int getBssEnable(PCCSP_TABLE_ENTRY entry) {
-    parameterValStruct_t **valStr, **valStr2;
-    int nval, retval, nval2;
-    char mystring[30];
+    /*Coverity Fix CID :58234,62374 74754 UnInit var */
+    parameterValStruct_t **valStr = NULL, **valStr2 = NULL;
+    int nval = 0, retval = 0, nval2 =0;
+    char mystring[30]= {0};
     char* name = (char *)mystring;
     
     CcspTraceInfo(("getBssEnable called on entry: %d (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
@@ -597,7 +600,7 @@ static int getBssEnable(PCCSP_TABLE_ENTRY entry) {
 
 static int setBssEnable(PCCSP_TABLE_ENTRY entry, int value) {
     parameterValStruct_t valStr;
-	int retval;
+	int retval = 0;
     char str[2][100];
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
@@ -627,8 +630,9 @@ static int setBssEnable(PCCSP_TABLE_ENTRY entry, int value) {
 }
 
 static int getBssAccessMode(PCCSP_TABLE_ENTRY entry) {
-    parameterValStruct_t **valStr;
-    int nval, retval;
+    /*Coverity Fix CID :54849,60302 UnInit var */
+    parameterValStruct_t **valStr = NULL;
+    int nval = 0, retval = 0;
     char str[2][100];
     char* name[2] = {(char*) str[0], (char*) str[1]};
     
@@ -676,7 +680,7 @@ static int getBssAccessMode(PCCSP_TABLE_ENTRY entry) {
 
 static int setBssAccessMode(PCCSP_TABLE_ENTRY entry, int value) {
     parameterValStruct_t valStr[2];
-	int retval;
+	int retval = 0;
     char str[4][80];
     valStr[0].parameterName = str[0];
     valStr[0].parameterValue = str[1];
@@ -723,9 +727,10 @@ static int setBssAccessMode(PCCSP_TABLE_ENTRY entry, int value) {
 }
 
 static int getBssClosedNetwork(PCCSP_TABLE_ENTRY entry) {
-    parameterValStruct_t **valStr;
-    int nval, retval;
-    char mystring[100];
+    /* Coverity Fix CID :59117,66173  UnInit var */
+    parameterValStruct_t **valStr = NULL;
+    int nval = 0, retval = 0;
+    char mystring[100] = {0};
     char* name = (char *)mystring;
     
     CcspTraceInfo(("getBssClosedNetwork called on entry: %d (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
@@ -760,7 +765,7 @@ static int getBssClosedNetwork(PCCSP_TABLE_ENTRY entry) {
 
 static int setBssClosedNetwork(PCCSP_TABLE_ENTRY entry, int value) {
     parameterValStruct_t valStr;
-	int retval;
+	int retval = 0;
     char str[2][100];
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
@@ -789,9 +794,10 @@ static int setBssClosedNetwork(PCCSP_TABLE_ENTRY entry, int value) {
 }
 
 static int getBssHotSpot(PCCSP_TABLE_ENTRY entry) {
-    parameterValStruct_t **valStr;
-    int nval, retval;
-    char mystring[100];
+    /*Coverity Fix CID :68466,70095 UnInit var */
+    parameterValStruct_t **valStr = NULL;
+    int nval = 0, retval = 0;
+    char mystring[100]= {0};
     char* name = (char *)mystring;
     
     retval = FindWifiDestComp();
@@ -824,7 +830,7 @@ static int getBssHotSpot(PCCSP_TABLE_ENTRY entry) {
 
 static int setBssHotSpot(PCCSP_TABLE_ENTRY entry, int value) {
     parameterValStruct_t valStr;
-	int retval;
+	int retval = 0;
     char str[2][100];
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
@@ -852,9 +858,10 @@ static int setBssHotSpot(PCCSP_TABLE_ENTRY entry, int value) {
     return 0;
 }
 static int getBssIsolationEnable(PCCSP_TABLE_ENTRY entry) {
-    parameterValStruct_t **valStr;
-    int nval, retval;
-    char mystring[100];
+    /*Coverity Fix CID :64290, 65182 UnInit var */
+    parameterValStruct_t **valStr = NULL;
+    int nval = 0, retval = 0;
+    char mystring[100] = {0};
     char* name = (char *)mystring;
     
     retval = FindWifiDestComp();
@@ -887,7 +894,7 @@ static int getBssIsolationEnable(PCCSP_TABLE_ENTRY entry) {
 
 static int setBssIsolationEnable(PCCSP_TABLE_ENTRY entry, int value) {
     parameterValStruct_t valStr;
-	int retval;
+	int retval = 0;
     char str[2][100];
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
@@ -1066,7 +1073,7 @@ static int getSsid(PCCSP_TABLE_ENTRY pEntry, char *ssid)
 static int setBssSsid(PCCSP_TABLE_ENTRY pEntry, const char *ssid)
 {
     parameterValStruct_t valStr;
-	int retval;
+	int retval = 0;
     char str[2][100];
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
@@ -1141,7 +1148,7 @@ static int getBssSecurityMode(PCCSP_TABLE_ENTRY pEntry)
 static int setBssSecurityMode(PCCSP_TABLE_ENTRY pEntry, int mode)
 {
     parameterValStruct_t valStr[2];
-	int retval;
+	int retval = 0;
     char str[4][100];
     valStr[0].parameterName=str[0];
     valStr[0].parameterValue=str[1];
@@ -1244,7 +1251,7 @@ static int getBssMaxNumSta(PCCSP_TABLE_ENTRY pEntry)
 static int setBssMaxNumSta(PCCSP_TABLE_ENTRY pEntry, int num)
 {
     parameterValStruct_t valStr;
-	int retval;
+	int retval = 0;
     char str[2][80];
     valStr.parameterName = str[0];
     valStr.parameterValue = str[1];
@@ -1355,11 +1362,17 @@ find_retry:
 
         if(table)
             netsnmp_tdata_add_row(table, row);
+      /* Coverity Fix CID : 135290 RESOURCE_LEAK */ 
+      if(pEntry)
+        AnscFreeMemory(pEntry);
+        
+
     }
 
 ret:
     if (insArray)
         free(insArray);
+ 
 
     return status;
 }
@@ -1705,8 +1718,9 @@ return 0;
 
 
 static int getCurrentChannel (PCCSP_TABLE_ENTRY entry) {
-    parameterValStruct_t **valStr;
-    int nval, retval;
+    /* Coverity Fix CID :53601,61933 UnInit var */
+    parameterValStruct_t **valStr = NULL;
+    int nval = 0, retval = 0;
     char str[2][80];
     char * name[2] = {(char*) str[0], (char*) str[1]};
     
@@ -1746,9 +1760,10 @@ static int getCurrentChannel (PCCSP_TABLE_ENTRY entry) {
 }
 
 static int getWmm(PCCSP_TABLE_ENTRY entry) {
-    parameterValStruct_t **valStr;
-    int nval, retval;
-    char mystring[80];
+    /*Coverity Fix CID :70800,70873 UnInit var */
+    parameterValStruct_t **valStr = NULL;
+    int nval= 0, retval = 0;
+    char mystring[80]= {0};
     char* name = (char *)mystring;
     
     CcspTraceInfo(("getWmm called on entry: %d (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
@@ -1782,9 +1797,10 @@ static int getWmm(PCCSP_TABLE_ENTRY entry) {
 }
 
 static int getWmmNoAck(PCCSP_TABLE_ENTRY entry){
-    parameterValStruct_t **valStr;
-    int nval, retval;
-    char mystring[80];
+    /*Coverity Fix CID :64884,65135 UnInit var */
+    parameterValStruct_t **valStr = NULL;
+    int nval = 0, retval = 0;
+    char mystring[80]= {0};
     char* name = (char *)mystring;
     
     CcspTraceInfo(("getWmmNoAck called on entry: %d (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
@@ -1818,9 +1834,10 @@ static int getWmmNoAck(PCCSP_TABLE_ENTRY entry){
 }
 
 static int getMcastRate(PCCSP_TABLE_ENTRY entry){
-    parameterValStruct_t **valStr;
-    int nval, retval;
-    char mystring[80];
+    /*Coverity Fix CID :74901,  UnInit var */
+    parameterValStruct_t **valStr = NULL;
+    int nval = 0, retval = 0;
+    char mystring[80]= {0};
     char* name = (char *)mystring;
     
     CcspTraceInfo(("getMcastRate called on entry: %d (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
@@ -1855,9 +1872,10 @@ static int getMcastRate(PCCSP_TABLE_ENTRY entry){
 }
 
 static int getCountry(PCCSP_TABLE_ENTRY entry){
-    parameterValStruct_t **valStr;
-    int nval, retval;
-    char mystring[80];
+    /*Coverity Fix CID :54683,70704,71750  UnInit var */
+    parameterValStruct_t **valStr = NULL;
+    int nval = 0, retval = 0;
+    char mystring[80] =  {0};
     char* name = (char *)mystring;
 
     CcspTraceInfo(("%s called on entry: %d (%d)\n", __FUNCTION__, entry->IndexValue[0].Value.uValue, sizeof(mystring)));
@@ -1895,9 +1913,10 @@ static int getCountry(PCCSP_TABLE_ENTRY entry){
 
 static int getMbssUserControl(PCCSP_TABLE_ENTRY entry) 
 {
-    parameterValStruct_t **valStr;
-    int nval, retval;
-    char mystring[80];
+    /*Coverity Fix CID :57199,71232 UnInit var */
+    parameterValStruct_t **valStr= NULL;
+    int nval = 0, retval = 0;
+    char mystring[80]= {0};
     char* name = (char *)mystring;
 
     CcspTraceInfo(("%s called on entry: %d (%d)\n", __FUNCTION__, entry->IndexValue[0].Value.uValue, sizeof(mystring)));
@@ -1933,9 +1952,10 @@ static int getMbssUserControl(PCCSP_TABLE_ENTRY entry)
 
 static int getMbssAdminControl(PCCSP_TABLE_ENTRY entry) 
 {
-    parameterValStruct_t **valStr;
-    int nval, retval;
-    char mystring[80];
+    /*Coverity Fix CID :57838,72697 UnInit var */
+    parameterValStruct_t **valStr =  NULL;
+    int nval = 0, retval = 0;
+    char mystring[80] = {0};
     char* name = (char *)mystring;
     
     CcspTraceInfo(("%s called on entry: %d (%d)\n", __FUNCTION__, entry->IndexValue[0].Value.uValue, sizeof(mystring)));
@@ -1970,9 +1990,10 @@ static int getMbssAdminControl(PCCSP_TABLE_ENTRY entry)
 }
 
 static int getOperMode(PCCSP_TABLE_ENTRY entry){
-    parameterValStruct_t **valStr;
-    int nval, retval;
-    char str[80];
+    /*Coverity Fix CID :53670 ,72007 UnInit var */
+    parameterValStruct_t **valStr = NULL;
+    int nval = 0, retval = 0;
+    char str[80] = {0};
     char * name = (char*) str;
     
     /*Fetching*/
@@ -2014,7 +2035,7 @@ static int getOperMode(PCCSP_TABLE_ENTRY entry){
 
 static int setCurrentChannel(PCCSP_TABLE_ENTRY entry, int val){
     parameterValStruct_t valStr[2];
-	int retval;
+	int retval = 0;
     char str[4][80];
     valStr[0].parameterName = str[0];
     valStr[0].parameterValue = str[1];
@@ -2058,10 +2079,11 @@ static int setCurrentChannel(PCCSP_TABLE_ENTRY entry, int val){
 }
 
 static int setWmm(PCCSP_TABLE_ENTRY entry, int val){
-    parameterValStruct_t valStr[MAX_APS_PER_RADIO];
-	int retval;
-    char str[MAX_APS_PER_RADIO][50];
-    char valueString[10];
+   /* Coverity Fix CID :61641 UnInit var */ 
+   parameterValStruct_t valStr[MAX_APS_PER_RADIO] = {0};
+	int retval = 0;
+    char str[MAX_APS_PER_RADIO][50] = {0};
+    char valueString[10]= {0};
     int aps = MAX_APS_PER_RADIO;
     
     retval = FindWifiDestComp(); 
@@ -2115,8 +2137,9 @@ static int setWmm(PCCSP_TABLE_ENTRY entry, int val){
 }
 
 static int setWmmNoAck(PCCSP_TABLE_ENTRY entry, int val){
-    parameterValStruct_t valStr[MAX_APS_PER_RADIO];
-	int retval;
+    /*Coverity Fix CID :72254  UnInit var */
+    parameterValStruct_t valStr[MAX_APS_PER_RADIO] = {0};
+	int retval = 0;
     char str[MAX_APS_PER_RADIO][60];
     char valueString[5];
     int aps = MAX_APS_PER_RADIO;
@@ -2142,10 +2165,11 @@ static int setWmmNoAck(PCCSP_TABLE_ENTRY entry, int val){
 }
 
 static int setMcastRate(PCCSP_TABLE_ENTRY entry, int val){
-    parameterValStruct_t valStr[MAX_APS_PER_RADIO];
-	int retval;
-    char str[MAX_APS_PER_RADIO][60];
-    char valueString[5];
+    /*Coverity Fix CID :61890 UnInit var */
+    parameterValStruct_t valStr[MAX_APS_PER_RADIO] = {0};
+	int retval = 0;
+    char str[MAX_APS_PER_RADIO][60] = {0};
+    char valueString[5] = {0};
     int aps = MAX_APS_PER_RADIO;
     
     sprintf(valueString, "%d", val);
@@ -2175,7 +2199,7 @@ static int setCountry(PCCSP_TABLE_ENTRY entry, int val){
 static int setMbssUserControl(PCCSP_TABLE_ENTRY entry, int val)
 {
     parameterValStruct_t valStr;
-	int retval;
+	int retval = 0;
     char str[2][80];
     valStr.parameterName = str[0];
     valStr.parameterValue = str[1];
@@ -2204,7 +2228,7 @@ static int setMbssUserControl(PCCSP_TABLE_ENTRY entry, int val)
 static int setMbssAdminControl(PCCSP_TABLE_ENTRY entry, int val)
 {
     parameterValStruct_t valStr;
-	int retval;
+	int retval = 0;
     char str[2][80];
     valStr.parameterName = str[0];
     valStr.parameterValue = str[1];
@@ -2232,7 +2256,7 @@ static int setMbssAdminControl(PCCSP_TABLE_ENTRY entry, int val)
 
 static int setOperMode(PCCSP_TABLE_ENTRY entry, int val){
     parameterValStruct_t valStr;
-	int retval;
+	int retval = 0;
     char str[2][100];
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
@@ -2560,13 +2584,14 @@ return 0;
 
 int getNMode(PCCSP_TABLE_ENTRY entry) 
 {
-    parameterValStruct_t **valStr;
-    int nval, retval = 1;
+    /*Coverity Fix CID :62899,63675 UnInit var */
+    parameterValStruct_t **valStr = NULL;
+    int nval = 0, retval = 1;
     char *a, *ac, *b,*g,*n;
 #if defined (_WIFI_AX_SUPPORT_)
     char *ax;
 #endif
-    char mystring[50];
+    char mystring[50]= {0};
     char* name = (char *)mystring;
     
     //AnscTraceWarning(("getBssEnable called on entry: %d (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
@@ -2656,7 +2681,7 @@ int getNMode(PCCSP_TABLE_ENTRY entry)
 int setNMode(PCCSP_TABLE_ENTRY entry, int val) 
 {
     parameterValStruct_t valStr;
-	int retval;
+	int retval = 0;
     char str[2][100];
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
@@ -2740,9 +2765,9 @@ int setNMode(PCCSP_TABLE_ENTRY entry, int val)
 }
 
 int getNPhyRate(PCCSP_TABLE_ENTRY entry) {
-    parameterValStruct_t **valStr;
-    int nval, retval;
-    char mystring[50];
+    parameterValStruct_t **valStr = NULL;
+    int nval = 0, retval = 0;
+    char mystring[50] = {0};
     char* name = (char *)mystring;
     return 0; //TODO: DATA MODEL NOT READY. IMPLEMENTATION DEFERRED.
     //AnscTraceWarning(("getBssEnable called on entry: %d (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
@@ -2776,7 +2801,7 @@ int getNPhyRate(PCCSP_TABLE_ENTRY entry) {
 
 int setNPhyRate(PCCSP_TABLE_ENTRY entry, int val) {
     parameterValStruct_t valStr;
-	int retval;
+	int retval = 0;
     char str[2][100];
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
@@ -2984,7 +3009,7 @@ static int getWpaPSK(PCCSP_TABLE_ENTRY pEntry, char *key)
 
 int setWpaPSK(PCCSP_TABLE_ENTRY entry, char *key, int keyLen) {
     parameterValStruct_t valStr;
-	int retval;
+	int retval = 0;
     char str[2][100];
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];

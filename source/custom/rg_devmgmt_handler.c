@@ -54,6 +54,7 @@
 #define DEVICE_REBOOT_REASON "Device.DeviceInfo.X_RDKCENTRAL-COM_LastRebootReason"
 #define RDKB_PAM_COMPONENT_NAME		     "eRT.com.cisco.spvtg.ccsp.pam"
 #define RDKB_PAM_DBUS_PATH		     "/com/cisco/spvtg/ccsp/pam"
+#define  MAX_STRVAL 64
 
 
 static int setRebootReason(char * paramName,char * paramValue);
@@ -122,8 +123,9 @@ static int iapd_handler(int lastOid, int insNum, iapd_t *pIapd)
             AnscTraceError(("%s wrong backend value %s.\n", __func__, prefix));
 			CcspTraceError(("%s wrong backend value %s.\n", __func__, prefix));
             return FALSE;
-        }else 
-            strncpy(pIapd->prefix_value, pVal, sizeof(pIapd->prefix_value));
+        }else
+             /* Covreity Fix : CID:135471:Buffer_Size_Warning */ 
+            strncpy(pIapd->prefix_value, pVal, sizeof(pIapd->prefix_value)-1 );
     }else{
         AnscTraceError(("%s unexpected lastOid %d.\n", __func__, lastOid));
 		CcspTraceError(("%s unexpected lastOid %d.\n", __func__, lastOid));
@@ -308,7 +310,7 @@ static int get_snmp_enable(unsigned char *octet)
 static int set_snmp_enable(const char *octet)
 {
     int bits, i, j = 0;
-    char strval[64] = {'\0'};
+    char strval[MAX_STRVAL] = {'\0'};
 
     sprintf(strval, "%x", octet[0]);    /* one octet */
     bits = strtoul(strval, NULL, 16);
@@ -321,7 +323,14 @@ static int set_snmp_enable(const char *octet)
                 _ansc_strcpy(strval, gSnmpEnableInfo[i].str);
             else{
                 _ansc_strcat(strval, ",");
+                  /* Coverity  Fix CID:135582 STRING_OVERFLOW */
+                 if( ( strlen( strval ) + strlen( gSnmpEnableInfo[i].str ))  < MAX_STRVAL ) {
                 _ansc_strcat(strval, gSnmpEnableInfo[i].str);
+               }
+                else
+               {
+                        CcspTraceDebug((" set_snmp_enable : string len of gSnmpEnableInfo[i].str  is greater than MAX_STRVAL \n"));
+               }
             }
             j++;
         }
