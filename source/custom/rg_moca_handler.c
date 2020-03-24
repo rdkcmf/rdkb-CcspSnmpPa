@@ -71,6 +71,8 @@
 
 #endif
 
+#define STR_MAX 80
+
 // Power
 static const int saMocaDevPwrTxMax_subid = 2;
 static const int saMocaDevPwrCtrlPhyRate_subid = 3;
@@ -122,9 +124,10 @@ static BOOL FindMoCADestComp(void)
 }
 
 static int getTxPowerLimit(int subid) {
-    parameterValStruct_t **valStr;
-    int nval, retval;
-    char mystring[80];
+    /* Coverity Fix CID:55976,64637 Uninit var */
+    parameterValStruct_t **valStr = NULL;
+    int nval = 0, retval = 0;
+    char mystring[STR_MAX] = {0};
     char* name = (char *)mystring;
     int pwrTxMax = 0;
 
@@ -178,9 +181,10 @@ static int setTxPowerLimit(int value) {
 }
 
 static int getBeaconPwrLevel(int subid) {
-    parameterValStruct_t **valStr;
-    int nval, retval;
-    char mystring[80];
+    /* Coverity Fix  CID: 59177,60847,75006  UnInit var*/
+    parameterValStruct_t **valStr = NULL;
+    int nval = 0, retval = 0;
+    char mystring[STR_MAX] = {0};
     char* name = (char *)mystring;
     int beaconPwrLevel = 0;
 
@@ -239,9 +243,10 @@ static int setBeaconPwrLevel(int value) {
 }
 
 static int getPwrCtrlPhyRate(int subid) {
-    parameterValStruct_t **valStr;
-    int nval, retval;
-    char mystring[80];
+    /* Coverity Fix CID:68029 UnInit var*/
+    parameterValStruct_t **valStr = NULL;
+    int nval = 0, retval = 0;
+    char mystring[STR_MAX] = {0};
     char* name = (char *)mystring;
     int controlPhyRate = 0;
 
@@ -530,9 +535,10 @@ static int32_t freqMaskToValue(uint32_t mask)
 }
 
 static int getFreqCurrentMaskSetting(char * pvalue) {
-    parameterValStruct_t **valStr;
-    int nval, retval;
-    char mystring[80];
+    /* Coverity Fix  CID: 56074,61784  UnInit var*/
+    parameterValStruct_t **valStr = NULL;
+    int nval = 0, retval = 0;
+    char mystring[STR_MAX] = {0};
     char* name = (char *)mystring;
     uint freqCurrentMaskSetting = 0;
     uint mask = 0;
@@ -637,9 +643,10 @@ static int setFreqCurrentMaskSetting(char * pvalue, int val_len) {
 }
 
 static int getX_CISCO_COM_ChannelScanMask(char * pvalue) {
-    parameterValStruct_t **valStr;
-    int nval, retval;
-    char mystring[80];
+    /* Coverity Fix CID:64441,67200 UnInit var */
+    parameterValStruct_t **valStr = NULL;
+    int nval = 0, retval = 0;
+    char mystring[STR_MAX]= {0};
     char* name = (char *)mystring;
     uint X_CISCO_COM_ChannelScanMask = 0;
     uint mask = 0;
@@ -910,9 +917,10 @@ for (req = requests; req != NULL; req = req->next)
     return SNMP_ERR_NOERROR;
 }
 static int getTabooMaskSetting(char * pvalue) {
-    parameterValStruct_t **valStr;
-    int nval, retval;
-    char mystring[80];
+    /* Coverity Fix CID: 62031,67046 UnInit var*/
+    parameterValStruct_t **valStr = NULL;
+    int nval = 0, retval= 0;
+    char mystring[STR_MAX] = {0};
     char* name = (char *)mystring;
     uint freqCurrentMaskSetting = 0;
     uint mask = 0;

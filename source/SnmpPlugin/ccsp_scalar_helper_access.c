@@ -721,9 +721,16 @@ CcspScalarHelperRefreshCache
 		for( i = 0; i< size; i ++)
 		{
 			pValue = paramValues[i];
-
-            if (pValue->parameterName && pValue->parameterValue)
-                CcspTraceDebug(("  %s %s\n", pValue->parameterName, pValue->parameterValue));
+                  /*Coverity Fix : CID:54264 Forward NULL  */
+                  if ( ( pValue->parameterName != NULL ) && (pValue->parameterValue != NULL) )
+                  {
+                      CcspTraceDebug(("  %s %s\n", pValue->parameterName, pValue->parameterValue));
+                  }
+                  else
+                  {
+                    CcspTraceDebug(("pValue->parameterName, pValue->parameterValue attains NULL\n"));
+                    return -1;
+                  }  
 
 			for( j= 0; j < pThisObject->nCacheMibCount; j ++)
 			{
@@ -732,11 +739,17 @@ CcspScalarHelperRefreshCache
 					pMibValue = CcspUtilLookforMibValueObjWithOid(&pThisObject->MibValueQueue, pThisObject->CacheMibOid[j]);
 					pMapping  = CcspUtilLookforMibMapWithOid(&pThisObject->MibObjQueue, pThisObject->CacheMibOid[j]);
 
-					if( pMibValue != NULL && pMapping != NULL)
+					if( (pMibValue != NULL) && (pMapping != NULL) && (pValue->parameterValue != NULL) )
 					{
-						/* Copy the value */
-						CcspUtilDMValueToMIB(pMapping, pMibValue, (int)pValue->type, (char*)pValue->parameterValue);
+					   /* Copy the value */
+					   CcspUtilDMValueToMIB(pMapping, pMibValue, (int)pValue->type, (char*)pValue->parameterValue);
 					}
+                                        else
+                                        {
+                                           CcspTraceDebug(("pMapping,pMibValue,pValue->parameterValue are attained NULL\n"));
+                                            return -1;
+                                        }
+                                        
 				}
 			}
 		}

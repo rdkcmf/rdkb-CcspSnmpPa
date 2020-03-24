@@ -106,6 +106,9 @@ struct block_day {
 #define BITMAP_FRI   (1 << 2)
 #define BITMAP_SAT   (1 << 1)
 
+#define BUF_MAX_SIZE  64
+#define BUFF_MAX_SIZE  128
+
 #define ARRAY_SIZE(x) ((unsigned)(sizeof(x) / sizeof((x)[0])))
 
 enum {
@@ -194,7 +197,7 @@ static struct mac_filter_mode filterMode[] = {
 
 static int mac_filter_get_mode(const char *dm, int *value)
 {
-    char strVal[64] = {'\0'};
+    char strVal[BUF_MAX_SIZE] = {'\0'};
     int i;
 
     if(dm == NULL || value == NULL) {
@@ -247,7 +250,7 @@ static int setFwFactoryReset(int value)
 
 static int isFwCustomLevel(void)
 {
-    char strVal[64] = {'\0'};
+    char strVal[BUF_MAX_SIZE] = {'\0'};
 
     if (get_dm_value(FW_LEVEL_DM, strVal, sizeof(strVal)))
         return 0;
@@ -261,7 +264,7 @@ static int isFwCustomLevel(void)
 
 static int getFwCustomBlock(const oid lastOid, int *value)
 {
-    char strVal[64] = {'\0'};
+    char strVal[BUF_MAX_SIZE] = {'\0'};
     int i;
 
     if (NULL == value)
@@ -295,7 +298,7 @@ static int getFwCustomBlock(const oid lastOid, int *value)
 
 static int setFwCustomBlock(const oid lastOid, int value)
 {
-    char strVal[64] = {'\0'};
+    char strVal[BUF_MAX_SIZE] = {'\0'};
     int i;
     
     if (value != 1 && value != 2)
@@ -422,7 +425,7 @@ int handleFwRequests(
 static int getFwTrafficBlock(unsigned char *value)
 {
     int i;
-    char strVal[64] = {'\0'};
+    char strVal[BUF_MAX_SIZE] = {'\0'};
 
     if (value == NULL)
         return -1;
@@ -476,7 +479,7 @@ static int setFwTrafficBlock(unsigned char *strval)
 static int getFwWanBlock(unsigned char *value)
 {
     int i;
-    char strVal[64] = {'\0'};
+    char strVal[BUF_MAX_SIZE] = {'\0'};
 
     if (value == NULL)
         return -1;
@@ -509,7 +512,7 @@ int handleFwBlockRequests(
     int                      ret;
     oid                      subid         = 0;
     unsigned char            value;
-    unsigned char            strVal[64]    = {'\0'};
+    unsigned char            strVal[BUF_MAX_SIZE]    = {'\0'};
 
     for (request = requests; request != NULL; request = request->next){
         requestvb = request->requestvb;
@@ -600,7 +603,7 @@ static int validate_block_days(const char *buf)
     char *save;
     int i, j, is_string_days = 0;
     int bitmap = 0, rc = 0;
-    char strVal[64] = {'\0'};
+    char strVal[BUF_MAX_SIZE] = {'\0'};
 
 
     if(buf == NULL) 
@@ -644,7 +647,7 @@ ret:
 
 static int get_block_days(const char *dmName, unsigned char *octet)
 {
-    char strVal[64] = {'\0'};
+    char strVal[BUF_MAX_SIZE] = {'\0'};
     char *ptr, *substr, *saveptr;
     int i;
 
@@ -676,7 +679,7 @@ static int get_block_days(const char *dmName, unsigned char *octet)
 
 static int set_block_days(const char *dmName, char *octetStr)
 {
-    char preStr[64] = {'\0'};
+    char preStr[BUF_MAX_SIZE] = {'\0'};
     int bitmap, i, j=0;
 
     if(dmName == NULL || octetStr == NULL) 
@@ -691,10 +694,23 @@ static int set_block_days(const char *dmName, char *octetStr)
     for(i=SUN; i<=SAT; i++) {
         if(bitmap & blockDays[i].bitmap) {
             if(j==0) 
-                _ansc_strcpy(preStr, blockDays[i].day);
+            {
+                 if(strlen(blockDays[i].day) < sizeof( preStr ))
+                 {  
+                    _ansc_strcpy(preStr, blockDays[i].day);
+                 }
+            }
             else{
                 _ansc_strcat(preStr, ",");
+                 /*Coverity Fix  CID: 135448: STRING_OVERFLOW */
+               if( ( strlen( preStr ) + strlen( blockDays[i].day )) < BUF_MAX_SIZE ) {
                 _ansc_strcat(preStr, blockDays[i].day);
+               }
+               else
+               {
+                 CcspTraceError(("Buffer value more than BUF_MAX_SIZE\n"));
+                 return -1;
+               }  
             }
             j++;
         }
@@ -717,7 +733,7 @@ int handleFwPortFilter(
     int                      ins, rowstatus;
     oid                      subid = 0;
     PCCSP_TABLE_ENTRY        pEntry;
-    char                     dmStr[128] = {'\0'};
+    char                     dmStr[BUFF_MAX_SIZE] = {'\0'};
     unsigned char            octet = 0;
 
     for (request = requests; request != NULL; request = request->next){
@@ -813,7 +829,7 @@ int handleFwMacFilter(
     int                      ins, rowstatus;
     oid                      subid = 0;
     PCCSP_TABLE_ENTRY        pEntry;
-    char                     dmStr[128] = {'\0'};
+    char                     dmStr[BUFF_MAX_SIZE] = {'\0'};
     unsigned char            octet = 0;
 
     for (request = requests; request != NULL; request = request->next){
@@ -837,7 +853,7 @@ int handleFwMacFilter(
             // comcast requirement: only show blocked or permitted devices
             {
                 int snmpFilterMode=SNMP_BLOCK;
-                char typeDm[128] = {'\0'}, typeVal[64] = {'\0'};
+                char typeDm[BUFF_MAX_SIZE] = {'\0'}, typeVal[BUF_MAX_SIZE] = {'\0'};
 
                 if(reqinfo->mode == MODE_GET) {
 
@@ -923,7 +939,7 @@ int handleFwMacFilter(
 #if 1
             {
                 int snmpFilterMode;
-                char typeDm[128] = {'\0'};
+                char typeDm[BUFF_MAX_SIZE] = {'\0'};
                 PCCSP_TABLE_ENTRY pEntry;
 
                 // set .Type when CreateAndWait
@@ -969,7 +985,7 @@ int handleFwUrlKeywordFilter(
     int                      ins, rowstatus;
     oid                      subid = 0;
     PCCSP_TABLE_ENTRY        pEntry;
-    char                     dmStr[128] = {'\0'};
+    char                     dmStr[BUFF_MAX_SIZE] = {'\0'};
     unsigned char            octet = 0;
 
     for (request = requests; request != NULL; request = request->next){
@@ -1233,8 +1249,10 @@ trusted_user_entry* lookup_trusted_user_entry(const char *ip)
     for(i=0; i<IP_FILTER_MAX_ENTRIES; i++) {
         if(ipFilter[i].start_ip[0] == 0){
             // set default values
-            strncpy(ipFilter[i].start_ip, ip, sizeof(ipFilter[i].start_ip));
-            strncpy(ipFilter[i].end_ip, ip, sizeof(ipFilter[i].end_ip));
+            /*Coverity  Fix: CID:135536:Buffer_Size_Warning */
+            strncpy(ipFilter[i].start_ip, ip, sizeof(ipFilter[i].start_ip) -1 );
+            /*Coverity  Fix: CID:135536:Buffer_Size_Warning */
+            strncpy(ipFilter[i].end_ip, ip, sizeof(ipFilter[i].end_ip) -1);
             ipFilter[i].trust = BLOCK;
             ipFilter[i].policy = NONE; 
             return &ipFilter[i];    // first unused entry
@@ -1285,7 +1303,7 @@ static int
 commit_trusted_user_entry(struct trusted_user_entry *pUserEntry, const char *ip)
 {
     int i;
-    char dm[128] = {'\0'};
+    char dm[BUFF_MAX_SIZE] = {'\0'};
     parameterValStruct_t *pValueArray = NULL;
 
     AnscTraceWarning(("%s(%d): Entering...\n", __func__, __LINE__));
@@ -1395,8 +1413,8 @@ static int set_trusted_user_entry(netsnmp_request_info *requests)
     netsnmp_variable_list *vb = NULL;
     PCCSP_TABLE_ENTRY     pEntry = NULL;
     struct trusted_user_entry *pUserEntry = NULL;
-    char dm[128] = {'\0'};
-    char ip[64] = {'\0'};
+    char dm[BUFF_MAX_SIZE] = {'\0'};
+    char ip[BUF_MAX_SIZE] = {'\0'};
     int subid, index, ins;
     int lastIndex = -1;
 
@@ -1440,8 +1458,16 @@ static int set_trusted_user_entry(netsnmp_request_info *requests)
             request->processed = 1;
         }
     }
-
-    return commit_trusted_user_entry(pUserEntry, ip);
+    
+    if( pUserEntry != NULL)
+    {  
+      return commit_trusted_user_entry(pUserEntry, ip);
+    }
+    else
+    {  
+      CcspTraceInfo(("%s - (%d): pUserEntry is NULL \n", __func__, __LINE__));
+       
+    }
 }
 
 static int load_trusted_user_entry(netsnmp_tdata *table)
@@ -1449,7 +1475,7 @@ static int load_trusted_user_entry(netsnmp_tdata *table)
     unsigned int *insArray = NULL;
     unsigned int insCount = 0;
     char pTemp[256] = {'\0'};
-    char ip[64] = {'\0'}, trusted[64] = {'\0'};
+    char ip[BUF_MAX_SIZE] = {'\0'}, trusted[BUF_MAX_SIZE] = {'\0'};
     int i;  // policy loop
     int j;  // instance number array loop
     int k;  // trusted user entires loop
@@ -1496,7 +1522,7 @@ static int load_trusted_user_entry(netsnmp_tdata *table)
                         pEntry->ins[i-1] = insArray[j];
 
                     if(pEntry->start_ip[0] == 0) 
-                        strncpy(pEntry->start_ip, ip, sizeof(pEntry->start_ip));
+                        strncpy(pEntry->start_ip, ip, sizeof(pEntry->start_ip)  );
                 }else{
                     CcspTraceInfo(("%s(%d): trusted user entry is full.\n", __func__, __LINE__));
                     return -1;
@@ -1533,8 +1559,8 @@ int handleFwIpFilterRequests(netsnmp_mib_handler *handler,
     oid                      subid = 0;
     PCCSP_TABLE_ENTRY        pEntry;
     struct trusted_user_entry   *pIpFilter = NULL;
-    char                     ip[64] = {'\0'};
-    char                     dm[128] = {'\0'};
+    char                     ip[BUF_MAX_SIZE] = {'\0'};
+    char                     dm[BUFF_MAX_SIZE] = {'\0'};
     int                      lastIndex = -1;
     int                      index;
     int                      reqCount = 0;
@@ -1571,7 +1597,16 @@ int handleFwIpFilterRequests(netsnmp_mib_handler *handler,
                 }
             }
             
-            get_trusted_user_entry_values(pIpFilter, request);
+             if( pIpFilter != NULL )
+             {  
+                get_trusted_user_entry_values(pIpFilter, request);
+             }
+             else
+             {
+                 CcspTraceWarning(("No Entry available for IpFilter,Hence failed in get_trusted_user_entry_values \n"));
+                 netsnmp_request_set_error(request, SNMP_NOSUCHINSTANCE);
+                  continue;
+             }  
         }
         break;
 

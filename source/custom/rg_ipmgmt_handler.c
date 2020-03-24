@@ -130,7 +130,9 @@ int handleIpMgmtRequests(
 
 
 static void getInterface(PCCSP_TABLE_ENTRY entry, char* interface ){
-    parameterValStruct_t **valStr;
+    
+    /*Coverity Fix CID:56876 Uninit var */
+    parameterValStruct_t **valStr = NULL;
     int nval = -1;
     char str[80];
     char * name = (char*) str;

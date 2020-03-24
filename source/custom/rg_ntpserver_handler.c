@@ -84,8 +84,9 @@ static BOOL FindNtpServerDestComp(void)
 
 static BOOL GetNtpServer(struct NTPServer *ntpServ)
 {
-    parameterValStruct_t **valStr;
-    int nval;
+    /* Coverity Fix : CID 57265, 58018,63204  UnInit var */
+    parameterValStruct_t **valStr = NULL;
+    int nval = 0;
     char *name[1];
 
     name[0] = ntpServ->dmName;
@@ -355,8 +356,9 @@ static BOOL FindPortModeDestComp(void)
 
 static BOOL GetPortMode(struct PortMode *portMode)
 {
-    parameterValStruct_t **valStr;
-    int nval;
+    /* Coverity Fix CID : 66548 UnInit var */
+    parameterValStruct_t **valStr = NULL;
+    int nval = 0;
     char *name[1];
     
     if (portMode->ins != 4) {

@@ -91,7 +91,8 @@ int set_dm_value(const char *param, char *val, size_t vlen)
     parameterValStruct_t    **structGet = NULL;
     parameterValStruct_t    structSet[1];
     char                    *paramNames[1];
-    int                     valNum;
+    /* Coverity Fix CID:59340 UnInit var */
+    int                     valNum = 0;
     
     if (!param || !val){
         AnscTraceWarning(("%s: bad parameters\n", __FUNCTION__));

@@ -744,13 +744,18 @@ CcspTableHelperSetMibValues
 								{
 									indexes[i] = pEntry->IndexValue[i].Value.uValue;
 								}
-
-								/* remove the entry at the back-end */
-								if(!CcspUtilDeleteCosaEntry((ANSC_HANDLE)pThisObject, indexes, pEntry->IndexCount))
-								{
-									AnscTraceWarning(("Failed to delete DM entry.\n"));
-								}
-
+                                                                /* Coverity Fix: CID: 110431 FORWARD_NULL */
+                                                                if( pThisObject->pCcspComp != NULL ){
+                                                                  /* remove the entry at the back-end */
+                                                                  if(!CcspUtilDeleteCosaEntry((ANSC_HANDLE)pThisObject, indexes, pEntry->IndexCount))
+                                                                  {
+                                                                     AnscTraceWarning(("Failed to delete DM entry.\n"));
+                                                                  }
+                                                                 }
+                                                                 else
+                                                                 {
+                                                                     CcspTraceDebug(("CcspTableHelperSetMibValues : pThisObject->pCcspComp  attains NULL \n"));
+                                                                 }
                                                                 // remove table_row from request before deleting it
                                                                 netsnmp_remove_tdata_row(request, table_row);
 
@@ -897,7 +902,7 @@ tableGroupGetCosaValues
 				pMibValue = CcspUtilLookforMibValueObjWithOid(&pEntry->MibValueQueue, CacheMibOid[j]);
 				pMibMap   = CcspUtilLookforMibMapWithOid(&pThisObject->MibObjQueue, CacheMibOid[j]);
 
-				if( pMibValue != NULL && pMibMap != NULL)
+				if( ( pMibValue != NULL) && (pMibMap != NULL) && (pValue->parameterValue != NULL))
 				{
 					/* Copy the value */
 					CcspUtilDMValueToMIB(pMibMap, pMibValue, (int)pValue->type, (char*)pValue->parameterValue);
@@ -925,19 +930,25 @@ tableGroupGetCosaValues
 		else
 		{
 			pValue = paramValues[0];
+                        /* Coverity Fix :CID:54700 FORWARD_NULL */
+                        if ( ( pValue->parameterName != NULL ) && ( pValue->parameterValue != NULL ) ){
+                           CcspTraceDebug(("  %s %s\n", pValue->parameterName, pValue->parameterValue));
 
-			if (pValue->parameterName && pValue->parameterValue)
-				CcspTraceDebug(("  %s %s\n", pValue->parameterName, pValue->parameterValue));
+                           pMibValue = CcspUtilLookforMibValueObjWithOid(&pEntry->MibValueQueue, CacheMibOid[i]);
+                           pMibMap   = CcspUtilLookforMibMapWithOid(&pThisObject->MibObjQueue, CacheMibOid[i]);
 
-			pMibValue = CcspUtilLookforMibValueObjWithOid(&pEntry->MibValueQueue, CacheMibOid[i]);
-			pMibMap   = CcspUtilLookforMibMapWithOid(&pThisObject->MibObjQueue, CacheMibOid[i]);
+                         if( pMibValue != NULL && pMibMap != NULL)
+                         {
+                                /* Copy the value */
+                                CcspUtilDMValueToMIB(pMibMap, pMibValue, (int)pValue->type, (char*)pValue->parameterValue);
+                         }
 
-			if( pMibValue != NULL && pMibMap != NULL)
-			{
-				/* Copy the value */
-				CcspUtilDMValueToMIB(pMibMap, pMibValue, (int)pValue->type, (char*)pValue->parameterValue);
-			}
-		}
+                    }
+                     else
+                    {
+                        CcspTraceDebug(("tableGroupGetCosaValues : pValue->parameterName & pValue->parameterValue  attains NULL \n"));
+                    }
+               }
 
 		/* free the parameter values */
 		Cosa_FreeParamValues(size, paramValues);

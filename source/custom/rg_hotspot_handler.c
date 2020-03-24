@@ -486,8 +486,9 @@ static int hotspot_set_if_enabled(int ins, int bEnabled)
 
 static int hotspot_vlan_tag_func(int ins, int *vlan_id, int cmd)
 {
-    char vlan[4], vlan_mode[16] = {'\0'};
-    char *pMode;
+    /*Coverity Fix CID :104280 UnInit var */
+    char vlan[4] = {0}, vlan_mode[16] = {'\0'};
+    char *pMode = NULL;
     int ret=TRUE;
     char vlanIdDm[64] = {'\0'};
     char vlanModeDm[64] = {'\0'};

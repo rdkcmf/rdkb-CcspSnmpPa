@@ -97,7 +97,7 @@
 #include "slap_vho_exported_api.h"
 
 #define MAX_OCTET_BUFFER_SIZE 256
-
+#define MAX_BUFF_SIZE 1024
 /**********************************************************************
 
     prototype:
@@ -2519,7 +2519,7 @@ utilBitsToDMString
 		PCCSP_MIB_MAPPING			pMibMapping
 	)
 {
-	char							pBuffer[1024]  = { 0 };
+	char							pBuffer[MAX_BUFF_SIZE]  = { 0 };
 	PCCSP_INT_STRING_MAP			pStrMap        = NULL;
 	ULONG							i              = 0;
 	ULONG							j			   = 0;
@@ -2544,7 +2544,15 @@ utilBitsToDMString
 					{
 						_ansc_strcat(pBuffer, ",");
 					}
-					_ansc_strcat(pBuffer, pStrMap->pString);
+
+                                         /* Coverity Fix CID: 135516: STRING_OVERFLOW */
+                                         if( ( strlen(pBuffer) + strlen(pStrMap->pString) ) < MAX_BUFF_SIZE) {
+                                          _ansc_strcat(pBuffer, pStrMap->pString);
+                                        }
+                                        else
+                                        {
+                                            AnscTraceError(("value assigned to Buffer  exceeds the  Max Buffer value \n"));          
+                                        }
 				}
 			}
 		}
