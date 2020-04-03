@@ -43,7 +43,7 @@ rdkb           OBJECT IDENTIFIER ::= { enterprises 17270 }
 rdkbModules    OBJECT IDENTIFIER ::= { rdkb 50 }
 
 rdkbRg    MODULE-IDENTITY
-        LAST-UPDATED    "201909200000Z"
+        LAST-UPDATED    "202004020000Z"
         ORGANIZATION    "TBD"
         CONTACT-INFO    "TBD"
         DESCRIPTION
@@ -1892,7 +1892,10 @@ rdkbRgdot11nExtMode OBJECT-TYPE
         an-mode(192),
         ac-only(256),
         nac-only(384),
-        anac-mode(448)
+        anac-mode(448),
+        ax-mode(512),
+        gnax-mode(672),
+        anacax-mode(960)
         }
     MAX-ACCESS  read-write
     STATUS      current
@@ -1917,6 +1920,9 @@ rdkbRgdot11nExtMode OBJECT-TYPE
          ac-only(256)  : accepts 11ac-capable clients only but supports 11a/n/ac modes in 5GHz.
          nac-only(384) : accepts 11n-capable clients only but supports 11a/n/ac modes in 5GHz (128+256).
          anac-mode(448): supports all 11a/n/ac modes in 5GHz (64+128+256).
+         ax-only(512).
+         gnax-mode(672): supports all 11g/n/ax modes in 2.4GHz (32+128+512).
+         anacax-mode(960): supports all 11a/n/ac/ax modes in 5GHz (64+128+256+512).
 
          Note: Some options may not be available depending on the radio model.
          Note: The change of this object value will also affect other MIB selections, including rdkbRgdot11nExtBandWidth.

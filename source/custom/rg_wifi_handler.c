@@ -119,7 +119,8 @@ typedef enum Mode {
     kGMask = 32,
     kAMask = 64,             
     kNMask = 128,
-    kACMask = 256
+    kACMask = 256,
+    kAXMask = 512
 } eMode;
 
 //TODO: Make this dynamic
@@ -2562,6 +2563,9 @@ int getNMode(PCCSP_TABLE_ENTRY entry)
     parameterValStruct_t **valStr;
     int nval, retval = 1;
     char *a, *ac, *b,*g,*n;
+#if defined (_WIFI_AX_SUPPORT_)
+    char *ax;
+#endif
     char mystring[50];
     char* name = (char *)mystring;
     
@@ -2594,11 +2598,32 @@ int getNMode(PCCSP_TABLE_ENTRY entry)
     a = _ansc_strchr(valStr[0]->parameterValue, 'a');
     ac = _ansc_strstr(valStr[0]->parameterValue, "ac");
 
+#if defined (_WIFI_AX_SUPPORT_)
+    ax = _ansc_strstr(valStr[0]->parameterValue, "ax");
+
+    // if a and ac or ax are not NULL and a is the same string, then move past the ac or ax and search for an a by itself
+    if ( (a && ac && (a  == ac)) || (a && ax && (a  == ax)))
+    {
+        a = a+1;
+        a = _ansc_strchr(a,'a');
+
+       // if a, ac, and ax are not NULL we must double check
+       if( a && ac && ax) 
+       {
+       	if ( (a && ac && (a  == ac)) || (a && ax && (a  == ax)))
+       	{
+       		a = a+1;
+       		a = _ansc_strchr(a,'a');	
+       	}
+       }
+    }
+#else
     // if a and ac are not NULL and they are the same string, then move past the ac and search for an a by itself
     if (a && ac && (a  == ac)) {
         a = a+1;
         a = _ansc_strchr(a,'a');
     }
+#endif
     
     retval = 0;
     if (a) {
@@ -2616,6 +2641,12 @@ int getNMode(PCCSP_TABLE_ENTRY entry)
     if (ac) {
         retval |= kACMask;
     }
+
+#if defined (_WIFI_AX_SUPPORT_)
+    if (ax) {
+        retval |= kAXMask;
+    }
+#endif
 
     Cosa_FreeParamValues(nval, valStr);
     
@@ -2645,9 +2676,15 @@ int setNMode(PCCSP_TABLE_ENTRY entry, int val)
 
     fiveG = isRadio5GHz(entry->IndexValue[0].Value.uValue);
 
+#if !defined (_WIFI_AX_SUPPORT_)
+    if (((val == kNOff) || (val & kAXMask)) ||  // not valid for either radio
+        (fiveG && ((val & kBMask) || (val & kGMask) ) ) || // b and g not valid for 5 GHz 
+        (!fiveG && ((val & kAMask) || (val & kACMask) ) ) )   // a and ac are not valid for 2.4 GHz
+#else
     if ((val == kNOff) ||  // not valid for either radio
-        (fiveG && ((val & kBMask) || (val &kGMask))) || // b and g not valid for 5 GHz 
+        (fiveG && ((val & kBMask) || (val & kGMask))) || // b and g not valid for 5 GHz 
         (!fiveG && ((val & kAMask) || (val & kACMask)) ) )   // a and ac are not valid for 2.4 GHz 
+#endif
     {
         CcspTraceError(("%s: Failed to set, unsupported value for %s %d for %s radio\n", __FUNCTION__, valStr.parameterName, val, (fiveG) ? "5 GHz" : "2.4 GHz"));
         return -1;
@@ -2684,6 +2721,11 @@ int setNMode(PCCSP_TABLE_ENTRY entry, int val)
     if (val & kNMask) {
         strcat(valStr.parameterValue,"n,");
     }
+#if defined (_WIFI_AX_SUPPORT_)
+    if (val & kAXMask) {
+        strcat(valStr.parameterValue,"ax,");
+    }
+#endif
     // remove last comma
     valStr.parameterValue[strlen(valStr.parameterValue)-1]  = '\0';
     valStr.type = ccsp_string;
