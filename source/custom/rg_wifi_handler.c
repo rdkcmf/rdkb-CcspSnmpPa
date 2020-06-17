@@ -1329,6 +1329,13 @@ find_retry:
     }
 
     for(i = 0; i < insCount; i++){
+        
+       row = netsnmp_tdata_create_row();
+        if(!row){
+            AnscFreeMemory(pEntry);
+            status = -1;
+            goto ret;
+        }
 
         pEntry = (PCCSP_TABLE_ENTRY)AnscAllocateMemory(sizeof(CCSP_TABLE_ENTRY));
 
@@ -1337,13 +1344,8 @@ find_retry:
             status = -1;
             goto ret;
         }
-
-        row = netsnmp_tdata_create_row();
-        if(!row){
-            AnscFreeMemory(pEntry);
-            status = -1;
-            goto ret;
-        }
+       
+        memset(pEntry,0,sizeof(pEntry));
 
         dmIns = insArray[i];
                    if (WIFI_IF_MAX <= dmIns)
@@ -1360,19 +1362,20 @@ find_retry:
         mibIndex = gDot11Info[dmIns].mib_index;
         netsnmp_tdata_row_add_index(row, ASN_UNSIGNED, &mibIndex, 4);
 
-        if(table)
-            netsnmp_tdata_add_row(table, row);
-      /* Coverity Fix CID : 135290 RESOURCE_LEAK */ 
-      if(pEntry)
-        AnscFreeMemory(pEntry);
+         if( netsnmp_tdata_add_row(table, row) != SNMPERR_SUCCESS )
+         goto ret;
+         }
+   return status;
         
 
-    }
+    
 
 ret:
     if (insArray)
         free(insArray);
- 
+     /* Coverity Fix CID : 135290 RESOURCE_LEAK */ 
+      if(pEntry)
+        AnscFreeMemory(pEntry); 
 
     return status;
 }
