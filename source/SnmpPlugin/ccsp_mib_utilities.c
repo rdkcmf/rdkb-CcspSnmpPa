@@ -95,9 +95,230 @@
 #include "slap_definitions.h"
 #include "slap_vco_global.h"
 #include "slap_vho_exported_api.h"
+#include "safec_lib_common.h"
 
 #define MAX_OCTET_BUFFER_SIZE 256
 #define MAX_BUFF_SIZE 1024
+
+#define SNMPA_TYPE_TOTAL sizeof(getSnmpaType)/sizeof(getSnmpaType[0])
+
+typedef enum
+{
+	SNMPA_TYPE_BOOLEAN,
+	SNMPA_TYPE_INTEGER,
+	SNMPA_TYPE_INTEGER32,
+	TIMEINTERVAL,
+	TIMEOUT,
+	TESTANDINCR,
+	INTERFACEINDEXORZERO,
+	INTERFACEINDEX,
+	TRUTHVALUE,
+	COUNTER32,
+	OPAQUE,
+	GAUGE32,
+	UNSIGNED32,
+	INETZONEINDEX,
+	UNSIGNED,
+	ROWSTATUS,
+	INETPORTNUMBER,
+	BITFIELD,
+	BITSTRING,
+	BITS,
+	SARGUSERCHANGEDFLAG,
+	IPADDRESS,
+	DISPLAYSTRING,
+	SNMPADMINSTRING,
+	OWNERSTRING,
+	INETADDRESS,
+	TIMETICKS,
+	TIMESTAMP,
+	INETADDRESSTYPE,
+	TRANSPORTADDRESSTYPE,
+	INETVERSION,
+	COUNTER64,
+	COUNTERBASEDGAUGE64,
+	ZEROBASEDCOUNTER64,
+	OCTET_STRING,
+	MACADDRESS,
+	PHYSADDRESS,
+	DATEANDTIME,
+        TYPE_NONE
+}eSnmpaType;
+
+typedef enum
+{
+   ASSIGN_UTYPE_ONLY,
+   CONDITIONALY_ASSIGN_LIMITS,
+   UNCONDITIONALLY_ASSIGN_LIMITS
+}eLimitsType;
+
+typedef struct
+{
+    char	*name;
+    int		case_sensitive;
+    ULONG	uType;
+    int		nMin;
+    int		nMax;
+    ULONG	uMaskLimit;
+    BOOL	bIsRowStatus;
+    eSnmpaType	type;
+    eLimitsType	limitsType;
+} GET_SNMPA_TYPE;
+
+GET_SNMPA_TYPE getSnmpaType[] = 
+{
+	"Boolean",			1,	ASN_BOOLEAN,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,    0,	SNMPA_TYPE_BOOLEAN,	ASSIGN_UTYPE_ONLY,
+	"INTEGER",			1,	ASN_INTEGER,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	SNMPA_TYPE_INTEGER,	ASSIGN_UTYPE_ONLY,
+	"Integer32",			0,	ASN_INTEGER,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	SNMPA_TYPE_INTEGER32,	ASSIGN_UTYPE_ONLY,
+	"TimeInterval",			1,	ASN_INTEGER,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	TIMEINTERVAL,		ASSIGN_UTYPE_ONLY,
+	"Timeout",			1,	ASN_INTEGER,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	TIMEOUT,		ASSIGN_UTYPE_ONLY,
+	"TestAndIncr",			0,	ASN_INTEGER,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	TESTANDINCR,		ASSIGN_UTYPE_ONLY,
+	"InterfaceIndexOrZero",		0,	ASN_INTEGER,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	INTERFACEINDEXORZERO,	ASSIGN_UTYPE_ONLY,
+	"InterfaceIndex",		0,	ASN_INTEGER,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	INTERFACEINDEX,		ASSIGN_UTYPE_ONLY,
+	"TruthValue",			1,	ASN_INTEGER,	1,    2,	CCSP_MIB_LIMIT_BOTH,	   0,	TRUTHVALUE,		UNCONDITIONALLY_ASSIGN_LIMITS,
+	"Counter32",			0,	ASN_COUNTER,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	COUNTER32,		ASSIGN_UTYPE_ONLY,
+	"Opaque",			0,	ASN_OPAQUE,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	OPAQUE,			ASSIGN_UTYPE_ONLY,
+	"Gauge32",			0,	ASN_UNSIGNED,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	GAUGE32,		ASSIGN_UTYPE_ONLY,
+	"Unsigned32",			1,	ASN_UNSIGNED,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	UNSIGNED32,		ASSIGN_UTYPE_ONLY,
+	"InetZoneIndex",		0,	ASN_UNSIGNED,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	INETZONEINDEX,		ASSIGN_UTYPE_ONLY,
+	"Unsigned",			0,	ASN_UNSIGNED,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,    0,	UNSIGNED,		ASSIGN_UTYPE_ONLY,
+	"RowStatus",			0,	ASN_INTEGER,	1,    6,	CCSP_MIB_LIMIT_BOTH,	   1,	ROWSTATUS,		CONDITIONALY_ASSIGN_LIMITS,
+	"InetPortNumber",		0,	ASN_UNSIGNED,	0,   65535,	CCSP_MIB_LIMIT_BOTH,	   0,	INETPORTNUMBER,		CONDITIONALY_ASSIGN_LIMITS,
+	"BitField",			1,	ASN_BIT_STR,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,    0,	BITFIELD,	        ASSIGN_UTYPE_ONLY,
+	"BitString",			0,	ASN_BIT_STR,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	BITSTRING,		ASSIGN_UTYPE_ONLY,
+	"BITS",				1,	ASN_OCTET_STR,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	BITS,			ASSIGN_UTYPE_ONLY,
+	"SaRgUserChangedFlag",		1,	ASN_OCTET_STR,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	SARGUSERCHANGEDFLAG,	ASSIGN_UTYPE_ONLY,
+	"IpAddress",			1,	ASN_IPADDRESS,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	IPADDRESS,		ASSIGN_UTYPE_ONLY,
+	"DisplayString",		0,	ASN_OCTET_STR,	0,   255,	CCSP_MIB_LIMIT_BOTH,	   0,	DISPLAYSTRING,		CONDITIONALY_ASSIGN_LIMITS,
+	"SnmpAdminString",		0,	ASN_OCTET_STR,	0,   255,	CCSP_MIB_LIMIT_BOTH,	   0,	SNMPADMINSTRING,	CONDITIONALY_ASSIGN_LIMITS,
+	"OwnerString",			0,	ASN_OCTET_STR,	0,   255,	CCSP_MIB_LIMIT_BOTH,	   0,	OWNERSTRING,		CONDITIONALY_ASSIGN_LIMITS,
+	"InetAddress",			0,	ASN_OCTET_STR,	0,   255,	CCSP_MIB_LIMIT_BOTH,	   0,	INETADDRESS,		CONDITIONALY_ASSIGN_LIMITS,
+	"TimeTicks",			1,	ASN_TIMETICKS,	0,   0,		CCSP_MIB_DEFAULT_LIMIT,	   0,	TIMETICKS,		ASSIGN_UTYPE_ONLY,
+	"TimeStamp",			1,	ASN_TIMETICKS,	0,   0,		CCSP_MIB_DEFAULT_LIMIT,	   0,	TIMESTAMP,		ASSIGN_UTYPE_ONLY,
+	"InetAddressType",		0,	ASN_INTEGER,	0,   16,	CCSP_MIB_LIMIT_BOTH,	   0,	INETADDRESSTYPE,	CONDITIONALY_ASSIGN_LIMITS,
+	"TransportAddressType",		0,	ASN_INTEGER,	0,   16,	CCSP_MIB_LIMIT_BOTH,	   0,	TRANSPORTADDRESSTYPE,	CONDITIONALY_ASSIGN_LIMITS,
+	"InetVersion",			0,	ASN_INTEGER,	0,   2,		CCSP_MIB_LIMIT_BOTH,	   0,	INETVERSION,		CONDITIONALY_ASSIGN_LIMITS,
+	"Counter64",			1,	ASN_COUNTER64,	0,   0,		CCSP_MIB_DEFAULT_LIMIT,	   0,	COUNTER64,		ASSIGN_UTYPE_ONLY,
+	"CounterBasedGauge64",		1,	ASN_COUNTER64,	0,   0,		CCSP_MIB_DEFAULT_LIMIT,	   0,	COUNTERBASEDGAUGE64,	ASSIGN_UTYPE_ONLY,
+	"ZeroBasedCounter64",		1,	ASN_COUNTER64,	0,   0,		CCSP_MIB_DEFAULT_LIMIT,	   0,	ZEROBASEDCOUNTER64,	ASSIGN_UTYPE_ONLY,
+	"OCTET STRING",			1,	ASN_OCTET_STR,	0,   0,		CCSP_MIB_DEFAULT_LIMIT,	   0,	OCTET_STRING,		ASSIGN_UTYPE_ONLY,
+	"MacAddress",			1,	ASN_OCTET_STR,	6,   6,		CCSP_MIB_LIMIT_BOTH,	   0,	MACADDRESS,		UNCONDITIONALLY_ASSIGN_LIMITS,
+	"PhysAddress",			1,	ASN_OCTET_STR,	6,   6,		CCSP_MIB_LIMIT_BOTH,	   0,	PHYSADDRESS,		UNCONDITIONALLY_ASSIGN_LIMITS,
+	"DateAndTime",			1,	ASN_OCTET_STR,	8,   11,	CCSP_MIB_LIMIT_BOTH,	   0,	DATEANDTIME,		UNCONDITIONALLY_ASSIGN_LIMITS
+};
+
+
+int GetSnmpaType(char *name , eSnmpaType *type_ptr, PCCSP_MIB_INFO pInfo)
+{
+    errno_t rc       = -1;
+    int     ind      = -1;
+    int strlength;
+    int i;
+    int found = 0;
+
+    if( (name == NULL) || (type_ptr == NULL) || ( pInfo == NULL ) )
+       return 0;
+   
+    strlength = strlen( name );
+     
+    for (i = 0; i < SNMPA_TYPE_TOTAL; i++)
+    {
+        if( getSnmpaType[i].case_sensitive )
+        {   
+           rc = strcasecmp_s(name, strlength, getSnmpaType[i].name, &ind);
+           ERR_CHK(rc);
+           if((ind==0) && (rc == EOK))
+           {
+               found = 1;
+           }
+        }
+        else
+        {
+           rc = strcmp_s(name, strlength, getSnmpaType[i].name, &ind);
+           ERR_CHK(rc);
+           if((ind==0) && (rc == EOK))
+           {
+               found = 1;
+           }
+       }
+      
+       if( found == 1 )
+       {
+         pInfo->uType = getSnmpaType[i].uType;
+         
+         if( getSnmpaType[i].limitsType == UNCONDITIONALLY_ASSIGN_LIMITS )
+         {
+           pInfo->uMaskLimit = getSnmpaType[i].uMaskLimit;
+           pInfo->nMin = getSnmpaType[i].nMin;
+           pInfo->nMax = getSnmpaType[i].nMax;
+         }
+         else if( getSnmpaType[i].limitsType == CONDITIONALY_ASSIGN_LIMITS )
+         {
+            if( pInfo->uMaskLimit == CCSP_MIB_NO_LIMIT )
+            {
+               pInfo->uMaskLimit = getSnmpaType[i].uMaskLimit;
+               pInfo->nMin = getSnmpaType[i].nMin;
+               pInfo->nMax = getSnmpaType[i].nMax;
+            }
+         }
+         
+         if( getSnmpaType[i].bIsRowStatus == 1 )
+         {
+            pInfo->bIsRowStatus = TRUE;
+         }
+         
+         *type_ptr = getSnmpaType[i].type;
+         
+         return 1;
+       }
+    }
+  
+    AnscTraceWarning(("Unknown MIB data type: %s, treat it as an OCTET_STRING.\n", name));
+    pInfo->uType = ASN_OCTET_STR;
+    
+    return 0;
+}
+
+
+
+#define NUM_TR69_TYPES (sizeof(tr69_string_to_datatype_table)/sizeof(tr69_string_to_datatype_table[0]))
+
+
+typedef struct tr69_string_to_datatype_pair {
+  char     *name;
+  int      level;
+}T69_PAIR;
+
+T69_PAIR tr69_string_to_datatype_table[] = {
+  { "int",  CCSP_TR69_DataType_int },
+  { "unsignedInt",   CCSP_TR69_DataType_unsignedInt},
+  { "boolean", CCSP_TR69_DataType_boolean},
+  { "dateTime",   CCSP_TR69_DataType_dateTime},
+  { "base64",  CCSP_TR69_DataType_base64},
+  { "string",  CCSP_TR69_DataType_string }
+};
+
+int tr69_string_to_datatype(char *name, int *type_ptr)
+{
+  int rc = -1;
+  int ind = -1;
+  int i = 0;
+  if((name == NULL) || (type_ptr == NULL))
+     return 0;
+  int length = strlen(name);
+  for (i = 0 ; i < NUM_TR69_TYPES ; ++i)
+  {
+      rc = strcmp_s(name, length , tr69_string_to_datatype_table[i].name, &ind);
+      ERR_CHK(rc);
+      if((rc == EOK) && (!ind))
+      {
+          *type_ptr = tr69_string_to_datatype_table[i].level;
+          return 1;
+      }
+  }
+  return 0;
+}
+
 /**********************************************************************
 
     prototype:
@@ -486,34 +707,14 @@ CcspUtilTR69StringToDataType
         char*						pBuffer
     )
 {
-	if( AnscEqualString(pBuffer, CCSP_TR69_STR_DataType_int, TRUE))
-	{
-		return CCSP_TR69_DataType_int;
-	}
-	else if( AnscEqualString(pBuffer, CCSP_TR69_STR_DataType_unsignedInt, TRUE))
-	{
-		return CCSP_TR69_DataType_unsignedInt;
-	} 
-	else if( AnscEqualString(pBuffer, CCSP_TR69_STR_DataType_boolean, TRUE))
-	{
-		return CCSP_TR69_DataType_boolean;
-	} 
-	else if( AnscEqualString(pBuffer, CCSP_TR69_STR_DataType_dateTime, TRUE))
-	{
-		return CCSP_TR69_DataType_dateTime;
-	} 
-	else if( AnscEqualString(pBuffer, CCSP_TR69_STR_DataType_base64, TRUE))
-	{
-		return CCSP_TR69_DataType_base64;
-	} 
-	else if( AnscEqualString(pBuffer, CCSP_TR69_STR_DataType_string, TRUE))
-	{
-		return CCSP_TR69_DataType_string;
-	} 
-
-	AnscTraceWarning(("Unknown TR69 data type - %s | string will be used instead. \n", pBuffer));
-
-	return CCSP_TR69_DataType_string;
+       int level = 0;
+       
+         if (!tr69_string_to_datatype(pBuffer, &level))
+        {
+           AnscTraceWarning(("Unknown TR69 data type - %s | string will be used instead. \n", pBuffer));
+           return CCSP_TR69_DataType_string;
+        }
+       return level;
 }
 
 /**********************************************************************
@@ -617,165 +818,33 @@ checkMibDataType
 		PQUEUE_HEADER               pQueue
 	)
 {
-	pInfo->bIsRowStatus = FALSE;
+  pInfo->bIsRowStatus = FALSE;
+	eSnmpaType Type = TYPE_NONE;
 
-	if( AnscEqualString(pType, "Boolean", FALSE))
-	{
-		pInfo->uType = ASN_BOOLEAN;
-	}
-	else if( AnscEqualString(pType, "INTEGER", FALSE) || AnscEqualString(pType, "Integer32", TRUE) ||
-		AnscEqualString(pType, "TimeInterval", FALSE) || AnscEqualString(pType, "Timeout", FALSE) ||
-		AnscEqualString(pType, "TestAndIncr", TRUE)   || AnscEqualString(pType, "InterfaceIndexOrZero", TRUE)||
-		AnscEqualString(pType, "InterfaceIndex", TRUE))
-	{
-		pInfo->uType = ASN_INTEGER;
-	}
-	else if( AnscEqualString(pType, "TruthValue", FALSE))
-	{
-		pInfo->uType = ASN_INTEGER;
-		pInfo->uMaskLimit = CCSP_MIB_LIMIT_BOTH;
-		pInfo->nMin       = 1;
-		pInfo->nMax		  = 2;
-	}
-	else if( AnscEqualString(pType, "Counter32", TRUE))
-	{
-		pInfo->uType = ASN_COUNTER;
-	}
-	else if( AnscEqualString(pType, "Opaque", TRUE))
-	{
-		pInfo->uType = ASN_OPAQUE;
-	}
-	else if( AnscEqualString(pType, "Gauge32", TRUE) || AnscEqualString(pType, "Unsigned32", FALSE)||
-		AnscEqualString(pType, "InetZoneIndex", TRUE) ||AnscEqualString(pType, "Unsigned", TRUE) )
-	{
-		pInfo->uType        = ASN_UNSIGNED;
-	}
-	else if( AnscEqualString(pType, "RowStatus", TRUE))
-	{
-		pInfo->uType = ASN_INTEGER;
-
-		if( pInfo->uMaskLimit == CCSP_MIB_NO_LIMIT)
+        if( GetSnmpaType( pType, &Type, pInfo ) )
+        {
+		if( Type == SARGUSERCHANGEDFLAG )
 		{
-			pInfo->uMaskLimit = CCSP_MIB_LIMIT_BOTH;
-			pInfo->nMin       = 1;
-			pInfo->nMax		  = 6;
-		}
-
-		pInfo->bIsRowStatus = TRUE;
-	}
-	else if( AnscEqualString(pType, "InetPortNumber", TRUE))
-	{
-		pInfo->uType = ASN_UNSIGNED;
-
-		if( pInfo->uMaskLimit == CCSP_MIB_NO_LIMIT)
-		{
-			pInfo->uMaskLimit = CCSP_MIB_LIMIT_BOTH;
-			pInfo->nMin       = 0;
-			pInfo->nMax		  = 65535;
-		}
-	}
-	else if( AnscEqualString(pType, "BitField", FALSE)||
-		AnscEqualString(pType, "BitString", TRUE))
-	{
-		pInfo->uType = ASN_BIT_STR;
-	}
-	else if ( AnscEqualString(pType, "BITS", FALSE))
-	{
-		pInfo->uType = ASN_OCTET_STR;
-	}
-	else if( AnscEqualString(pType, "SaRgUserChangedFlag", FALSE))
-	{
-		pInfo->uType = ASN_OCTET_STR;
-		CcspUtilParseEnumString("lanParameters(0),wanMTU(1),wirelessBasic(2),wirelessAdvanced(3),wirelessSecurity(4),\
+			CcspUtilParseEnumString("lanParameters(0),wanMTU(1),wirelessBasic(2),wirelessAdvanced(3),wirelessSecurity(4),\
 wirelessAccessControl(5),fixedCPE(6),ipAddrFiltering(7),macAddrFiltering(8),portFiltering(9),portForwarding(10),\
 portTriggers(11),dmzHost(12),blockProxy(13),blockCookies(14),blockJava(15),blockActiveX(16),blockPopup(17),\
 blockFragments(18),detectPortScan(19),detectFlood(20),firewallEvent(21)", pQueue);
-	}
-	else if( AnscEqualString(pType, "IpAddress", FALSE))
-	{
-		pInfo->uType = ASN_IPADDRESS;
-	}
-	else if( AnscEqualString(pType, "DisplayString", TRUE) ||AnscEqualString(pType, "SnmpAdminString", TRUE)||
-		     AnscEqualString(pType, "OwnerString", TRUE) ||AnscEqualString(pType, "InetAddress", TRUE))
-	{
-		pInfo->uType = ASN_OCTET_STR;
-		if( pInfo->uMaskLimit == CCSP_MIB_NO_LIMIT)
-		{
-			pInfo->uMaskLimit = CCSP_MIB_LIMIT_BOTH;
-			pInfo->nMin       = 0;
-			pInfo->nMax		  = 255;
 		}
-	}
-	else if( AnscEqualString(pType, "TimeTicks", FALSE) || AnscEqualString(pType, "TimeStamp", FALSE))
-	{
-		pInfo->uType = ASN_TIMETICKS;
-	}
-	else if( AnscEqualString(pType, "InetAddressType", TRUE))
-	{
-		pInfo->uType = ASN_INTEGER;
-		if( pInfo->uMaskLimit == CCSP_MIB_NO_LIMIT)
-		{
-			pInfo->uMaskLimit = CCSP_MIB_LIMIT_BOTH;
-			pInfo->nMin       = 0;
-			pInfo->nMax		  = 16;
-		}
-
-		CcspUtilParseEnumString("unknown(0),ipv4(1),ipv6(2),ipv4z(3),ipv6z(4),dns(16)", pQueue);
-	}
-	else if( AnscEqualString(pType, "TransportAddressType", TRUE))
-	{
-		pInfo->uType = ASN_INTEGER;
-		if( pInfo->uMaskLimit == CCSP_MIB_NO_LIMIT)
-		{
-			pInfo->uMaskLimit = CCSP_MIB_LIMIT_BOTH;
-			pInfo->nMin       = 0;
-			pInfo->nMax		  = 16;
-		}
-
-		CcspUtilParseEnumString("unknown(0),udpIpv4(1),udpIpv6(2),udpIpv4z(3),udpIpv6z(4),tcpIpv4(5),tcpIpv6(6),tcpIpv4z(7),tcpIpv6z(8),sctpIpv4(9),sctpIpv6(10),\
+                else if( Type == INETADDRESSTYPE )
+                {
+                        CcspUtilParseEnumString("unknown(0),ipv4(1),ipv6(2),ipv4z(3),ipv6z(4),dns(16)", pQueue);
+                }
+                else if( Type == TRANSPORTADDRESSTYPE )
+                {
+                        CcspUtilParseEnumString("unknown(0),udpIpv4(1),udpIpv6(2),udpIpv4z(3),udpIpv6z(4),tcpIpv4(5),tcpIpv6(6),tcpIpv4z(7),tcpIpv6z(8),sctpIpv4(9),sctpIpv6(10),\
 sctpIpv4z(11),sctpIpv6z(12),local(13),udpDns(14),tcpDns(15),sctpDns(16)", pQueue);
-	}
-	else if( AnscEqualString(pType, "InetVersion", TRUE))
-	{
-		pInfo->uType = ASN_INTEGER;
-		if( pInfo->uMaskLimit == CCSP_MIB_NO_LIMIT)
-		{
-			pInfo->uMaskLimit = CCSP_MIB_LIMIT_BOTH;
-			pInfo->nMin       = 0;
-			pInfo->nMax		  = 2;
-		}
+                }
+                else if( Type == INETVERSION )
+                {
+                        CcspUtilParseEnumString("unknown(0),ipv4(1),ipv6(2)", pQueue);
+                }
+       }
 
-		CcspUtilParseEnumString("unknown(0),ipv4(1),ipv6(2)", pQueue);
-	}
-	else if( AnscEqualString(pType,"Counter64", FALSE)||AnscEqualString(pType,"CounterBasedGauge64", FALSE) ||
-		AnscEqualString(pType,"ZeroBasedCounter64", FALSE))
-	{
-		pInfo->uType = ASN_COUNTER64;
-	}
-	else if( AnscEqualString(pType, "OCTET STRING", FALSE))
-	{
-		pInfo->uType = ASN_OCTET_STR;
-	}
-	else if( AnscEqualString(pType, "MacAddress", FALSE) || AnscEqualString(pType, "PhysAddress", FALSE))
-	{
-		pInfo->uType = ASN_OCTET_STR;
-		pInfo->uMaskLimit = CCSP_MIB_LIMIT_BOTH;
-		pInfo->nMin       = 6;
-		pInfo->nMax		  = 6;
-	}
-	else if( AnscEqualString(pType, "DateAndTime", FALSE))
-	{
-		pInfo->uType = ASN_OCTET_STR;
-		pInfo->uMaskLimit = CCSP_MIB_LIMIT_BOTH;
-		pInfo->nMin       = 8;
-		pInfo->nMax		  = 11;
-	}
-	else
-	{
-		AnscTraceWarning(("Unknown MIB data type: %s, treat it as an OCTET_STRING.\n", pType));
-
-		pInfo->uType = ASN_OCTET_STR;
-	}
 
 }
 
@@ -794,6 +863,8 @@ CcspUtilLoadMibInfo
     PANSC_XML_DOM_NODE_OBJECT       pChildNode3        = (PANSC_XML_DOM_NODE_OBJECT)NULL;
 	char							buffer[256]        = { 0 };
 	ULONG							uSize              = 256;
+        errno_t rc  = -1;
+        int     ind  = -1;
 
 	/* load the lastOid */
 	pChildNode = (PANSC_XML_DOM_NODE_OBJECT)pRootNode->GetChildByName(pRootNode, CCSP_XML_MibInfo_lastOid);
@@ -816,8 +887,15 @@ CcspUtilLoadMibInfo
 		pChildNode->GetDataString(pChildNode, NULL, buffer, &uSize);
 	}
 
-	if( AnscEqualString(buffer, "ReadWrite", TRUE) || AnscEqualString(buffer, "WriteOnly", TRUE))
-	{
+	rc = strcmp_s( "ReadWrite",strlen("ReadWrite"), buffer,&ind);
+        ERR_CHK(rc);
+        if ( (rc != EOK) || (ind) )
+        {
+            rc = strcmp_s("WriteOnly", strlen("WriteOnly"),buffer, &ind);
+            ERR_CHK(rc);
+	}
+        if ( (rc == EOK) && (!ind) )
+        {
 		pInfo->bWritable = TRUE;
 	}
 	else
@@ -850,10 +928,18 @@ CcspUtilLoadMibInfo
 
 		if( pChildNode2 != NULL)
 		{
-			if( AnscEqualString(buffer, "INTEGER", FALSE) || AnscEqualString(buffer, "Integer32", TRUE) )
-			{
-				pChildNode2->GetDataLong(pChildNode2, NULL, (LONG*)&pInfo->nMin);
-			}
+                       rc = strcasecmp_s( "INTEGER",strlen("INTEGER"), buffer,&ind);
+                       ERR_CHK(rc);
+                       if ( (rc != EOK) || (ind) )
+                       {
+                            rc = strcmp_s("Integer32", strlen("Integer32"),buffer, &ind);
+                            ERR_CHK(rc);
+                       }
+                       if ( (rc == EOK) && (!ind) )
+                       {
+                           pChildNode2->GetDataLong(pChildNode2, NULL, (LONG*)&pInfo->nMin);
+                       }
+
 			else
 			{				
 				pChildNode2->GetDataUlong(pChildNode2, NULL, (ULONG*)&pInfo->nMin);
@@ -861,10 +947,19 @@ CcspUtilLoadMibInfo
 			
 			if( pChildNode3 != NULL)
 			{
-				if( AnscEqualString(buffer, "INTEGER", FALSE) || AnscEqualString(buffer, "Integer32", TRUE) )
-				{
-					pChildNode3->GetDataLong(pChildNode3, NULL, (LONG*)&pInfo->nMax);
-				}
+                                rc = strcasecmp_s( "INTEGER",strlen("INTEGER"), buffer,&ind);
+                                 ERR_CHK(rc);
+                                if ( (rc != EOK) || (ind) )
+                               {
+                                  rc = strcmp_s("Integer32", strlen("Integer32"),buffer, &ind);
+                                  ERR_CHK(rc);
+                               }
+                               if ( (rc == EOK) && (!ind) )
+                               {
+                                  pChildNode3->GetDataLong(pChildNode3, NULL, (LONG*)&pInfo->nMax);
+
+                               }
+
 				else
 				{				
 					pChildNode3->GetDataUlong(pChildNode3, NULL, (ULONG*)&pInfo->nMax);
@@ -879,14 +974,23 @@ CcspUtilLoadMibInfo
 		}
 		else if( pChildNode3 != NULL)
 		{
-			if( AnscEqualString(buffer, "INTEGER", FALSE) || AnscEqualString(buffer, "Integer32", TRUE) )
-			{
-				pChildNode3->GetDataLong(pChildNode3, NULL, (ULONG*)&pInfo->nMax);
-			}
-			else
-			{				
-				pChildNode3->GetDataUlong(pChildNode3, NULL, (ULONG*)&pInfo->nMax);
-			}
+                       rc = strcasecmp_s( "INTEGER",strlen("INTEGER"), buffer,&ind);
+                       ERR_CHK(rc);
+                       if ( (rc != EOK) || (ind) )
+                       {
+                            rc = strcmp_s("Integer32", strlen("Integer32"),buffer, &ind);
+                            ERR_CHK(rc);
+                       }
+                       if ( (rc == EOK) && (!ind) )
+                       {
+                           pChildNode3->GetDataLong(pChildNode3, NULL, (ULONG*)&pInfo->nMax);
+
+                       }
+                       else                                               
+                       {
+                                pChildNode3->GetDataUlong(pChildNode3, NULL, (ULONG*)&pInfo->nMax);
+                       }
+
 		
 			pInfo->uMaskLimit = CCSP_MIB_LIMIT_MAX;
 		}
@@ -894,7 +998,13 @@ CcspUtilLoadMibInfo
 
 	/* check the MIB data type limitations */
 	checkMibDataType(buffer, pInfo, pQueue);
-	AnscCopyString(pInfo->pType, buffer);
+        rc = strcpy_s(pInfo->pType,sizeof(pInfo->pType), buffer);
+        if(rc != EOK)
+         {
+              ERR_CHK(rc);
+               return FALSE;
+          }
+  
 
 	return TRUE;
 }
@@ -1488,25 +1598,49 @@ CcspUtilTraceOid
 	int								i           = 0;
 	char							buffer[512] = {0};
 	char*							pTemp       = buffer;
-
-	AnscCopyString(buffer, "Oid:[");
+        int buf_len = sizeof(buffer);
+        errno_t    rc = -1;
+	rc = strcpy_s(buffer,buf_len, "Oid:[");
+         if(rc != EOK)
+         {
+            ERR_CHK(rc);
+            return;
+         }
+       
 	pTemp = (char*)(buffer + AnscSizeOfString(buffer));
 
 	for( i = 0; i < uLength; i ++)
 	{
 		if( i == 0)
 		{
-			_ansc_sprintf(pTemp, "%d", (int)pOid[i]);
+			rc = sprintf_s(pTemp,buf_len, "%d", (int)pOid[i]);
+                        if(rc < EOK)
+                        {
+                           ERR_CHK(rc);
+                           return ;
+                        }
 		}
 		else
 		{
-			_ansc_sprintf(pTemp, ".%d", (int)pOid[i]);
+			rc = sprintf_s(pTemp,buf_len, ".%d", (int)pOid[i]);
+                        if(rc < EOK)
+                        {
+                           ERR_CHK(rc);
+                           return ;
+                        }
+
 		}
 
 		pTemp += AnscSizeOfString(pTemp);
 	}
 
-	_ansc_sprintf(pTemp, "] Len=%lu\n", uLength);
+	rc = sprintf_s(pTemp,buf_len, "] Len=%lu\n", uLength);
+        if(rc < EOK)
+        {
+             ERR_CHK(rc);
+             return ;
+        }
+
 
 	AnscTraceInfo((buffer));
 }
@@ -1546,7 +1680,9 @@ CcspUtilInitMibValueArray
 {	
 	PCCSP_MIB_VALUE					pMibValue			= (PCCSP_MIB_VALUE)NULL;
 	PCCSP_MIB_MAPPING				pMibMap				= (PCCSP_MIB_MAPPING)NULL;
-    PSINGLE_LINK_ENTRY              pSLinkEntry         = (PSINGLE_LINK_ENTRY)NULL;
+        PSINGLE_LINK_ENTRY              pSLinkEntry         = (PSINGLE_LINK_ENTRY)NULL;
+        errno_t rc = -1;
+        int ind = -1;
 
 	if( !pMibObjQueue || !pMibValueQueue || pMibObjQueue->Depth == pMibValueQueue->Depth ||
 		pMibValueQueue->Depth > 0)
@@ -1576,10 +1712,18 @@ CcspUtilInitMibValueArray
 				pMibValue->BackValue.pBuffer  = NULL;
 				pMibValue->uBackSize          = 0;
 
-				if( AnscEqualString(pMibMap->MibInfo.pType, "MacAddress", FALSE)|| AnscEqualString(pMibMap->MibInfo.pType, "PhysAddress", FALSE))
-				{
-					pMibValue->uSize = 6;
-				}
+                                rc = strcasecmp_s("MacAddress",strlen("MacAddress"),pMibMap->MibInfo.pType,&ind);
+                                ERR_CHK(rc);
+                                if ( (rc != EOK) || (ind) )
+                                {
+                                    rc = strcasecmp_s("PhysAddress",strlen("PhysAddress"),pMibMap->MibInfo.pType,&ind);
+                                    ERR_CHK(rc);
+                                }
+                                if ( (rc == EOK) && (!ind) )
+                                {
+                                    pMibValue->uSize = 6;
+
+                                }
 				else if( pMibValue->uType >= ASN_IPADDRESS && pMibValue->uType <= ASN_OPAQUE)
 				{
 					pMibValue->uSize = sizeof(ULONG);
@@ -1879,6 +2023,7 @@ CcspUtilDMFilterToNamespace
 	int                             size		 = 0;
 	parameterValStruct_t**          paramValues	 = NULL;
 	char*							pReqName     = NULL;
+        errno_t         rc   = -1;
 
 	if( pStr == NULL)
 	{
@@ -1930,8 +2075,15 @@ CcspUtilDMFilterToNamespace
 		pStr ++;
 	}
 
-	if( pStr[0] != '0')	AnscCopyString(pValue, pStr);
-
+	if( pStr[0] != '0')
+        {
+            rc = strcpy_s(pValue,sizeof(pValue), pStr);
+            if(rc != EOK)
+             {
+	          ERR_CHK(rc);
+	          goto EXIT;
+              }
+        }
 	/* remove the spaces at the end */
 	pStr = _ansc_strstr(pValue, " ");
 
@@ -1941,11 +2093,19 @@ CcspUtilDMFilterToNamespace
 	}
 
 	/* check all the instances and find the first one with the type and value */
+        int pName_length = sizeof(pName1);
+        int pVal_len = sizeof(pValue);
 	for( i = 0; i < insNumber; i ++)
 	{
 		size = 0;
 
-		_ansc_sprintf(pName1, pName, insArray[i]);
+	         rc = sprintf_s(pName1,pName_length, pName, insArray[i]);
+                 if(rc < EOK)
+                 {
+                   ERR_CHK(rc);
+                   goto EXIT;
+                 }
+
 
 		pReqName = AnscCloneString(pName1);
 
@@ -1959,6 +2119,7 @@ CcspUtilDMFilterToNamespace
 		AnscFreeMemory(pReqName);
 
         CcspTraceDebug(("  %s %s\n", paramValues[0]->parameterName, paramValues[0]->parameterValue));
+         int ind = -1; 
 
 		if( paramValues[0] != NULL)
 		{
@@ -1966,10 +2127,15 @@ CcspUtilDMFilterToNamespace
 			{
 				insNumber = insArray[i];
 			}
-			else if( AnscEqualString(pValue, paramValues[0]->parameterValue, FALSE))
-			{
+			else
+                        {
+                           rc =  strcasecmp_s(pValue,pVal_len, paramValues[0]->parameterValue, &ind);
+                           ERR_CHK(rc);
+                           if((!ind) && (rc == EOK))
+			   {
 				insNumber = insArray[i];
-			}
+		       	    }
+                        }
 		}
 
 		/* free the parameter values */
@@ -2025,6 +2191,8 @@ CcspUtilLookforEnumStrInMapping
 {
 	PCCSP_INT_STRING_MAP			pMap				= (PCCSP_INT_STRING_MAP)NULL;
     PSINGLE_LINK_ENTRY              pSLinkEntry         = (PSINGLE_LINK_ENTRY)NULL;
+    errno_t rc = -1;
+    int ind = -1;
     
     pSLinkEntry = AnscQueueGetFirstEntry(pMapping);
 
@@ -2032,11 +2200,15 @@ CcspUtilLookforEnumStrInMapping
     {
         pMap         = ACCESS_CCSP_INS_STRING_MAP(pSLinkEntry);
         pSLinkEntry  = AnscQueueGetNextEntry(pSLinkEntry);
-
-		if( pMap != NULL && AnscEqualString(pMap->pString, pString, TRUE))
+        if( pMap != NULL)
+        {
+                rc = strcmp_s(pMap->pString,strlen(pMap->pString),pString,&ind);
+                ERR_CHK(rc);
+		if((!ind) && (rc == EOK))
 		{
 			return pMap->EnumCode;
 		}
+        }
     }
 
 	AnscTraceWarning(("Unable to find the map integer value of enumeration '%s'\n", pString));
@@ -2126,6 +2298,7 @@ utilStringToBits
 	int							iFind           = -1;
 	int							iMax            = 0;
 	char                        pTemp[256]      = { 0 };
+        errno_t          rc  = -1;
 
 	/* check how many bits are on */
 	while( pTemp1 != NULL && AnscSizeOfString(pTemp1) > 0)
@@ -2139,7 +2312,12 @@ utilStringToBits
 		}
 		else
 		{
-			AnscCopyString(pTemp, pTemp1);
+			rc = strcpy_s(pTemp,sizeof(pTemp), pTemp1);
+                        if(rc != EOK)
+                       {
+                          ERR_CHK(rc);
+                          return;
+                        }
 		}
 
 		if( AnscSizeOfString(pTemp) > 0)
@@ -2207,6 +2385,8 @@ CcspUtilDMValueToMIB
 	PANSC_UNIVERSAL_TIME			pTime          = NULL;
 	u_char							pBuff[8]	   = { 0 };
 	SLAP_UCHAR_ARRAY*               pMacArray      = (SLAP_UCHAR_ARRAY*)NULL;
+        errno_t rc = -1;
+        int ind = -1;
 
 	/* free previous memory */
 	if( pMibValue->uType == ASN_OCTET_STR)
@@ -2242,22 +2422,29 @@ CcspUtilDMValueToMIB
 	{
 		if( uDMType == ccsp_boolean)
 		{
-			if( AnscEqualString(pValue, "true", FALSE))
+			rc = strcasecmp_s("true",strlen("true"), pValue,&ind);
+                        ERR_CHK(rc);
+                        if((!ind) && (rc == EOK))
 			{
 				pMibValue->Value.uValue = RS_ACTIVE;
 			}
-                        else if( AnscEqualString(pValue, "notready", FALSE))
+                        else
                         {
+                            rc = strcasecmp_s("notready",strlen("notready"),pValue, &ind);
+                            ERR_CHK(rc);
+                            if((!ind) && (rc == EOK))
+                            {
                                 pMibValue->Value.uValue = RS_NOTREADY;
-                        }
-			else
-			{
+                             }
+			     else
+			     {
 				pMibValue->Value.uValue = RS_NOTINSERVICE;
-			}
+		             }
+                        }
 		}
 		else
 		{
-			if( AnscEqualString(pValue, "1", FALSE))
+                        if( ( pValue[0] == '1' ) && ( pValue[1] == '\0' ))
 			{
 				pMibValue->Value.uValue = RS_ACTIVE;
 			}
@@ -2281,20 +2468,27 @@ CcspUtilDMValueToMIB
 	}
 	else if ( uDMType == ccsp_boolean)
 	{
-		if(AnscEqualString(pMibInfo->pType, "TruthValue", FALSE))
+		rc = strcasecmp_s( "TruthValue",strlen("TruthValue"),pMibInfo->pType,&ind);
+                ERR_CHK(rc);
+                if((!ind) && (rc == EOK))                
 		{
-			if( AnscEqualString(pValue, "true", FALSE))
-			{
+		   rc = strcasecmp_s( "true",strlen("true"),pValue,&ind);
+                   ERR_CHK(rc);
+                   if((!ind) && (rc == EOK))
+                   {
 				pMibValue->Value.uValue = 1;
-			}
-			else
-			{
-				pMibValue->Value.uValue = 2;
-			}
+	            }
+		   else
+		   {
+			pMibValue->Value.uValue = 2;
+		   }
 		}
 		else
 		{
-			if( AnscEqualString(pValue, "true", FALSE))
+                        rc = strcasecmp_s( "true",strlen("true"),pValue,&ind);
+                        ERR_CHK(rc);
+                        if((!ind) && (rc == EOK))
+
 			{
 				pMibValue->Value.uValue = 1;
 			}
@@ -2308,7 +2502,14 @@ CcspUtilDMValueToMIB
 	{
 		if( pMibValue->uType == ASN_OCTET_STR)
 		{
-			if( AnscEqualString(pMibInfo->pType, "MacAddress", FALSE)|| AnscEqualString(pMibInfo->pType, "PhysAddress", FALSE))
+                        rc = strcasecmp_s("MacAddress",strlen("MacAddress"),pMibInfo->pType,&ind);
+                        ERR_CHK(rc);
+                        if ( (rc != EOK) || (ind) )
+                       {
+                           rc = strcasecmp_s("PhysAddress",strlen("PhysAddress"),pMibInfo->pType,&ind);
+                           ERR_CHK(rc);
+                       }
+                      if ( (rc == EOK) && (!ind) )
 			{
 				/* it's a Mac Address */
 				pMacArray = SlapVcoStringToMacAddr(NULL, pValue);
@@ -2329,8 +2530,13 @@ CcspUtilDMValueToMIB
 					pMibValue->uSize = 6;
 				}
 			}
-			else if( AnscEqualString(pMibInfo->pType, "DateAndTime", FALSE))
-			{
+			else
+                        {    
+                              rc = strcasecmp_s( "DateAndTime",strlen("DateAndTime"),pMibInfo->pType,&ind);
+                              ERR_CHK(rc);
+                              if((!ind) && (rc == EOK))
+                              
+			      {
 				pTime = (PANSC_UNIVERSAL_TIME)SlapVcoStringToCalendarTime(NULL, pValue);
 		
 				if( pTime != NULL)
@@ -2361,7 +2567,13 @@ CcspUtilDMValueToMIB
 					AnscFreeMemory(pTime);
 				}
 			}
-			else if( AnscEqualString(pMibInfo->pType, "InetAddressIPv6", FALSE))
+                        else 
+                        {
+
+              			rc =  strcasecmp_s("InetAddressIPv6",strlen( "InetAddressIPv6"), pMibInfo->pType,&ind);
+                                ERR_CHK(rc);
+                                if((!ind) && (rc == EOK)) 
+                        
             {
                 struct in6_addr *addr6;
 
@@ -2381,6 +2593,8 @@ CcspUtilDMValueToMIB
 				pMibValue->Value.pBuffer = NULL;
 				pMibValue->uSize  = 0;
 			}
+                    }
+                  }
 		}
 		else if( pMibValue->uType == ASN_INTEGER || pMibValue->uType == ASN_UNSIGNED)
 		{
@@ -2493,6 +2707,7 @@ utilUcharArrayToString
 {
     char*                           var_string   = (char*)AnscAllocateMemory(uLength * 2 + 1);
     ULONG                           i            = 0;
+    errno_t      rc = -1;
 
     if ( !var_string )
     {
@@ -2506,12 +2721,16 @@ utilUcharArrayToString
     {
         for ( i = 0; i < uLength; i++ )
         {
-            _ansc_sprintf
-                (
-                    &var_string[i * 2],
-                    "%02X",
-                    pArray[i]
-                );
+           
+                
+           rc =  sprintf_s (&var_string[i * 2],( (uLength * 2 + 1) - ( i * 2 ) ), "%02X",pArray[i]);
+           if(rc < EOK)
+           {
+             ERR_CHK(rc);
+             AnscFreeMemory(var_string);
+             return NULL;
+           }
+               
         }
     }
 
@@ -2532,6 +2751,7 @@ utilBitsToDMString
 	ULONG							j			   = 0;
 	u_char							charByte       = 0x01;
 	ULONG							uValueBit      = 0;
+        errno_t     rc =  -1;
 
 	for( i = 0; i < uLength; i ++)
 	{
@@ -2550,17 +2770,28 @@ utilBitsToDMString
 				{
 					if( pBuffer[0] != 0x00)
 					{
-						_ansc_strcat(pBuffer, ",");
+						rc = strcat_s(pBuffer,MAX_BUFF_SIZE, ",");
+                                                if(rc != EOK)
+		                                {
+			                          ERR_CHK(rc);
+			                          return NULL;
+		                                }
 					}
 
                                          /* Coverity Fix CID: 135516: STRING_OVERFLOW */
                                          if( ( strlen(pBuffer) + strlen(pStrMap->pString) ) < MAX_BUFF_SIZE) {
-                                          _ansc_strcat(pBuffer, pStrMap->pString);
+                                           rc = strcat_s(pBuffer,MAX_BUFF_SIZE, pStrMap->pString);
+                                           if(rc != EOK)
+                                          {
+                                              ERR_CHK(rc);
+                                               return NULL;
+                                         }
                                         }
                                         else
                                         {
                                             AnscTraceError(("value assigned to Buffer  exceeds the  Max Buffer value \n"));          
                                         }
+
 				}
 			}
 		}
@@ -2585,6 +2816,8 @@ CcspUtilMIBValueToDM
 	PCCSP_INT_STRING_MAP			pMap				= (PCCSP_INT_STRING_MAP)NULL;
 	parameterValStruct_t*			pValue				= (parameterValStruct_t*)pVoid;
 	ULONG					uValue				= 0;
+        errno_t rc = -1;
+        int ind =-1;
 
 	if( pMibMapping->MibInfo.bIsRowStatus)
 	{
@@ -2613,8 +2846,12 @@ CcspUtilMIBValueToDM
 			}
 		}
 	}
-	else if( AnscEqualString(pMibMapping->MibInfo.pType, "TruthValue", FALSE))
-	{
+	else
+        {
+         rc = strcasecmp_s("TruthValue",strlen( "TruthValue"),pMibMapping->MibInfo.pType,&ind);
+         ERR_CHK(rc);
+          if ((!ind) && (rc == EOK))
+	  {
 		if( pValue->type == ccsp_boolean)
 		{
 			if( *pVb->val.integer == 1)
@@ -2651,11 +2888,18 @@ CcspUtilMIBValueToDM
 	}
 	else if( uType == ASN_OCTET_STR)
 	{
-		if( AnscEqualString(pMibMapping->MibInfo.pType, "MacAddress", FALSE) || AnscEqualString(pMibMapping->MibInfo.pType, "PhysAddress", FALSE))
+		rc = strcasecmp_s("MacAddress", strlen("MacAddress"), pMibMapping->MibInfo.pType,&ind);
+                ERR_CHK(rc);
+                if ( (rc != EOK) || (ind) )
+                {
+                 rc = strcasecmp_s("PhysAddress", strlen("PhysAddress"), pMibMapping->MibInfo.pType,&ind);
+                  ERR_CHK(rc);
+                }
+                if ( (rc == EOK) && (!ind) )
 		{
-			_ansc_sprintf
+		  rc = sprintf_s
 				(
-					pBuff,
+					pBuff,MAX_OCTET_BUFFER_SIZE,
 					"%02X:%02X:%02X:%02X:%02X:%02X",
 					pVb->val.bitstring[0],
 					pVb->val.bitstring[1],
@@ -2664,13 +2908,22 @@ CcspUtilMIBValueToDM
 					pVb->val.bitstring[4],
 					pVb->val.bitstring[5]
 				);
+                     if(rc < EOK)
+                    {
+                       ERR_CHK(rc);
+                       return FALSE;
+                    }
 			pValue->parameterValue = AnscCloneString(pBuff);
-        } 
-        else if ( AnscEqualString(pMibMapping->MibInfo.pType, "InetAddressIPv6", FALSE))
+               } 
+        else
+        {
+          rc = strcasecmp_s("InetAddressIPv6",strlen( "InetAddressIPv6"), pMibMapping->MibInfo.pType,&ind);
+          ERR_CHK(rc);
+          if ((!ind) && (rc == EOK))
         {
             if (inet_ntop(AF_INET6, pVb->val.bitstring, pBuff, sizeof(pBuff)) != NULL)
                 pValue->parameterValue = AnscCloneString(pBuff);
-            /*
+             /*
               _ansc_sprintf
                 (
                     pBuff,
@@ -2701,7 +2954,13 @@ CcspUtilMIBValueToDM
 			so next memory block may not be a NULL terminator. Copy based on passed in net-snmp length to prevent extra characters */			
 			if(MAX_OCTET_BUFFER_SIZE > pVb->val_len)
 			{
-				memcpy((char*)pBuff, (char*)pVb->val.string, pVb->val_len);
+                                rc = memcpy_s((char*)pBuff,MAX_OCTET_BUFFER_SIZE, (char*)pVb->val.string, pVb->val_len);
+                                if(rc != EOK)
+                                {
+                                   ERR_CHK(rc);
+                                   return FALSE;
+                                 }
+                                
 				pValue->parameterValue = AnscCloneString(pBuff);
 			}
 			else
@@ -2709,6 +2968,7 @@ CcspUtilMIBValueToDM
 				AnscTraceError(("Buffer Not Large Enough: Failed to Transfer Value. Buffer Size: %d, Value Size: %d\n", MAX_OCTET_BUFFER_SIZE, pVb->val_len));
 			}
 		}
+          }
 	}
 	else if( uType == ASN_INTEGER)
 	{
@@ -2735,7 +2995,13 @@ CcspUtilMIBValueToDM
 		}
 		else
 		{
-			sprintf(pBuff, "%ld", *pVb->val.integer);
+			rc = sprintf_s(pBuff,MAX_OCTET_BUFFER_SIZE, "%ld", *pVb->val.integer);
+                        if(rc < EOK)
+                        {
+                              ERR_CHK(rc);
+                              return FALSE;
+                         }
+
 			pValue->parameterValue = AnscCloneString(pBuff);
 		}
 	}
@@ -2757,7 +3023,13 @@ CcspUtilMIBValueToDM
 		}
 		else
 		{
-			sprintf(pBuff, "%ld", (ULONG)*pVb->val.integer);
+                        rc = sprintf_s(pBuff,MAX_OCTET_BUFFER_SIZE, "%ld", (ULONG)*pVb->val.integer);
+                        if(rc < EOK)
+                        {
+                              ERR_CHK(rc);
+                              return FALSE;
+                         }
+
 			pValue->parameterValue = AnscCloneString(pBuff);
 		}
 	}
@@ -2786,7 +3058,7 @@ CcspUtilMIBValueToDM
 	{
 		AnscTraceWarning(("Unsupported MIB type: %d. Failed to transfer value.\n", uType));
 	}
-
+      }
 	return TRUE;
 }
 
@@ -2980,6 +3252,7 @@ CcspUtilDeleteCosaEntry
 	char							pObjName[256]   = { 0 };
 	char							pTmpName[256]   = { 0 };
 	ULONG							pMapIndex[8]    = { 0 };
+        errno_t    rc =-1;
 
 	if( uIndexCount == 0)
 	{
@@ -3008,26 +3281,67 @@ CcspUtilDeleteCosaEntry
 
 	if( uIndexCount == 1)
 	{
-		_ansc_sprintf(pObjName, "%s%lu.", pIndexMap->Mapping.IndexMappingInfo.pTableObj, 
-			pMapIndex[0]);
-	}
+		rc = sprintf_s(pObjName,sizeof(pObjName), "%s%lu.", pIndexMap->Mapping.IndexMappingInfo.pTableObj, pMapIndex[0]);
+                if(rc < EOK)
+                {
+                      ERR_CHK(rc);
+                      return FALSE;
+                 }
+       }
 	else if(uIndexCount == 2)
 	{
-		_ansc_sprintf(pTmpName, pIndexMap->Mapping.IndexMappingInfo.pTableObj, 
+		rc = sprintf_s(pTmpName, sizeof(pTmpName),pIndexMap->Mapping.IndexMappingInfo.pTableObj, 
 			pMapIndex[0]);
-		_ansc_sprintf(pObjName, "%s%lu.", pTmpName, pMapIndex[1]);
+                   if(rc < EOK)
+                   {
+                      ERR_CHK(rc);
+                      return FALSE;
+                    }
+
+		rc = sprintf_s(pObjName,sizeof(pObjName), "%s%lu.", pTmpName, pMapIndex[1]);
+                if(rc < EOK)
+                {
+                      ERR_CHK(rc);
+                      return FALSE;
+                }
+
 	}
 	else if(uIndexCount == 3)
 	{
-		_ansc_sprintf(pTmpName, pIndexMap->Mapping.IndexMappingInfo.pTableObj, 
+	           rc = sprintf_s(pTmpName,sizeof(pTmpName), pIndexMap->Mapping.IndexMappingInfo.pTableObj, 
 			pMapIndex[0], pMapIndex[1]);
-		_ansc_sprintf(pObjName, "%s%lu.", pTmpName, pMapIndex[2]);
+                    if(rc < EOK)
+                   {
+                      ERR_CHK(rc);
+                      return FALSE;
+                   }
+
+		rc = sprintf_s(pObjName,sizeof(pObjName), "%s%lu.", pTmpName, pMapIndex[2]);
+                 if(rc < EOK)
+                {
+                      ERR_CHK(rc);
+                      return FALSE;
+                }
+
 	}
 	else if(uIndexCount == 4)
 	{
-		_ansc_sprintf(pTmpName, pIndexMap->Mapping.IndexMappingInfo.pTableObj, 
+	       rc =  sprintf_s(pTmpName,sizeof(pTmpName), pIndexMap->Mapping.IndexMappingInfo.pTableObj, 
 			pMapIndex[0], pMapIndex[1], pMapIndex[2]);
-		_ansc_sprintf(pObjName, "%s%lu.", pTmpName, pMapIndex[3]);
+                                   if(rc < EOK)
+                   {
+                      ERR_CHK(rc);
+                      return FALSE;
+                   }
+
+	         rc = sprintf_s(pObjName,sizeof(pObjName), "%s%lu.", pTmpName, pMapIndex[3]);
+                 if(rc < EOK)
+                 {
+                      ERR_CHK(rc);
+                      return FALSE;
+                 }
+
+
 	}
 	else
 	{
@@ -3089,6 +3403,8 @@ CcspUtilCreateCosaEntry
 	ULONG							pInsArray[8]    = {0};
 	BOOL							bExist          = FALSE;
 	ULONG							newIns          = 0;
+        errno_t rc = -1;
+        int pTmplen = sizeof(pTmp);
 
 	for( i = 0; i < uIndexCount; i ++)
 	{
@@ -3107,20 +3423,41 @@ CcspUtilCreateCosaEntry
 
 		if( i == 0)
 		{
-			AnscCopyString(pTmp, pIndexMap->Mapping.IndexMappingInfo.pTableObj);
+	           rc =	strcpy_s(pTmp,pTmplen, pIndexMap->Mapping.IndexMappingInfo.pTableObj);
+                   if(rc != EOK)
+                   {
+	              ERR_CHK(rc);
+	              return FALSE;
+                   }
 		}
 		else if( i == 1)
 		{
-			_ansc_sprintf(pTmp,pIndexMap->Mapping.IndexMappingInfo.pTableObj, pInsArray[0]);
+	             rc = sprintf_s(pTmp,pTmplen,pIndexMap->Mapping.IndexMappingInfo.pTableObj, pInsArray[0]);
+                     if(rc < EOK)
+                   {
+                      ERR_CHK(rc);
+                      return FALSE;
+                   }
+
 		}
 		else if( i == 2)
 		{
-			_ansc_sprintf(pTmp,pIndexMap->Mapping.IndexMappingInfo.pTableObj, pInsArray[0], pInsArray[1]);
+			rc = sprintf_s(pTmp,pTmplen,pIndexMap->Mapping.IndexMappingInfo.pTableObj, pInsArray[0], pInsArray[1]);
+                   if(rc <  EOK)
+                   {
+                      ERR_CHK(rc);
+                      return FALSE;
+                   }
 
 		}
 		else if (i == 3)
 		{
-			_ansc_sprintf(pTmp,pIndexMap->Mapping.IndexMappingInfo.pTableObj, pInsArray[0], pInsArray[1], pInsArray[2]);
+		   rc = sprintf_s(pTmp,pTmplen,pIndexMap->Mapping.IndexMappingInfo.pTableObj, pInsArray[0], pInsArray[1], pInsArray[2]);
+                   if(rc <  EOK)
+                   {
+                      ERR_CHK(rc);
+                      return FALSE;
+                   }
 
 		}
 		else
@@ -3286,24 +3623,47 @@ CcspUtilGetDMParamName
 {
 	ULONG							pInsArray[8]  = { 0 };
 	char							pTemp[256]    = { 0 };
-
+        errno_t     rc = -1;
 	CcspUtilMibIndexesToInsArray(pMapping, pIndexArray, pInsArray, uIndexCount);
 
 	if(uIndexCount  == 1)
 	{
-		_ansc_sprintf(pTemp, pDMName, pInsArray[0]);
+		rc = sprintf_s(pTemp,sizeof(pTemp), pDMName, pInsArray[0]);
+                 if(rc < EOK)
+                 {
+                     ERR_CHK(rc);
+                     return NULL;
+                 }
 	}
 	else if( uIndexCount == 2)
 	{
-		_ansc_sprintf(pTemp, pDMName, pInsArray[0], pInsArray[1]);
+		 rc =  sprintf_s(pTemp,sizeof(pTemp), pDMName, pInsArray[0], pInsArray[1]);
+                 if(rc < EOK)
+                 {
+                     ERR_CHK(rc);
+                     return NULL;
+                 }
+
 	}
 	else if( uIndexCount == 3)
 	{
-		_ansc_sprintf(pTemp, pDMName, pInsArray[0], pInsArray[1], pInsArray[2]);
+		 rc = sprintf_s(pTemp,sizeof(pTemp), pDMName, pInsArray[0], pInsArray[1], pInsArray[2]);
+                 if(rc < EOK)
+                 {
+                     ERR_CHK(rc);
+                     return NULL;
+                 }
+
 	}
 	else if( uIndexCount == 4)
 	{
-		_ansc_sprintf(pTemp, pDMName, pInsArray[0], pInsArray[1], pInsArray[2], pInsArray[3]);
+		 rc = sprintf_s(pTemp,sizeof(pTemp), pDMName, pInsArray[0], pInsArray[1], pInsArray[2], pInsArray[3]);
+                 if(rc < EOK)
+                 {
+                     ERR_CHK(rc);
+                     return NULL;
+                 }
+
 	}
 
 	return AnscCloneString(pTemp);

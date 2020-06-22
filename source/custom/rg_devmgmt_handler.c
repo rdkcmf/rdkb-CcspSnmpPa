@@ -42,6 +42,8 @@
 #include "ccsp_snmp_common.h"
 #include "ccsp_mib_definitions.h"
 
+#include "safec_lib_common.h"
+
 #define TRUE 1
 #define FALSE 0
 
@@ -56,6 +58,9 @@
 #define RDKB_PAM_DBUS_PATH		     "/com/cisco/spvtg/ccsp/pam"
 #define  MAX_STRVAL 64
 
+#define MAX_INTERFACE_VAL 50
+#define MAX_VAL_SET 100
+
 
 static int setRebootReason(char * paramName,char * paramValue);
 
@@ -69,8 +74,15 @@ static int is_iana_addr(int index)
 {
     char dm_str[64] = {'\0'};
     char iana_origin[32] = {'\0'};
+    errno_t rc = -1;
+    int ind = -1;
 
-    snprintf(dm_str, sizeof(dm_str), IANA_ORIGIN_DM, index);
+    rc = sprintf_s(dm_str, sizeof(dm_str), IANA_ORIGIN_DM, index);
+    if(rc < EOK)
+    {
+            ERR_CHK(rc);
+            return FALSE;
+     }
 
     if(get_dm_value(dm_str, iana_origin, sizeof(iana_origin))) {
         AnscTraceError(("%s failed to get %s.\n", __func__, dm_str));
@@ -78,7 +90,10 @@ static int is_iana_addr(int index)
         return FALSE;
     }
 
-    if (strncmp(IANA_ORIGIN_DHCPv6, iana_origin, strlen(IANA_ORIGIN_DHCPv6))) {
+    rc = strcmp_s(IANA_ORIGIN_DHCPv6,strlen(IANA_ORIGIN_DHCPv6) ,iana_origin, &ind);
+    ERR_CHK(rc);
+     if((ind) && (rc == EOK)) 
+     {
         AnscTraceError(("IANA ORIGIN \"%s\".\n", iana_origin));
 		CcspTraceError(("IANA ORIGIN \"%s\".\n", iana_origin));
         return FALSE;
@@ -92,6 +107,11 @@ static int iapd_handler(int lastOid, int insNum, iapd_t *pIapd)
     char dm_str[64] = {'\0'}, prefix[64] = {'\0'};
     char *pLen, *saveptr, *pVal;
     int i=0;
+    char *ptr = NULL;
+    size_t len = 0;
+    
+    
+    errno_t rc =-1;
 
     if (pIapd == NULL) {
         AnscTraceError(("%s invalid parameter.\n", __func__));
@@ -99,7 +119,12 @@ static int iapd_handler(int lastOid, int insNum, iapd_t *pIapd)
         return FALSE;
     }
 
-    snprintf(dm_str, sizeof(dm_str), IAPD_PREFIX_DM, insNum);
+     rc =   sprintf_s(dm_str, sizeof(dm_str), IAPD_PREFIX_DM, insNum);
+   if(rc < EOK)
+   {
+        ERR_CHK(rc);
+        return FALSE;
+   }
 
     if(get_dm_value(dm_str, prefix, sizeof(prefix))) {
         AnscTraceError(("%s failed to get %s.\n", __func__, dm_str));
@@ -117,15 +142,32 @@ static int iapd_handler(int lastOid, int insNum, iapd_t *pIapd)
             pLen++; // skip '/'
             pIapd->prefix_length = atoi(pLen);
         }
-    }else if (lastOid == IAPD_PREFIXVALUE_SUBID) { 
-        pVal = strtok(prefix, "/");
+    }else if (lastOid == IAPD_PREFIXVALUE_SUBID) {
+        if(prefix!=NULL)
+        {
+           len = strlen(prefix);
+        } 
+        if(!len)
+        {  
+          return FALSE;
+        }
+        pVal = strtok_s(prefix,&len, "/",&ptr);
+        
         if(!pVal) {
             AnscTraceError(("%s wrong backend value %s.\n", __func__, prefix));
 			CcspTraceError(("%s wrong backend value %s.\n", __func__, prefix));
             return FALSE;
-        }else
-             /* Covreity Fix : CID:135471:Buffer_Size_Warning */ 
-            strncpy(pIapd->prefix_value, pVal, sizeof(pIapd->prefix_value)-1 );
+        }
+        else
+        {
+            /* Covreity Fix : CID:135471:Buffer_Size_Warning */
+            rc = strcpy_s(pIapd->prefix_value,sizeof(pIapd->prefix_value), pVal);
+            if(rc != EOK)
+              {
+                     ERR_CHK(rc);
+                      return FALSE;
+              }
+        }
     }else{
         AnscTraceError(("%s unexpected lastOid %d.\n", __func__, lastOid));
 		CcspTraceError(("%s unexpected lastOid %d.\n", __func__, lastOid));
@@ -196,9 +238,9 @@ handleIapdTable(
     PCCSP_TABLE_ENTRY entry = NULL; 
     netsnmp_variable_list *vb = NULL;
     int index;
-    iapd_t iapd;
+    iapd_t iapd = {0};
 
-    memset(&iapd, 0, sizeof(iapd));
+
 
     for (req = requests; req != NULL; req = req->next) {
         vb = req->requestvb;
@@ -284,20 +326,31 @@ static int get_snmp_enable(unsigned char *octet)
     char strVal[64] = {'\0'};
     char *ptr, *substr, *saveptr;
     int i;
-
+    size_t len = 0;
+    errno_t rc =-1;
+    int ind =-1;
     if(octet == NULL) 
         return FALSE;
 
     if(get_dm_value(SNMPENABLE_DM, strVal, sizeof(strVal))) 
         return FALSE;
-
+    len = strlen(strVal);
     for(ptr=strVal; ;ptr=NULL) {
-        substr = strtok_r(ptr, ",", &saveptr);
+       
+        if(!len)
+        break;
+        
+        substr = strtok_s(ptr,&len, ",", &saveptr);
         if(substr == NULL) 
             break;
-
+        
+        int substr_length = strlen(substr);
+      
         for(i=0; i<SNMPENABLE_MAX; i++) {
-            if(strcasecmp(substr, gSnmpEnableInfo[i].str) == 0) {
+            rc = strcasecmp_s(substr,substr_length, gSnmpEnableInfo[i].str,&ind);
+            ERR_CHK(rc);
+            if ((!ind) && (rc == EOK))
+            {
                 *octet |= gSnmpEnableInfo[i].bitmap;
                 break;
             }
@@ -311,26 +364,48 @@ static int set_snmp_enable(const char *octet)
 {
     int bits, i, j = 0;
     char strval[MAX_STRVAL] = {'\0'};
-
-    sprintf(strval, "%x", octet[0]);    /* one octet */
-    bits = strtoul(strval, NULL, 16);
+    errno_t rc =-1;
+    
+   bits = ((unsigned char) octet[0]) & 0xFF;
 
     bzero(strval, sizeof(strval));
 
     for(i=0; i<SNMPENABLE_MAX; i++) {
         if(bits & gSnmpEnableInfo[i].bitmap) {
             if(j==0) 
-                _ansc_strcpy(strval, gSnmpEnableInfo[i].str);
-            else{
-                _ansc_strcat(strval, ",");
+            {
+                rc = strcpy_s(strval,sizeof(strval), gSnmpEnableInfo[i].str);
+                if(rc != EOK)
+                   {
+                    ERR_CHK(rc);
+                    return FALSE;
+                   }
+
+            }
+            else
+            {
+                rc = strcat_s(strval,sizeof(strval), ",");
+                if(rc != EOK)
+                   {
+                    ERR_CHK(rc);
+                    return FALSE;
+                   }
                   /* Coverity  Fix CID:135582 STRING_OVERFLOW */
                  if( ( strlen( strval ) + strlen( gSnmpEnableInfo[i].str ))  < MAX_STRVAL ) {
-                _ansc_strcat(strval, gSnmpEnableInfo[i].str);
-               }
-                else
+
+                  rc =  strcat_s(strval, sizeof(strval),gSnmpEnableInfo[i].str);
+                  if(rc != EOK)
+                   {
+                     ERR_CHK(rc);
+                     return FALSE;
+                    }
+                }
+                 else
                {
                         CcspTraceDebug((" set_snmp_enable : string len of gSnmpEnableInfo[i].str  is greater than MAX_STRVAL \n"));
                }
+
+
             }
             j++;
         }
@@ -485,14 +560,25 @@ static int setRebootReason(char * paramName,char * paramValue)
 {
 
     parameterValStruct_t valStr;
-    char str[2][100];
+    char str[2][MAX_VAL_SET];
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
+     errno_t rc =-1;
              
-    sprintf(valStr.parameterName, "%s",paramName);
-    sprintf(valStr.parameterValue, "%s", paramValue);
+   rc =  sprintf_s(valStr.parameterName,MAX_VAL_SET, "%s",paramName);
+   if(rc < EOK)
+     {
+          ERR_CHK(rc);
+          return -1;
+     }
+   rc =  sprintf_s(valStr.parameterValue,MAX_VAL_SET, "%s", paramValue);
+     if(rc < EOK)
+     {
+          ERR_CHK(rc);
+          return -1;
+     }
     valStr.type = ccsp_string;
-   
+     
     
     if (!Cosa_SetParamValuesNoCommit(RDKB_PAM_COMPONENT_NAME, RDKB_PAM_DBUS_PATH, &valStr, 1))
     {
@@ -578,19 +664,51 @@ int getInterface(PCCSP_TABLE_ENTRY pEntry, char *interface)
 	int ret ;
 	char index;	
 	int iface;
+        errno_t rc = -1;        
+
     if(!interface)
         return -1;
-    snprintf(dmStr, sizeof(dmStr), CONNECTEDCLIENT_DM_INTERFACE, pEntry->IndexValue[0].Value.uValue);
+
+    rc = sprintf_s(dmStr, sizeof(dmStr), CONNECTEDCLIENT_DM_INTERFACE, pEntry->IndexValue[0].Value.uValue);
+     if(rc < EOK)
+     {
+        ERR_CHK(rc);
+        return -1;
+     }
+    
     ret = get_dm_value(dmStr, interface, 50);
 	if(strstr(interface,"WiFi")) {
 		index = interface[strlen(interface)-1];
 		iface = index - '0';
-		if(iface == 1)                  
-			strcpy(interface,"WiFi 2.4G");
+		if(iface == 1)
+                {                  
+			 rc = strcpy_s(interface,MAX_INTERFACE_VAL,"WiFi 2.4G");
+                          if(rc != EOK)
+                         {
+                           ERR_CHK(rc);
+                           return -1;
+                          }
+                }
 		else if(iface == 2)
-			strcpy(interface,"WiFi 5G");
+                {
+			rc = strcpy_s(interface,MAX_INTERFACE_VAL,"WiFi 5G");
+                         if(rc != EOK)
+                         {
+                           ERR_CHK(rc);
+                           return -1;
+                          }
+
+                }
 		else
-			strcpy(interface,"WiFi");
+                {
+			rc = strcpy_s(interface,MAX_INTERFACE_VAL,"WiFi");
+                        if(rc != EOK)
+                         {
+                           ERR_CHK(rc);
+                           return -1;
+                          }
+
+                }
 	}
     return 0; 
 }
@@ -610,7 +728,7 @@ handleConnectedDevices(
     PCCSP_TABLE_ENTRY entry = NULL; 
     netsnmp_variable_list *vb = NULL;
     int index;
-	char interface[50] = {'\0'};
+	char interface[MAX_INTERFACE_VAL] = {'\0'};
 
     for (req = requests; req != NULL; req = req->next) {
    

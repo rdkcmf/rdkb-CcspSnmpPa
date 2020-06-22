@@ -45,6 +45,7 @@
 #include "slap_definitions.h"
 #include "slap_vco_global.h"
 #include "slap_vho_exported_api.h"
+#include "safec_lib_common.h"
 
 #define TRUE 1
 #define FALSE 0
@@ -197,7 +198,8 @@ commit:
 int getInsertDhcpOption(int *value)
 {
     char strVal[64] = {'\0'};
-
+    errno_t rc =-1;
+    int ind =-1;
     if (NULL == value) {
         CcspTraceWarning(("Return value pointer is null\n"));
         return FALSE;
@@ -208,19 +210,29 @@ int getInsertDhcpOption(int *value)
         return FALSE;
     }
 
-    if (!strcmp(strVal, "true"))
+    rc = strcmp_s("true",strlen("true"),strVal,&ind);
+    ERR_CHK(rc);
+    if((!ind) && (rc == EOK)) 
+    {
         *value |= CURCUIT_ID_BIT;
+    }
     else
         *value &= ~CURCUIT_ID_BIT;
 
-    memset(strVal, 0, sizeof(strVal));
+    rc = memset_s(strVal,sizeof(strVal), 0, sizeof(strVal));
+    ERR_CHK(rc);
     if (get_dm_value(HOTSPOT_DM_OPTION82_REMOTE_ID, strVal, sizeof(strVal))) {
 		CcspTraceWarning(("get_dm_value: %s failed\n", HOTSPOT_DM_OPTION82_REMOTE_ID));
         return FALSE;
     }
 
-    if (!strcmp(strVal, "true"))
+    rc = strcmp_s("true",strlen("true"),strVal,&ind);
+    ERR_CHK(rc);
+    if((!ind) && (rc == EOK))    
+    {
+
         *value |= REMOTE_ID_BIT;
+   }
     else
         *value &= ~REMOTE_ID_BIT;
 
@@ -230,27 +242,32 @@ int getInsertDhcpOption(int *value)
 
 int setInsertDhcpOption(int value)
 {
-    char curcuit[64] = {'\0'};
-    char remote[64] = {'\0'};
-
-    if (value & CURCUIT_ID_BIT)
-        strncpy(curcuit, "true", strlen("true"));
-    else
-        strncpy(curcuit, "false", strlen("false"));
-
-    if (value & REMOTE_ID_BIT) 
-        strncpy(remote, "true", strlen("true"));
-    else
-        strncpy(remote, "false", strlen("false"));
-
-    if (set_dm_value(HOTSPOT_DM_OPTION82_CURCUIT_ID, curcuit, strlen(curcuit)) ||
-        set_dm_value(HOTSPOT_DM_OPTION82_REMOTE_ID, remote, strlen(remote))) {
-          /* CID: 63012- Unrecognized char escape*/
-		CcspTraceWarning(("set_dm_value: '%s' \\ '%s' failed\n",HOTSPOT_DM_OPTION82_CURCUIT_ID, HOTSPOT_DM_OPTION82_REMOTE_ID));
-        return FALSE;
+    
+    if (value & CURCUIT_ID_BIT) {
+        if (set_dm_value(HOTSPOT_DM_OPTION82_CURCUIT_ID, "true", strlen("true"))) {
+            goto error_return;
+        }
+    } else {
+        if (set_dm_value(HOTSPOT_DM_OPTION82_CURCUIT_ID, "false", strlen("false"))) {
+            goto error_return;
+        }
     }
 
-    return TRUE;
+ if (value & REMOTE_ID_BIT) {
+        if (set_dm_value(HOTSPOT_DM_OPTION82_REMOTE_ID, "true", strlen("true"))) {
+            goto error_return;
+        }
+    } else {
+        if (set_dm_value(HOTSPOT_DM_OPTION82_REMOTE_ID, "false", strlen("false"))) {
+            goto error_return;
+        }
+    }
+
+ return TRUE;
+ error_return:
+  /* CID: 63012- Unrecognized char escape*/
+ CcspTraceWarning(("set_dm_value: '%s' \ '%s' failed\n",HOTSPOT_DM_OPTION82_CURCUIT_ID, HOTSPOT_DM_OPTION82_REMOTE_ID));
+ return FALSE;
         
 }
 
@@ -357,8 +374,13 @@ int setRemoteEpAddr(int oid, char *ip)
 static int is_wifi_hotspot_ssid(char *localIntf, int ins)
 {
     char wifiSsid[32] = {'\0'};
-    
-    snprintf(wifiSsid, sizeof(wifiSsid), HOTSPOT_DM_WIFI_SSID, ins);
+    errno_t rc =-1; 
+    rc = sprintf_s(wifiSsid, sizeof(wifiSsid), HOTSPOT_DM_WIFI_SSID, ins);
+    if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return FALSE;
+      }
 
     if (!strstr(localIntf, wifiSsid))
         return FALSE; 
@@ -370,8 +392,15 @@ static int hotspot_get_if_enabled(int ins, int *bEnabled)
 {
     char localIntf[256] = {'\0'};
     char ssidDm[32] = {'\0'};
+    errno_t rc =-1;
 
-    snprintf(ssidDm, sizeof(ssidDm), HOTSPOT_DM_WIFI_SSID, ins);
+    rc = sprintf_s(ssidDm, sizeof(ssidDm), HOTSPOT_DM_WIFI_SSID, ins);
+    if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return FALSE;
+      }
+
 
 	//zqiu:
     //if(get_dm_value(HOTSPOT_DM_LOCAL_INTERFACES, localIntf, sizeof(localIntf))) {
@@ -401,6 +430,7 @@ static int hotspot_get_if_enabled(int ins, int *bEnabled)
 static int hotspot_set_if_enabled(int ins, int bEnabled)
 {
     char ssidDm[32] = {'\0'};
+    errno_t rc =-1;
     // char localIf[256] = {'\0'};
     // char *substr, *saveptr, *save, *str;
     // int ifBitmask = 0, len, ifIns;
@@ -469,7 +499,13 @@ static int hotspot_set_if_enabled(int ins, int bEnabled)
     // }
 	
 	//zqiu:
-	snprintf(ssidDm, sizeof(ssidDm), HOTSPOT_DM_WIFI_SSID, ins);
+	rc = sprintf_s(ssidDm, sizeof(ssidDm), HOTSPOT_DM_WIFI_SSID, ins);
+        if(rc < EOK)
+        {
+           ERR_CHK(rc);
+           return FALSE;
+        }
+
 	if(ins == HOTSPOT_SSID1_INS) {
 		if(set_dm_value(HOTSPOT_DM_IF1_LOCAL_INTERFACES, ssidDm, sizeof(ssidDm))) {
 			CcspTraceError(("Failed to set value DM %s!\n", HOTSPOT_DM_IF1_LOCAL_INTERFACES));
@@ -494,6 +530,8 @@ static int hotspot_vlan_tag_func(int ins, int *vlan_id, int cmd)
     char vlanIdDm[64] = {'\0'};
     char vlanModeDm[64] = {'\0'};
     int i, brIns=-1;
+    errno_t rc =-1;
+    int ind =-1;
 #if 0
     char assBr[2][32]={{'\0'},{'\0'}}, localIf[2][32]={{'\0'},{'\0'}};
     char *token, *brPtr, *ifPtr, *brSavePtr, *ifSavePtr;
@@ -562,56 +600,67 @@ static int hotspot_vlan_tag_func(int ins, int *vlan_id, int cmd)
     }
 
     if(i>=2) {
-        ret=FALSE;
-        goto fini;
+        return FALSE;
+    }
+  
+    rc =  sprintf_s(vlanModeDm, sizeof(vlanModeDm), HOTSPOT_DM_VLAN_MODE, brIns);
+    if(rc < EOK)
+    {
+       ERR_CHK(rc);
+       return FALSE;
+    }
+
+    rc  = sprintf_s(vlanIdDm, sizeof(vlanIdDm), HOTSPOT_DM_VLAN_TAG, brIns);
+    if(rc < EOK)
+    {
+       ERR_CHK(rc);
+       return FALSE;
     }
 
     if (cmd==GET_VLAN_TAG) {
-        snprintf(vlanModeDm, sizeof(vlanModeDm), HOTSPOT_DM_VLAN_MODE, brIns);
-
         if(get_dm_value(vlanModeDm, vlan_mode, sizeof(vlan_mode))) {
             printf("Failed to get DM %s!\n", vlanModeDm);
-            ret=FALSE;
-            goto fini;
+            return FALSE;
+            
         }
 
-        if (!strcmp(gVlanMode[VLAN_TAGGING], vlan_mode)) {
+        rc =strcmp_s(vlan_mode,sizeof(vlan_mode),gVlanMode[VLAN_TAGGING],&ind);
+        ERR_CHK(rc);
+        if((!ind) && (rc == EOK)) 
+        {
             *vlan_id = 0;
         }else{
-            snprintf(vlanIdDm, sizeof(vlanIdDm), HOTSPOT_DM_VLAN_TAG, brIns);
             if(get_dm_value(vlanIdDm, vlan, sizeof(vlan))) {
                 printf("Failed to get DM %s!\n", vlanIdDm);
-                ret=FALSE;
-                goto fini;
+                return FALSE;
             }
             *vlan_id = atoi(vlan);
         }
 
     }else if (cmd==SET_VLAN_TAG) {
        if (*vlan_id != 0) {
-            sprintf(vlan, "%d", *vlan_id);
-            snprintf(vlanIdDm, sizeof(vlanIdDm), HOTSPOT_DM_VLAN_TAG, brIns);
+            rc =   sprintf_s(vlan,sizeof(vlan), "%d", *vlan_id);
+            if(rc < EOK)
+            {
+                 ERR_CHK(rc);
+                 return FALSE;
+            }
 
             if(set_dm_value(vlanIdDm, vlan, 4)) {
                 printf("Failed to set DM %s!\n", vlanIdDm);
-                ret=FALSE;
-                goto fini;
+                return FALSE;
             }
         }
 
         pMode = (*vlan_id == 0) ? gVlanMode[VLAN_TAGGING] : gVlanMode[VLAN_PASSTHROUGH];
-        snprintf(vlanModeDm, sizeof(vlanModeDm), HOTSPOT_DM_VLAN_MODE, brIns);
 
         if(set_dm_value(vlanModeDm, pMode, strlen(pMode))) {
             printf("Failed to get DM %s!\n", vlanModeDm);
-            ret=FALSE;
-            goto fini;
+            return FALSE;
         }
     }else
         ret=FALSE;
-fini:
-    // free(brPtr);
-    // free(ifPtr);
+
     return ret;
 }
 

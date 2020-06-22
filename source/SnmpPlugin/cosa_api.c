@@ -36,6 +36,7 @@
 
 #include "ansc_platform.h"
 #include "cosa_api.h"
+#include "safec_lib_common.h"
 
 /* Cosa specific stuff */
 #ifdef _COSA_SIM_
@@ -56,15 +57,27 @@ char   dst_pathname_cr[64]  =  {0};
 /* Init COSA */
 BOOL Cosa_Init(void)
 {
+   errno_t rc =-1;
 #ifdef _COSA_SIM_
 //#if 1
-    snprintf(dst_pathname_cr, sizeof(dst_pathname_cr), "com.cisco.spvtg.ccsp.CR");
+    rc = sprintf_s(dst_pathname_cr, sizeof(dst_pathname_cr), "com.cisco.spvtg.ccsp.CR");
+    if(rc < EOK)
+     {
+           ERR_CHK(rc);
+           return FALSE;
+     }
+
 #else
     /*
      *  Hardcoding "eRT." is just a workaround. We need to feed the subsystem
      *  info into this initialization routine.
      */
-    sprintf(dst_pathname_cr, "%s%s", CCSP_SNMP_AGENT_PA_SUBSYSTEM, CCSP_DBUS_INTERFACE_CR);
+    rc = sprintf_s(dst_pathname_cr, sizeof(dst_pathname_cr),"%s%s", CCSP_SNMP_AGENT_PA_SUBSYSTEM, CCSP_DBUS_INTERFACE_CR);
+     if(rc < EOK)
+     {
+           ERR_CHK(rc);
+           return FALSE;
+     }
 #endif
     if(!bus_handle)
     {

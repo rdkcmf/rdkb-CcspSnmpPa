@@ -65,6 +65,7 @@
 #include "cosa_api.h"
 
 #include<time.h>
+#include "safec_lib_common.h"
 
 /**********************************************************************
 
@@ -588,6 +589,9 @@ CcspScalarHelperRefreshCache
 	PSINGLE_LINK_ENTRY              pSLinkEntry     = (PSINGLE_LINK_ENTRY)NULL;
 	char                            pTemp[256]      = { 0 };
 	ULONG							uInsNumber      = 0;
+        errno_t rc = -1;
+        int ind = -1;
+       
 
 	if( pDMString == NULL)
 	{
@@ -629,8 +633,19 @@ CcspScalarHelperRefreshCache
 					{
 						if( _ansc_strstr(pMibMap->Mapping.pDMName, "%d") != NULL)
 						{
-							AnscCopyString(pTemp, pMibMap->Mapping.pDMName);
-							_ansc_sprintf(pMibMap->Mapping.pDMName, pTemp, uInsNumber);
+						rc =	strcpy_s(pTemp,sizeof(pTemp), pMibMap->Mapping.pDMName);
+                                                            if(rc != EOK)
+                                                           {
+                                                                ERR_CHK(rc);
+                                                                 return -1;
+                                                            }
+							rc = sprintf_s(pMibMap->Mapping.pDMName,sizeof(pMibMap->Mapping.pDMName), pTemp, uInsNumber);
+                                                        if(rc < EOK)
+                                                           {
+                                                                ERR_CHK(rc);
+                                                                 return -1;
+                                                            }
+
 						}
 
 						pThisObject->CacheMibOid[pThisObject->nCacheMibCount]  = pMibMap->MibInfo.uLastOid;
@@ -664,7 +679,17 @@ CcspScalarHelperRefreshCache
 
 				if(Cosa_FindDestComp(pMibMap->Mapping.pDMName, &pDestComp, &pDestPath))
 				{
-					if(!AnscEqualString(pDestComp, pThisObject->pCcspComp, TRUE) || !AnscEqualString(pDestPath, pThisObject->pCcspPath, TRUE))
+                                        rc = strcmp_s(pThisObject->pCcspComp,strlen(pThisObject->pCcspComp),pDestComp,&ind);
+                                        ERR_CHK(rc);
+                                        if ( (rc != EOK) ||  (!ind) )
+                                        {
+                                           rc = strcmp_s( pThisObject->pCcspPath,strlen(pThisObject->pCcspPath),pDestPath, &ind);
+                                           ERR_CHK(rc);
+                                        }
+
+                                        if ( (rc == EOK) && (ind) )  
+
+    
 					{
 						AnscTraceError(("Different Ccsp Component '%s' for DM namespace '%s', Error!\n", pDestComp, pMibMap->Mapping.pDMName));
 					}
@@ -734,8 +759,13 @@ CcspScalarHelperRefreshCache
 
 			for( j= 0; j < pThisObject->nCacheMibCount; j ++)
 			{
-				if( pValue->parameterName != NULL && AnscEqualString(pValue->parameterName, pThisObject->CacheDMName[j], TRUE))
-				{
+                               
+				if( pValue->parameterName != NULL )
+                                {
+                                    rc = strcmp_s(pThisObject->CacheDMName[j],strlen(pThisObject->CacheDMName[j]),pValue->parameterName,&ind);
+                                    ERR_CHK(rc);
+                                   if ((!ind) && (rc == EOK))
+			           {
 					pMibValue = CcspUtilLookforMibValueObjWithOid(&pThisObject->MibValueQueue, pThisObject->CacheMibOid[j]);
 					pMapping  = CcspUtilLookforMibMapWithOid(&pThisObject->MibObjQueue, pThisObject->CacheMibOid[j]);
 
@@ -750,14 +780,15 @@ CcspScalarHelperRefreshCache
                                             return -1;
                                         }
                                         
-				}
+			             
+				   }
+                                }
 			}
 		}
 
 		/* free the parameter values */
 		Cosa_FreeParamValues(size, paramValues);
-
-	}
+     }
 
 	return 0;
 }

@@ -59,6 +59,7 @@
 #include "ansc_xml_dom_parser_interface.h"
 #include "ansc_xml_dom_parser_external_api.h"
 #include "ansc_xml_dom_parser_status.h"
+#include "safec_lib_common.h"
 
 /**********************************************************************
 
@@ -105,6 +106,7 @@ CcspScalarHelperLoadMibs
 	char							buffer[256]        = { 0 };
 	ULONG							uSize              = 256;
 	ULONG							uLastOid           = 0;
+        errno_t        rc = -1;
 
 	/* check the name */
 	pChildNode = (PANSC_XML_DOM_NODE_OBJECT)pRootNode->GetChildByName(pRootNode, CCSP_XML_Scalar_name);
@@ -115,7 +117,12 @@ CcspScalarHelperLoadMibs
 	}
 
 	/* copy the name */
-	AnscCopyString(pThisObject->MibName, buffer);
+	rc = strcpy_s(pThisObject->MibName,sizeof(pThisObject->MibName), buffer);
+        if(rc != EOK)
+        {
+               ERR_CHK(rc);
+               return FALSE;
+        }
 
 	/* check whether it's enabled or not */
 	pChildNode = (PANSC_XML_DOM_NODE_OBJECT)pRootNode->GetChildByName(pRootNode, CCSP_XML_Scalar_enabled);
@@ -350,6 +357,7 @@ CcspScalarHelperRegisterMibHandler
     netsnmp_cache*                  cache			   = NULL;
     int                             oidIndex           = 0;
     oid                             oidReg[MAXI_CCSP_OID_LENGTH] = {0};
+    errno_t rc = -1;
 
 	if( pThisObject->uMinOid == 0 || pThisObject->uMaxOid == 0)
 	{
@@ -361,7 +369,12 @@ CcspScalarHelperRegisterMibHandler
 	/* register MIB handler */
 	AnscTraceWarning(("Register scalar mib group '%s'\n", pThisObject->MibName));
 	CcspUtilTraceOid(pThisObject->BaseOid, pThisObject->uOidLen);
-    memcpy(oidReg, pThisObject->BaseOid, pThisObject->uOidLen * sizeof(oid));
+        rc =  memcpy_s(oidReg,sizeof(oidReg), pThisObject->BaseOid, pThisObject->uOidLen * sizeof(oid));
+        if(rc != EOK)
+        {
+             ERR_CHK(rc);
+             return;
+        }
     
     PSINGLE_LINK_ENTRY entry; 
     PCCSP_MIB_VALUE scalar;

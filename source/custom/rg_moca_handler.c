@@ -43,6 +43,7 @@
 
 #include "ccsp_snmp_common.h"
 #include "ccsp_mib_definitions.h"
+#include "safec_lib_common.h"
 
 // Power
 #define MOCA_DM_OBJ                             "Device.MoCA.Interface."
@@ -72,6 +73,9 @@
 #endif
 
 #define STR_MAX 80
+
+#define MAX_VAL_SET 100
+#define MAX_VAL_LEVEL 120
 
 // Power
 static const int saMocaDevPwrTxMax_subid = 2;
@@ -130,12 +134,18 @@ static int getTxPowerLimit(int subid) {
     char mystring[STR_MAX] = {0};
     char* name = (char *)mystring;
     int pwrTxMax = 0;
+    errno_t rc =-1;
 
     CcspTraceInfo(("getTxPowerLimit called on subid: %d\n", subid));
     
     FindMoCADestComp();
     
-    snprintf(name, sizeof(mystring), MOCA_DM_TxPowerLimit);
+    rc = sprintf_s(name, sizeof(mystring), MOCA_DM_TxPowerLimit);
+    if(rc < EOK)
+     {
+           ERR_CHK(rc);
+           return -1;
+      }
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
         CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
@@ -159,7 +169,8 @@ static int getTxPowerLimit(int subid) {
 
 static int setTxPowerLimit(int value) {
     parameterValStruct_t valStr;
-    char str[2][100];
+    char str[2][MAX_VAL_SET];
+    errno_t rc = -1;
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
     
@@ -167,8 +178,20 @@ static int setTxPowerLimit(int value) {
 
     FindMoCADestComp(); /*TODO: Handle error*/
 
-    sprintf(valStr.parameterName, MOCA_DM_TxPowerLimit);
-    sprintf(valStr.parameterValue, "%d", value);
+    rc = sprintf_s(valStr.parameterName,MAX_VAL_SET, MOCA_DM_TxPowerLimit);
+    if(rc < EOK)
+    {
+        ERR_CHK(rc);
+        return -1;
+     }    
+    
+    rc = sprintf_s(valStr.parameterValue,MAX_VAL_SET, "%d", value);
+    if(rc < EOK)
+    {
+        ERR_CHK(rc);
+        return -1;
+     }
+    
     valStr.type = ccsp_int;
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
@@ -187,12 +210,19 @@ static int getBeaconPwrLevel(int subid) {
     char mystring[STR_MAX] = {0};
     char* name = (char *)mystring;
     int beaconPwrLevel = 0;
+    errno_t rc = -1;
 
     CcspTraceInfo(("getBeaconPwrLevel called on subid: %d\n", subid));
     
     FindMoCADestComp();
     
-    snprintf(name, sizeof(mystring), MOCA_DM_BeaconPowerLimit);
+    rc = sprintf_s(name, sizeof(mystring), MOCA_DM_BeaconPowerLimit);
+    if(rc < EOK)
+    {
+        ERR_CHK(rc);
+        return -1;
+     }
+
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
         CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
@@ -216,16 +246,29 @@ static int getBeaconPwrLevel(int subid) {
 
 static int setBeaconPwrLevel(int value) {
     parameterValStruct_t valStr;
-    char str[2][120];
+    char str[2][MAX_VAL_LEVEL];
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
     
     CcspTraceInfo(("value: %d\n", value));
 
     FindMoCADestComp(); 
+    errno_t rc =-1;
 
-    sprintf(valStr.parameterName, MOCA_DM_BeaconPowerLimit);
-    sprintf(valStr.parameterValue, "%d", -value);
+    rc = sprintf_s(valStr.parameterName,MAX_VAL_LEVEL, MOCA_DM_BeaconPowerLimit);
+    if(rc < EOK)
+    {
+        ERR_CHK(rc);
+        return -1;
+     }
+
+   rc  =   sprintf_s(valStr.parameterValue,MAX_VAL_LEVEL, "%d", -value);
+   if(rc < EOK)
+    {
+        ERR_CHK(rc);
+        return -1;
+     }
+
     valStr.type = ccsp_unsignedInt;
 
     CcspTraceInfo(("dstComp: %s\n", dstComp));
@@ -249,12 +292,18 @@ static int getPwrCtrlPhyRate(int subid) {
     char mystring[STR_MAX] = {0};
     char* name = (char *)mystring;
     int controlPhyRate = 0;
-
+  errno_t rc =-1;
     CcspTraceInfo(("getPwrCtrlPhyRate called on subid: %d\n", subid));
     
     FindMoCADestComp();
     
-    snprintf(name, sizeof(mystring), MOCA_DM_AutoPowerControlPhyRate);
+    rc = sprintf_s(name, sizeof(mystring), MOCA_DM_AutoPowerControlPhyRate);
+    if(rc < EOK)
+    {
+        ERR_CHK(rc);
+        return -1;
+     }
+
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
         CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
@@ -278,16 +327,29 @@ static int getPwrCtrlPhyRate(int subid) {
 
 static int setPwrCtrlPhyRate(int value) {
     parameterValStruct_t valStr;
-    char str[2][120];
+    char str[2][MAX_VAL_LEVEL];
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
     
     CcspTraceInfo(("value: %d\n", value));
 
     FindMoCADestComp(); 
+    errno_t rc =-1;
 
-    sprintf(valStr.parameterName, MOCA_DM_AutoPowerControlPhyRate);
-    sprintf(valStr.parameterValue, "%d", value);
+    rc = sprintf_s(valStr.parameterName,MAX_VAL_LEVEL, MOCA_DM_AutoPowerControlPhyRate);
+    if(rc < EOK)
+    {
+        ERR_CHK(rc);
+        return -1;
+     }
+
+    rc = sprintf_s(valStr.parameterValue,MAX_VAL_LEVEL, "%d", value);
+    if(rc < EOK)
+    {
+        ERR_CHK(rc);
+        return -1;
+     }
+
     valStr.type = ccsp_unsignedInt;
 
     CcspTraceInfo(("dstComp: %s\n", dstComp));
@@ -546,10 +608,16 @@ static int getFreqCurrentMaskSetting(char * pvalue) {
     uint freq_mask = 0;
     int freq;
     int i, j;
+    errno_t rc =-1;
    
     FindMoCADestComp();
     
-    snprintf(name, sizeof(mystring), MOCA_DM_FreqCurrentMaskSetting);
+    rc = sprintf_s(name, sizeof(mystring), MOCA_DM_FreqCurrentMaskSetting);
+    if(rc < EOK)
+    {
+           ERR_CHK(rc);
+           return -1;
+    }
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
         CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
@@ -596,10 +664,11 @@ static int getFreqCurrentMaskSetting(char * pvalue) {
 
 static int setFreqCurrentMaskSetting(char * pvalue, int val_len) {
     parameterValStruct_t valStr;
-    char str[2][120];
+    char str[2][MAX_VAL_LEVEL];
     uint bitmask = 0;
     int i;
     BOOL err = FALSE;
+    errno_t rc = -1;
 
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
@@ -626,8 +695,21 @@ static int setFreqCurrentMaskSetting(char * pvalue, int val_len) {
     }
 
     if(!err) {
-        sprintf(valStr.parameterName, "%s", MOCA_DM_FreqCurrentMaskSetting);
-        sprintf(valStr.parameterValue, "%016x", bitmask);
+        rc = sprintf_s(valStr.parameterName,MAX_VAL_LEVEL, "%s", MOCA_DM_FreqCurrentMaskSetting);
+        if(rc < EOK)
+        {
+          ERR_CHK(rc);
+          return -1;
+        }
+
+        
+        rc =  sprintf_s(valStr.parameterValue,MAX_VAL_LEVEL, "%016x", bitmask);
+        if(rc < EOK)
+        {
+          ERR_CHK(rc);
+          return -1;
+         }
+
         valStr.type = ccsp_string;
     
         CcspTraceInfo(("valStr.parameterName: %s\n", valStr.parameterName));
@@ -654,10 +736,17 @@ static int getX_CISCO_COM_ChannelScanMask(char * pvalue) {
     uint scan_mask = 0;
     int freq;
     int i, j;
+    errno_t rc =-1;
    
     FindMoCADestComp();
     
-    snprintf(name, sizeof(mystring), MOCA_DM_X_CISCO_COM_ChannelScanMask);
+    rc = sprintf_s(name, sizeof(mystring), MOCA_DM_X_CISCO_COM_ChannelScanMask);
+    if(rc < EOK)
+    {
+        ERR_CHK(rc);
+         return -1;
+    }
+
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
         CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
@@ -704,7 +793,7 @@ static int getX_CISCO_COM_ChannelScanMask(char * pvalue) {
 
 static int setX_CISCO_COM_ChannelScanMask(char * pvalue, int val_len) {
     parameterValStruct_t valStr;
-    char str[2][120];
+    char str[2][MAX_VAL_LEVEL];
     uint bitmask = 0;;
     int i;
     BOOL err = FALSE;
@@ -715,6 +804,7 @@ static int setX_CISCO_COM_ChannelScanMask(char * pvalue, int val_len) {
     CcspTraceInfo(("pvalue: %s\n", pvalue));
 
     FindMoCADestComp(); 
+    errno_t rc =-1;
 
     for(i=0; i<val_len; i++) {
 
@@ -734,8 +824,20 @@ static int setX_CISCO_COM_ChannelScanMask(char * pvalue, int val_len) {
     }
 
     if(!err) {
-        sprintf(valStr.parameterName, "%s", MOCA_DM_X_CISCO_COM_ChannelScanMask);
-        sprintf(valStr.parameterValue, "%016x", bitmask);
+        rc = sprintf_s(valStr.parameterName,MAX_VAL_LEVEL, "%s", MOCA_DM_X_CISCO_COM_ChannelScanMask);
+        if(rc < EOK)
+         {
+           ERR_CHK(rc);
+            return -1;
+          }
+
+        rc = sprintf_s(valStr.parameterValue,MAX_VAL_LEVEL, "%016x", bitmask);
+        if(rc < EOK)
+         {
+           ERR_CHK(rc);
+            return -1;
+          }
+
         valStr.type = ccsp_string;
     
         CcspTraceInfo(("valStr.parameterName: %s\n", valStr.parameterName));
@@ -928,10 +1030,16 @@ static int getTabooMaskSetting(char * pvalue) {
     uint freq_mask = 0;
     int freq;
     int i, j;
+    errno_t rc =-1;
    
     FindMoCADestComp();
     
-    snprintf(name, sizeof(mystring), MOCA_DM_TabooMask);
+    rc = sprintf_s(name, sizeof(mystring), MOCA_DM_TabooMask);
+    if(rc < EOK)
+    {
+          ERR_CHK(rc);
+          return -1;
+    }
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
         CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
@@ -978,10 +1086,11 @@ static int getTabooMaskSetting(char * pvalue) {
 
 static int setTabooMaskSetting(char * pvalue, int val_len) {
     parameterValStruct_t valStr;
-    char str[2][120];
+    char str[2][MAX_VAL_LEVEL];
     uint bitmask = 0;
     int i;
     BOOL err = FALSE;
+    errno_t rc =-1;
 
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
@@ -1008,8 +1117,20 @@ static int setTabooMaskSetting(char * pvalue, int val_len) {
     }
 
     if(!err) {
-        sprintf(valStr.parameterName, "%s", MOCA_DM_TabooMask);
-        sprintf(valStr.parameterValue, "%016x", bitmask);
+       rc = sprintf_s(valStr.parameterName,MAX_VAL_LEVEL, "%s", MOCA_DM_TabooMask);
+       if(rc < EOK)
+    {
+          ERR_CHK(rc);
+          return -1;
+    }
+
+      rc =  sprintf_s(valStr.parameterValue,MAX_VAL_LEVEL, "%016x", bitmask);
+       if(rc < EOK)
+    {
+          ERR_CHK(rc);
+          return -1;
+    }
+
         valStr.type = ccsp_string;
     
         CcspTraceInfo(("valStr.parameterName: %s\n", valStr.parameterName));

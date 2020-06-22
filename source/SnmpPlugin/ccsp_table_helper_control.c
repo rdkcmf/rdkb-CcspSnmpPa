@@ -59,7 +59,7 @@
 #include "ansc_xml_dom_parser_interface.h"
 #include "ansc_xml_dom_parser_external_api.h"
 #include "ansc_xml_dom_parser_status.h"
-
+#include "safec_lib_common.h"
 /**********************************************************************
 
     prototype:
@@ -106,6 +106,8 @@ CcspTableHelperLoadMibs
 	char							buffer[256]        = { 0 };
 	ULONG							uSize              = 256;
 	ULONG							uLastOid           = 0;
+        errno_t rc = -1;
+        int ind = -1;
 
 	/* check the name */
 	pChildNode = (PANSC_XML_DOM_NODE_OBJECT)pRootNode->GetChildByName(pRootNode, CCSP_XML_Table_name);
@@ -116,7 +118,12 @@ CcspTableHelperLoadMibs
 	}
 
 	/* copy the name */
-	AnscCopyString(pThisObject->MibName, buffer);
+	rc =  strcpy_s(pThisObject->MibName,sizeof(pThisObject->MibName), buffer);
+        if(rc != EOK)
+        {
+             ERR_CHK(rc);
+             return FALSE;
+         }
 
 	/* check whether it's enabled or not */
 	pChildNode = (PANSC_XML_DOM_NODE_OBJECT)pRootNode->GetChildByName(pRootNode, CCSP_XML_Table_enabled);
@@ -236,7 +243,9 @@ CcspTableHelperLoadMibs
 
 	while(pChildNode != NULL)
 	{
-		if(!AnscEqualString(pChildNode->GetName(pChildNode), CCSP_XML_Table_index, TRUE))
+		rc = strcmp_s(CCSP_XML_Table_index,strlen(CCSP_XML_Table_index),pChildNode->GetName(pChildNode), &ind);
+                ERR_CHK(rc);
+                if((ind) && (rc == EOK))
 		{
 			break;
 		}
@@ -256,7 +265,9 @@ CcspTableHelperLoadMibs
 	/* Load MIB object one by one */
 	while(pChildNode != NULL)
 	{
-		if(!AnscEqualString(pChildNode->GetName(pChildNode), CCSP_XML_Table_mapping, TRUE))
+		rc = strcmp_s(CCSP_XML_Table_mapping, strlen(CCSP_XML_Table_mapping),pChildNode->GetName(pChildNode), &ind);
+                ERR_CHK(rc);
+                if((ind) && (rc == EOK))
 		{
 			break;
 		}
@@ -294,7 +305,12 @@ CcspTableHelperLoadMibs
 
 			if( AnscSizeOfString(pThisObject->pStrSampleDM) == 0 && pMibMapping->bHasMapping)
 			{
-				AnscCopyString(pThisObject->pStrSampleDM, pMibMapping->Mapping.pDMName);
+				rc = strcpy_s(pThisObject->pStrSampleDM,sizeof(pThisObject->pStrSampleDM), pMibMapping->Mapping.pDMName);
+                                 if(rc != EOK)
+                                 {
+                                    ERR_CHK(rc);
+                                    return FALSE;
+                                  }
 			}
 		}
 
