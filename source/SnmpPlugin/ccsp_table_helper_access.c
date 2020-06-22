@@ -63,6 +63,7 @@
 
 #include "cosa_api.h"
 #include<time.h>
+#include "safec_lib_common.h"
 
 /**********************************************************************
 
@@ -830,6 +831,7 @@ tableGroupGetCosaValues
 	PSINGLE_LINK_ENTRY              pSLinkEntry     = (PSINGLE_LINK_ENTRY)NULL;
 	PCCSP_MIB_VALUE					pMibValue       = (PCCSP_MIB_VALUE)NULL;
 	BOOL							bReturn         = FALSE;
+        errno_t rc = -1;
 
 	pSLinkEntry = AnscQueueGetFirstEntry(&pThisObject->MibObjQueue);
 
@@ -845,29 +847,53 @@ tableGroupGetCosaValues
 			{
 				if( pEntry->IndexCount == 1)
 				{
-					_ansc_sprintf(pTemp, pMibMap->Mapping.pDMName, 
+					rc = sprintf_s(pTemp,sizeof(pTemp), pMibMap->Mapping.pDMName, 
                             pEntry->IndexValue[0].Value.iValue);
+                                         if(rc < EOK)
+                                         {
+                                             ERR_CHK(rc);
+                                             return FALSE;
+                                          }
+                                        
 				}
 				else if( pEntry->IndexCount == 2)
 				{
-					_ansc_sprintf(pTemp, pMibMap->Mapping.pDMName,
+					rc = sprintf_s(pTemp,sizeof(pTemp), pMibMap->Mapping.pDMName,
                             pEntry->IndexValue[0].Value.iValue,
                             pEntry->IndexValue[1].Value.iValue);
+                                          if(rc < EOK)
+                                         {
+                                             ERR_CHK(rc);
+                                             return FALSE;
+                                          }
+
 				}
 				else if( pEntry->IndexCount == 3)
 				{
-					_ansc_sprintf(pTemp, pMibMap->Mapping.pDMName,
+					rc = sprintf_s(pTemp,sizeof(pTemp), pMibMap->Mapping.pDMName,
                             pEntry->IndexValue[0].Value.iValue,
                             pEntry->IndexValue[1].Value.iValue,
                             pEntry->IndexValue[2].Value.iValue);
+                                         if(rc < EOK)
+                                         {
+                                             ERR_CHK(rc);
+                                             return FALSE;
+                                          }
+
 				}
 				else if( pEntry->IndexCount == 4)
 				{
-					_ansc_sprintf(pTemp, pMibMap->Mapping.pDMName,
+					rc = sprintf_s(pTemp,sizeof(pTemp), pMibMap->Mapping.pDMName,
                             pEntry->IndexValue[0].Value.iValue,
                             pEntry->IndexValue[1].Value.iValue,
                             pEntry->IndexValue[2].Value.iValue,
                             pEntry->IndexValue[3].Value.iValue);
+                                          if(rc < EOK)
+                                         {
+                                             ERR_CHK(rc);
+                                             return FALSE;
+                                          }
+
 				}
 
 				CacheDMName[nCacheMibCount] = AnscCloneString(pTemp);
@@ -986,8 +1012,14 @@ tableGroupGetSubDMMapping
 	char*							pSubDMName = pTemp;
 	int							iReturn         = 0;
 	int 					uDMType;
+        errno_t    rc = -1;
 
-	_ansc_sprintf(pTemp, pSubDM, indexes[0], indexes[1], indexes[2]);
+	rc = sprintf_s(pTemp,sizeof(pTemp), pSubDM, indexes[0], indexes[1], indexes[2]);
+         if(rc < EOK)
+        {
+           ERR_CHK(rc);
+           return -1;
+        }
 
 	if( !Cosa_GetParamValues(pThisObject->pCcspComp, pThisObject->pCcspPath, &pSubDMName, 1, &size, &paramValues))
 	{
@@ -1046,6 +1078,7 @@ CcspTableHelperRefreshCache
 	unsigned int					insCount3       = 32;
 	unsigned int					subDMIns[3] = {0,0,0};
     int                             status          = 0;
+    errno_t rc = -1;
 
     if (pThisObject->RefreshCacheCallback != NULL)
     {
@@ -1129,7 +1162,12 @@ CcspTableHelperRefreshCache
 		{
 			if(pIndexMap->uMapType >= CCSP_MIB_MAP_TO_DM)
 			{
-				AnscCopyString(pTemp, pIndexMap->Mapping.DMMappingInfo.pDMName);
+			          rc = strcpy_s (pTemp, sizeof(pTemp),pIndexMap->Mapping.DMMappingInfo.pDMName);
+                                  if(rc != EOK)
+                                  {
+                                     ERR_CHK(rc);
+                                     return -1;
+                                   }
 		
 				/* get the ins count */
 				if( !Cosa_GetInstanceNums(pThisObject->pCcspComp, pThisObject->pCcspPath, pTemp, &insArray1, &insCount1))
@@ -1198,7 +1236,12 @@ CcspTableHelperRefreshCache
 		{
 			if(pIndexMap->uMapType >= CCSP_MIB_MAP_TO_DM)
 			{
-				AnscCopyString(pTemp, pIndexMap->Mapping.DMMappingInfo.pDMName);
+				rc = strcpy_s(pTemp,sizeof(pTemp), pIndexMap->Mapping.DMMappingInfo.pDMName);
+                                if(rc != EOK)
+                                {
+                                    ERR_CHK(rc);
+                                    return -1;
+                                 }
 		
 				/* get the ins count */
 				if( !Cosa_GetInstanceNums(pThisObject->pCcspComp, pThisObject->pCcspPath, pTemp, &insArray1, &insCount1))
@@ -1232,7 +1275,13 @@ CcspTableHelperRefreshCache
 						if(pIndexMap->uMapType >= CCSP_MIB_MAP_TO_DM)
 						{
 							/* AnscCopyString(pTemp, pIndexMap->Mapping.DMMappingInfo.pDMName); */
-							_ansc_sprintf(pTemp, pIndexMap->Mapping.DMMappingInfo.pDMName, insArray1[i]);
+							rc = sprintf_s(pTemp,sizeof(pTemp), pIndexMap->Mapping.DMMappingInfo.pDMName, insArray1[i]);
+                                                         if(rc < EOK)
+                                                        {
+                                                           ERR_CHK(rc);
+                                                           return -1;
+                                                         }
+
 		
 							/* get the ins count */
 							if( !Cosa_GetInstanceNums(pThisObject->pCcspComp, pThisObject->pCcspPath, pTemp, &insArray2, &insCount2))
@@ -1308,7 +1357,12 @@ CcspTableHelperRefreshCache
 		{
 			if(pIndexMap->uMapType >= CCSP_MIB_MAP_TO_DM)
 			{
-				AnscCopyString(pTemp, pIndexMap->Mapping.DMMappingInfo.pDMName);
+				rc = strcpy_s(pTemp,sizeof(pTemp), pIndexMap->Mapping.DMMappingInfo.pDMName);
+                                if(rc != EOK)
+                               {
+                                  ERR_CHK(rc);
+                                  return -1;
+                                }
 		
 				/* get the ins count */
 				if( !Cosa_GetInstanceNums(pThisObject->pCcspComp, pThisObject->pCcspPath, pTemp, &insArray1, &insCount1))
@@ -1342,7 +1396,13 @@ CcspTableHelperRefreshCache
 						if(pIndexMap->uMapType >= CCSP_MIB_MAP_TO_DM)
 						{
 							/* AnscCopyString(pTemp, pIndexMap->Mapping.DMMappingInfo.pDMName); */
-							_ansc_sprintf(pTemp, pIndexMap->Mapping.DMMappingInfo.pDMName, insArray1[i]);
+							rc = sprintf_s(pTemp,sizeof(pTemp), pIndexMap->Mapping.DMMappingInfo.pDMName, insArray1[i]);
+                                                         if(rc < EOK)
+                                                         {
+                                                            ERR_CHK(rc);
+                                                            return -1;
+                                                         }
+
 		
 							/* get the ins count */
 							if( !Cosa_GetInstanceNums(pThisObject->pCcspComp, pThisObject->pCcspPath, pTemp, &insArray2, &insCount2))
@@ -1376,7 +1436,12 @@ CcspTableHelperRefreshCache
 									if(pIndexMap->uMapType >= CCSP_MIB_MAP_TO_DM)
 									{
 										/* AnscCopyString(pTemp, pIndexMap->Mapping.DMMappingInfo.pDMName); */
-										_ansc_sprintf(pTemp, pIndexMap->Mapping.DMMappingInfo.pDMName, insArray1[i], insArray2[j]);
+										rc = sprintf_s(pTemp,sizeof(pTemp), pIndexMap->Mapping.DMMappingInfo.pDMName, insArray1[i], insArray2[j]);
+                                                                                if(rc < EOK)
+                                                                              {
+                                                                                    ERR_CHK(rc);
+                                                                                    return -1;
+                                                                               }
 		
 										/* get the ins count */
 										if( !Cosa_GetInstanceNums(pThisObject->pCcspComp, pThisObject->pCcspPath, pTemp, &insArray3, &insCount3))

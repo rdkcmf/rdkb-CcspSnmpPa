@@ -41,6 +41,7 @@
 #include "ccsp_snmp_common.h"
 #include "ccsp_mib_definitions.h"
 #include "cosa_api.h"
+#include "safec_lib_common.h"
 
 static oid saRgIpMgmtApplySettings_lastOid = 1001;
 static oid saRgIpMgmtLanAddrInterface_oid = 9; 
@@ -49,6 +50,16 @@ static char *dhcpdstComp = NULL, *dhcpdstPath = NULL; /* cache */
 
 #define IPMGNT_DM_OBJ "Device.DHCPv4."
 #define IPMGMTLANADDRINTERFACE_DM_PAT "Device.DHCPv4.Server.Pool.%d.Client.%d.X_CISCO_COM_Interface"
+#define MAX_VAL 10
+#define NUM_INTEREFACE_TABLE  (sizeof(interface_pair_table) / sizeof(interface_pair_table[0]))
+
+typedef struct
+{
+  char *value;
+  char *iff;
+} INTERFACE_PAIR_TABLE;
+
+INTERFACE_PAIR_TABLE interface_pair_table[] = { {"Ethernet", "LAN"}, {"SSID.1", "WiFi-2.4"}, {"SSID.2", "WiFi-5"}, {"MoCA", "MoCA"}, {"", "Unknown"} };
 
 static BOOL FindIpMgntDestComp(void)
 {
@@ -136,13 +147,20 @@ static void getInterface(PCCSP_TABLE_ENTRY entry, char* interface ){
     int nval = -1;
     char str[80];
     char * name = (char*) str;
+    int i = 0;
+    errno_t rc =-1;
     
     if(FALSE == FindIpMgntDestComp())
     {
         goto ERR; 
     } 
     
-    snprintf(name, sizeof(str),IPMGMTLANADDRINTERFACE_DM_PAT,entry->IndexValue[0].Value.uValue, entry->IndexValue[1].Value.uValue);
+    rc = sprintf_s(name, sizeof(str),IPMGMTLANADDRINTERFACE_DM_PAT,entry->IndexValue[0].Value.uValue, entry->IndexValue[1].Value.uValue);
+    if(rc < EOK)
+    {
+         ERR_CHK(rc);
+         goto ERR;
+     }
 
     if (!Cosa_GetParamValues(dhcpdstComp, dhcpdstPath, &name, 1, &nval, &valStr))
     {
@@ -154,25 +172,31 @@ static void getInterface(PCCSP_TABLE_ENTRY entry, char* interface ){
         goto ERR;
     }
 
-    if(strstr(valStr[0]->parameterValue, "Ethernet")){
-        strcpy(interface, "LAN"); 
-    }else if(strstr(valStr[0]->parameterValue, "SSID.1")){
-        strcpy(interface, "WiFi-2.4");
-    }else if(strstr(valStr[0]->parameterValue, "SSID.2")){
-        strcpy(interface, "WiFi-5");
-    }else if(strstr(valStr[0]->parameterValue, "MoCA")){
-        strcpy(interface, "MoCA");
-    }else
-        strcpy(interface, "Unknow");
 
-    if (nval > 0)
-    {
-        Cosa_FreeParamValues(nval, valStr);
-    }
-    return;
+  for (i = 0 ; i < NUM_INTEREFACE_TABLE; ++i)
+  {
+     if( (interface_pair_table[i].value[0] == '\0') || (strstr(valStr[0]->parameterValue, interface_pair_table[i].value )))
+     {
+         rc = strcpy_s(interface, MAX_VAL, interface_pair_table[i].iff);
+         if (rc != EOK)
+         {
+            ERR_CHK(rc);
+            rc = strcpy_s(interface, MAX_VAL, "Unknow");
+            ERR_CHK(rc);
+         }
+         break;
+     }
+   }
+  
+ Cosa_FreeParamValues(nval, valStr);
+ return;
+
+   
 
 ERR:
-    strcpy(interface, "Unknow");
+    rc = strcpy_s(interface,MAX_VAL, "Unknow");
+    ERR_CHK(rc);
+            
     return;
 }
 
@@ -186,7 +210,7 @@ handlerIpMgntLanAddrTable(
 {
     netsnmp_request_info* req;
     int subid;
-    char strval[10];
+    char strval[MAX_VAL];
     int retval=SNMP_ERR_NOERROR;
     PCCSP_TABLE_ENTRY entry = NULL;
     netsnmp_variable_list *vb = NULL;

@@ -40,6 +40,8 @@
 #include <unistd.h>
 #include "CcspSnmpPlugin.h"
 
+#include "safec_lib_common.h"
+
 #ifdef USE_PCD_API_EXCEPTION_HANDLING
 #include "pcdapi.h"
 #endif
@@ -123,6 +125,7 @@ main(int argc, char *argv[])
     char                            cmd[1024]          = {0};
     FILE                           *fd                 = NULL;
     char                           pidPath[35]         = {0};
+    errno_t    rc1 = -1;
 	
     parse_arg(argc, argv);
 
@@ -167,11 +170,22 @@ main(int argc, char *argv[])
     /*Devices Now Allow Multiple Instances of this component for V2 & V3  */
     if(2 == instance_number)
     {
-    	sprintf(pidPath, "%s", SNMP_V3_PID_PATH);
+      rc1 = sprintf_s(pidPath,sizeof(pidPath), "%s", SNMP_V3_PID_PATH);
+       if(rc1 < EOK)
+        {
+           ERR_CHK(rc1);
+           return -1;
+        }
     }
     else
     {
-    	sprintf(pidPath, "%s", SNMP_V2_PID_PATH);
+    	rc1 = sprintf_s(pidPath,sizeof(pidPath), "%s", SNMP_V2_PID_PATH);
+         if(rc1 < EOK)
+        {
+           ERR_CHK(rc1);
+           return -1;
+        }
+
     }
 	
     /*This is used for systemd */
@@ -183,7 +197,14 @@ main(int argc, char *argv[])
     }
     else
     {
-        sprintf(cmd, "%d", getpid());
+        rc1 = sprintf_s(cmd,sizeof(cmd), "%d", getpid());
+         if(rc1 < EOK)
+        {
+           ERR_CHK(rc1);
+           fclose(fd);
+           return -1;
+        }
+
         fputs(cmd, fd);
         fclose(fd);
         fprintf(stderr, "PID path is %s\n", pidPath);

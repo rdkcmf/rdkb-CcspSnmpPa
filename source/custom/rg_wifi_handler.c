@@ -44,6 +44,7 @@
 #include "ccsp_snmp_common.h"
 #include "ccsp_mib_definitions.h"
 #include <time.h>
+#include "safec_lib_common.h"
 
 #define WIFI_DM_OBJ          "Device.WiFi."
 #define WIFI_DM_BSSENABLE    "Device.WiFi.SSID.%d.Enable"
@@ -77,6 +78,52 @@
 #define MAX_APS_PER_RADIO 16
 
 #define NOT_IMPLEMENTED -2 
+
+#define MAX_VAL_SET 100
+
+#define MAX_VAL_LEVEL 80
+
+#define MAX_ARRAY_VALUE 6
+
+#define NUM_DMVALUE_TYPES (sizeof(dmValue_type_table)/sizeof(dmValue_type_table[0]))
+
+typedef struct dmValue_pair {
+  char     *name;
+  int      level;
+} dmValue_PAIR;
+
+dmValue_PAIR dmValue_type_table[] = {
+  { "None",  0 },
+  { "WEP-128",   1},
+  { "WEP-64", 1},
+  { "WPA-Personal",   2},
+  { "WPA2-Personal",  3},
+  { "WPA2-Enterprise", 5  },
+   { "WPA-WPA2-Personal", 7  },
+    { "WPA-WPA2-Enterprise", 8  }
+};
+
+int dmValue_type_from_name(char *name, int *type_ptr)
+{
+  int rc = -1;
+  int ind = -1;
+  int i = 0;
+  if((name == NULL) || (type_ptr == NULL))
+     return 0;
+  int length = strlen(name);
+
+  for (i = 0 ; i < NUM_DMVALUE_TYPES ; ++i)
+  {
+      rc = strcmp_s(name,length, dmValue_type_table[i].name, &ind);
+      ERR_CHK(rc);
+      if((rc == EOK) && (!ind))
+      {
+          *type_ptr = dmValue_type_table[i].level;
+          return 1;
+      }
+  }
+  return 0;
+}
 
 static const int saRgDot11BssId_subid = 1;
 static const int saRgDot11BssSsid_subid = 3;
@@ -139,7 +186,7 @@ static int getNumAPs( ) {
     int nval = 0, retval = 0;
     char mystring[80]= {0};
     char* name = (char *)mystring;
-    
+    errno_t rc =-1; 
     AnscTraceError(("get number of APs \n" ));
     
     retval = FindWifiDestComp();
@@ -151,7 +198,13 @@ static int getNumAPs( ) {
     
     // return 4;
 
-    snprintf(name, sizeof(mystring), WIFI_DM_NUMBER_APS);
+    rc =  sprintf_s(name, sizeof(mystring), WIFI_DM_NUMBER_APS);
+    if(rc < EOK)
+    { 
+         ERR_CHK(rc);
+         return -1;
+     }
+
     printf("%s: DML command %s \n", __FUNCTION__, name);
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
@@ -187,6 +240,7 @@ static int getNumAPs( ) {
 static int SetAllAPsonRadio(int radioInst, parameterValStruct_t valStr[], char* namestrings, int strSize, int* aps, const char* dmFormat, char* value, int type) {
     int i = 0;
     int offset = 0;
+    errno_t rc =-1;
 
     // Radio 1 has odd AP instance numbers 1,3,5,... and Radio 2 has even numbers.  Currently supporting 2 AP per radio
     int numAPs = getNumAPs();
@@ -207,7 +261,12 @@ static int SetAllAPsonRadio(int radioInst, parameterValStruct_t valStr[], char* 
 #endif
         valStr[0].parameterValue = value;
         valStr[0].parameterName = &namestrings[0];
-        sprintf(valStr[0].parameterName, dmFormat, radioInst);
+       rc =  sprintf_s(valStr[0].parameterName,strSize, dmFormat, radioInst);
+         if(rc < EOK)
+         {
+           ERR_CHK(rc);
+           return -1;
+         }
         valStr[0].type = type;
     return 0;
 }
@@ -238,13 +297,15 @@ static int applyDot11Settings(int val) {
 	
     parameterValStruct_t valStr[2];
     
-    char str[4][100];
+    char str[4][MAX_VAL_SET];
     valStr[0].parameterName=str[0];
     valStr[0].parameterValue=str[1];
     valStr[1].parameterName=str[2];
     valStr[1].parameterValue=str[3];
     
     retval = FindWifiDestComp();
+    errno_t rc =-1;
+ 
 	
 	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
@@ -254,12 +315,35 @@ static int applyDot11Settings(int val) {
     if (val != 1)
         val = 0;
 
-    sprintf(valStr[0].parameterName, WIFI_DM_APPLY, 1);
-    sprintf(valStr[0].parameterValue, "%s", val ? "true" : "false");
+    rc =  sprintf_s(valStr[0].parameterName,MAX_VAL_SET, WIFI_DM_APPLY, 1);
+    if(rc < EOK)
+    {
+         ERR_CHK(rc);
+         return -1;
+     }
+    rc =  sprintf_s(valStr[0].parameterValue,MAX_VAL_SET, "%s", val ? "true" : "false");
+    if(rc < EOK)
+    {
+         ERR_CHK(rc);
+         return -1;
+     }
+
     valStr[0].type = ccsp_boolean;
 
-    sprintf(valStr[1].parameterName, WIFI_DM_APPLY, 2);
-    sprintf(valStr[1].parameterValue, "%s", val ? "true" : "false");
+    rc = sprintf_s(valStr[1].parameterName,MAX_VAL_SET, WIFI_DM_APPLY, 2);
+    if(rc < EOK)
+    {
+         ERR_CHK(rc);
+         return -1;
+     }
+
+    rc = sprintf_s(valStr[1].parameterValue,MAX_VAL_SET, "%s", val ? "true" : "false");
+    if(rc < EOK)
+    {
+         ERR_CHK(rc);
+         return -1;
+     }
+
     valStr[1].type = ccsp_boolean;
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, 2))
@@ -290,7 +374,7 @@ static int getWps(PCCSP_TABLE_ENTRY entry)
     int nval = 0, retval = 0;
     char str[80]= {0};
     char * name = (char*) str;
-
+    errno_t rc =-1;
     /*Fetching*/
     retval = FindWifiDestComp();
 	
@@ -299,7 +383,13 @@ static int getWps(PCCSP_TABLE_ENTRY entry)
        return -1;
     }
     
-    snprintf(str, sizeof(str),WIFI_DM_WPSTIME,1);
+    rc = sprintf_s(str, sizeof(str),WIFI_DM_WPSTIME,1);
+    if(rc < EOK)
+    {
+         ERR_CHK(rc);
+         return -1;
+     }
+
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
         CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
@@ -319,7 +409,13 @@ static int getWps(PCCSP_TABLE_ENTRY entry)
         Cosa_FreeParamValues(nval, valStr);
         nval = 0;
         valStr = NULL;
-        snprintf(str, sizeof(str),WIFI_DM_WPSTIME,2);
+        rc = sprintf_s(str, sizeof(str),WIFI_DM_WPSTIME,2);
+        if(rc < EOK)
+       {
+          ERR_CHK(rc);
+          return -1;
+        }
+
         if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
         {
             CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));        
@@ -343,20 +439,32 @@ int setWps(PCCSP_TABLE_ENTRY entry, int wpsTime)
     int retval = 0;
 	
 	parameterValStruct_t valStr;
-    char str[2][100];
+    char str[2][MAX_VAL_SET];
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
     
     retval = FindWifiDestComp();
-	
+    errno_t rc =-1;	
 	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
 
     // Turn off Wps if wpsTime is 0, else enable it
-    sprintf(valStr.parameterName, WIFI_DM_WPS,1);
-    sprintf(valStr.parameterValue, "%s",  (wpsTime == 0) ? "false": "true");
+    rc = sprintf_s(valStr.parameterName,MAX_VAL_SET, WIFI_DM_WPS,1);
+    if(rc < EOK)
+    {
+         ERR_CHK(rc);
+         return -1;
+     }
+
+   rc =  sprintf_s(valStr.parameterValue,MAX_VAL_SET, "%s",  (wpsTime == 0) ? "false": "true");
+   if(rc < EOK)
+    {
+         ERR_CHK(rc);
+         return -1;
+     }
+
     valStr.type = ccsp_boolean;
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
@@ -365,8 +473,20 @@ int setWps(PCCSP_TABLE_ENTRY entry, int wpsTime)
         return -1;
     }
 
-    sprintf(valStr.parameterName, WIFI_DM_WPS,2);
-    sprintf(valStr.parameterValue, "%s",  (wpsTime == 0) ? "false": "true");
+   rc = sprintf_s(valStr.parameterName,MAX_VAL_SET, WIFI_DM_WPS,2);
+   if(rc < EOK)
+    {
+         ERR_CHK(rc);
+         return -1;
+     }
+
+    rc = sprintf_s(valStr.parameterValue,MAX_VAL_SET, "%s",  (wpsTime == 0) ? "false": "true");
+    if(rc < EOK)
+    {
+         ERR_CHK(rc);
+         return -1;
+     }
+
     valStr.type = ccsp_boolean;
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
@@ -375,8 +495,20 @@ int setWps(PCCSP_TABLE_ENTRY entry, int wpsTime)
         return -1;
     }
 
-    sprintf(valStr.parameterName, WIFI_DM_WPSTIME,1);
-    sprintf(valStr.parameterValue, "%d", wpsTime); 
+   rc =     sprintf_s(valStr.parameterName,MAX_VAL_SET, WIFI_DM_WPSTIME,1);
+   if(rc < EOK)
+    {
+         ERR_CHK(rc);
+         return -1;
+     }
+
+   rc = sprintf_s(valStr.parameterValue,MAX_VAL_SET, "%d", wpsTime); 
+   if(rc < EOK)
+    {
+         ERR_CHK(rc);
+         return -1;
+     }
+
     valStr.type = ccsp_int;
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
@@ -385,8 +517,20 @@ int setWps(PCCSP_TABLE_ENTRY entry, int wpsTime)
         return -1;
     }
 
-    sprintf(valStr.parameterName, WIFI_DM_WPSTIME,2);
-    sprintf(valStr.parameterValue, "%d", wpsTime); 
+    rc = sprintf_s(valStr.parameterName,MAX_VAL_SET, WIFI_DM_WPSTIME,2);
+    if(rc < EOK)
+    {
+         ERR_CHK(rc);
+         return -1;
+     }
+
+   rc =  sprintf_s(valStr.parameterValue,MAX_VAL_SET, "%d", wpsTime); 
+    if(rc < EOK)
+    {
+         ERR_CHK(rc);
+         return -1;
+     }
+
     valStr.type = ccsp_int;
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
@@ -560,6 +704,7 @@ static int getBssEnable(PCCSP_TABLE_ENTRY entry) {
     int nval = 0, retval = 0, nval2 =0;
     char mystring[30]= {0};
     char* name = (char *)mystring;
+    errno_t rc =-1;
     
     CcspTraceInfo(("getBssEnable called on entry: %d (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
@@ -570,7 +715,13 @@ static int getBssEnable(PCCSP_TABLE_ENTRY entry) {
        return -1;
     }
     
-    snprintf(name, sizeof(mystring), WIFI_DM_BSSENABLE, entry->IndexValue[0].Value.uValue);
+    rc =  sprintf_s(name, sizeof(mystring), WIFI_DM_BSSENABLE, entry->IndexValue[0].Value.uValue);
+     if(rc < EOK)
+     {
+         ERR_CHK(rc);
+         return -1;
+     }
+
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
         CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
@@ -578,9 +729,25 @@ static int getBssEnable(PCCSP_TABLE_ENTRY entry) {
     }
 
     if(entry->IndexValue[0].Value.uValue % 2) 
-        snprintf(name, sizeof(mystring), WIFI_DM_RADIO_ENABLE, 1);
+    {
+      rc  =  sprintf_s(name, sizeof(mystring), WIFI_DM_RADIO_ENABLE, 1);
+      if(rc < EOK)             
+     {
+         ERR_CHK(rc);
+         return -1;
+     }
+
+
+    }
     else
-        snprintf(name, sizeof(mystring), WIFI_DM_RADIO_ENABLE, 2);
+    {
+        rc = sprintf_s(name, sizeof(mystring), WIFI_DM_RADIO_ENABLE, 2);
+        if(rc < EOK)
+     {
+         ERR_CHK(rc);
+         return -1;
+     }  
+   }
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval2, &valStr2))
     {
         CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
@@ -603,12 +770,12 @@ static int getBssEnable(PCCSP_TABLE_ENTRY entry) {
 static int setBssEnable(PCCSP_TABLE_ENTRY entry, int value) {
     parameterValStruct_t valStr;
 	int retval = 0;
-    char str[2][100];
+    char str[2][MAX_VAL_SET];
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
     
     retval = FindWifiDestComp();
-	
+    errno_t rc =-1;	
 	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
@@ -618,8 +785,19 @@ static int setBssEnable(PCCSP_TABLE_ENTRY entry, int value) {
     if (value <  1 || value > 2)
         return -1;
 
-    sprintf(valStr.parameterName, WIFI_DM_BSSENABLE, entry->IndexValue[0].Value.uValue);
-    sprintf(valStr.parameterValue, "%s", value == 1 ? "true" : "false");
+    rc = sprintf_s(valStr.parameterName,MAX_VAL_SET, WIFI_DM_BSSENABLE, entry->IndexValue[0].Value.uValue);  
+     if(rc < EOK)
+    {
+         ERR_CHK(rc);
+         return -1;
+     }
+    rc = sprintf_s(valStr.parameterValue,MAX_VAL_SET, "%s", value == 1 ? "true" : "false");
+    if(rc < EOK)
+    {
+         ERR_CHK(rc);
+         return -1;
+     }
+
     valStr.type = ccsp_boolean;
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
@@ -637,6 +815,7 @@ static int getBssAccessMode(PCCSP_TABLE_ENTRY entry) {
     int nval = 0, retval = 0;
     char str[2][100];
     char* name[2] = {(char*) str[0], (char*) str[1]};
+    errno_t rc =-1;
     
     CcspTraceInfo(("getBssAccessMode called on entry: %d\n", entry->IndexValue[0].Value.uValue));
     
@@ -647,8 +826,20 @@ static int getBssAccessMode(PCCSP_TABLE_ENTRY entry) {
        return -1;
     }
     
-    snprintf(str[0], sizeof(str[0]),WIFI_DM_MACF_ENABLE,entry->IndexValue[0].Value.uValue);
-    snprintf(str[1], sizeof(str[1]),WIFI_DM_MACF_ASBL,entry->IndexValue[0].Value.uValue);
+    rc = sprintf_s(str[0], sizeof(str[0]),WIFI_DM_MACF_ENABLE,entry->IndexValue[0].Value.uValue); 
+     if(rc < EOK)
+     {
+           ERR_CHK(rc);
+           return -1;
+      }
+
+    rc = sprintf_s(str[1], sizeof(str[1]),WIFI_DM_MACF_ASBL,entry->IndexValue[0].Value.uValue);
+    if(rc < EOK)
+     {
+           ERR_CHK(rc);
+           return -1;
+      }
+
 
     if (!Cosa_GetParamValues(dstComp, dstPath, name, 2, &nval, &valStr))
     {
@@ -683,13 +874,13 @@ static int getBssAccessMode(PCCSP_TABLE_ENTRY entry) {
 static int setBssAccessMode(PCCSP_TABLE_ENTRY entry, int value) {
     parameterValStruct_t valStr[2];
 	int retval = 0;
-    char str[4][80];
+    char str[4][MAX_VAL_LEVEL];
     valStr[0].parameterName = str[0];
     valStr[0].parameterValue = str[1];
     valStr[1].parameterName = str[2];
     valStr[1].parameterValue = str[3];
     int valCnt =1;
-    
+    errno_t rc =-1;    
     retval = FindWifiDestComp();
 	
 	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
@@ -699,23 +890,60 @@ static int setBssAccessMode(PCCSP_TABLE_ENTRY entry, int value) {
     
     /*snprintf(name[0], sizeof(name[0]),WIFI_DM_MACF_ENABLE,entry->IndexValue[0].Value.uValue);
     snprintf(name[1], sizeof(name[1]),WIFI_DM_MACF_ASBL,entry->IndexValue[0].Value.uValue);*/
-    sprintf(valStr[0].parameterName, WIFI_DM_MACF_ENABLE, entry->IndexValue[0].Value.uValue);
+    rc = sprintf_s(valStr[0].parameterName,MAX_VAL_LEVEL, WIFI_DM_MACF_ENABLE, entry->IndexValue[0].Value.uValue);
+     if(rc < EOK)
+     {
+           ERR_CHK(rc);
+           return -1;
+      }
+
     valStr[0].type = ccsp_boolean;
     if (value == 0) {
         /*allowAny*/
-        sprintf(valStr[0].parameterValue, "%s", "false");
+        rc = sprintf_s(valStr[0].parameterValue,MAX_VAL_LEVEL, "%s", "false");
+        if(rc < EOK)
+     {
+           ERR_CHK(rc);
+           return -1;
+      }
+
     } else {
         /*Mac filter enabled*/
-        sprintf(valStr[0].parameterValue, "%s", "true");
-        sprintf(valStr[1].parameterName, WIFI_DM_MACF_ASBL, entry->IndexValue[0].Value.uValue);
+        rc = sprintf_s(valStr[0].parameterValue,MAX_VAL_LEVEL, "%s", "true");
+         if(rc < EOK)
+     {
+           ERR_CHK(rc);
+           return -1;
+      }
+
+        rc = sprintf_s(valStr[1].parameterName,MAX_VAL_LEVEL, WIFI_DM_MACF_ASBL, entry->IndexValue[0].Value.uValue);
+        if(rc < EOK)
+     {
+           ERR_CHK(rc);
+           return -1;
+      }
+
         valStr[1].type = ccsp_boolean;
         valCnt = 2;
         if (value == 1) {
             /*allowList*/
-            sprintf(valStr[1].parameterValue, "%s", "false");
+            rc = sprintf_s(valStr[1].parameterValue,MAX_VAL_LEVEL, "%s", "false");
+             if(rc < EOK)
+            {
+               ERR_CHK(rc);
+               return -1;
+             }
+
+
         } else {
             /*denyList*/
-            sprintf(valStr[1].parameterValue, "%s", "true");
+            rc = sprintf_s(valStr[1].parameterValue,MAX_VAL_LEVEL, "%s", "true");
+             if(rc < EOK)
+            {
+               ERR_CHK(rc);
+               return -1;
+             }
+
         }
     }
 
@@ -734,6 +962,7 @@ static int getBssClosedNetwork(PCCSP_TABLE_ENTRY entry) {
     int nval = 0, retval = 0;
     char mystring[100] = {0};
     char* name = (char *)mystring;
+    errno_t rc =-1;
     
     CcspTraceInfo(("getBssClosedNetwork called on entry: %d (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
@@ -744,7 +973,13 @@ static int getBssClosedNetwork(PCCSP_TABLE_ENTRY entry) {
        return -1;
     }
     
-    snprintf(name, sizeof(mystring), WIFI_DM_ADVERTISE, entry->IndexValue[0].Value.uValue);
+    rc = sprintf_s(name, sizeof(mystring), WIFI_DM_ADVERTISE, entry->IndexValue[0].Value.uValue);
+     if(rc < EOK)
+     {
+         ERR_CHK(rc);
+         return -1;
+     }
+
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
         CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
@@ -768,11 +1003,12 @@ static int getBssClosedNetwork(PCCSP_TABLE_ENTRY entry) {
 static int setBssClosedNetwork(PCCSP_TABLE_ENTRY entry, int value) {
     parameterValStruct_t valStr;
 	int retval = 0;
-    char str[2][100];
+    char str[2][MAX_VAL_SET];
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
     
     retval = FindWifiDestComp();
+    errno_t rc =-1;
 	
 	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
@@ -782,8 +1018,20 @@ static int setBssClosedNetwork(PCCSP_TABLE_ENTRY entry, int value) {
     if (value != 1)
         value = 2;
 
-    sprintf(valStr.parameterName, WIFI_DM_ADVERTISE, entry->IndexValue[0].Value.uValue);
-    sprintf(valStr.parameterValue, "%s", value == 2 ? "true" : "false");
+    rc = sprintf_s(valStr.parameterName,MAX_VAL_SET, WIFI_DM_ADVERTISE, entry->IndexValue[0].Value.uValue);
+    if(rc < EOK)
+     {
+         ERR_CHK(rc);
+         return -1;
+     }
+
+    rc = sprintf_s(valStr.parameterValue,MAX_VAL_SET, "%s", value == 2 ? "true" : "false");
+    if(rc < EOK)
+     {
+         ERR_CHK(rc);
+         return -1;
+     }
+
     valStr.type = ccsp_boolean;
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
@@ -801,15 +1049,22 @@ static int getBssHotSpot(PCCSP_TABLE_ENTRY entry) {
     int nval = 0, retval = 0;
     char mystring[100]= {0};
     char* name = (char *)mystring;
-    
     retval = FindWifiDestComp();
+    errno_t rc =-1;
+    int ind =-1;
 	
 	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
     
-    snprintf(name, sizeof(mystring), WIFI_DM_BSSHOTSPOT, entry->IndexValue[0].Value.uValue);
+    rc = sprintf_s(name, sizeof(mystring), WIFI_DM_BSSHOTSPOT, entry->IndexValue[0].Value.uValue);
+    if(rc < EOK)
+     {
+         ERR_CHK(rc);
+         return -1;
+     }
+
     CcspTraceInfo(("%s: called on entry: %d %s(%d)\n", __func__, entry->IndexValue[0].Value.uValue, mystring, sizeof(mystring)));
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
@@ -823,7 +1078,10 @@ static int getBssHotSpot(PCCSP_TABLE_ENTRY entry) {
         return -1;
     }
     
-    retval = _ansc_strncmp("false", valStr[0]->parameterValue, 5) ? 1 : 2;
+    rc = strcmp_s("false",strlen("false"),valStr[0]->parameterValue,&ind);
+    ERR_CHK(rc);
+    retval = (ind) ? 1 : 2 ;
+    
     
     Cosa_FreeParamValues(nval, valStr);
     
@@ -833,12 +1091,12 @@ static int getBssHotSpot(PCCSP_TABLE_ENTRY entry) {
 static int setBssHotSpot(PCCSP_TABLE_ENTRY entry, int value) {
     parameterValStruct_t valStr;
 	int retval = 0;
-    char str[2][100];
+    char str[2][MAX_VAL_SET];
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
     
     retval = FindWifiDestComp();
-	
+    errno_t rc =-1;	
 	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
@@ -847,8 +1105,20 @@ static int setBssHotSpot(PCCSP_TABLE_ENTRY entry, int value) {
     if (value != 1)
         value = 2;
 
-    sprintf(valStr.parameterName, WIFI_DM_BSSHOTSPOT, entry->IndexValue[0].Value.uValue);
-    sprintf(valStr.parameterValue, "%s", value == 1 ? "true" : "false");
+   rc =  sprintf_s(valStr.parameterName,MAX_VAL_SET, WIFI_DM_BSSHOTSPOT, entry->IndexValue[0].Value.uValue);
+    if(rc < EOK)
+     {
+         ERR_CHK(rc);
+         return -1;
+     }
+
+    rc = sprintf_s(valStr.parameterValue,MAX_VAL_SET, "%s", value == 1 ? "true" : "false");
+    if(rc < EOK)
+     {
+         ERR_CHK(rc);
+         return -1;
+     }
+
     valStr.type = ccsp_boolean;
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
@@ -865,15 +1135,22 @@ static int getBssIsolationEnable(PCCSP_TABLE_ENTRY entry) {
     int nval = 0, retval = 0;
     char mystring[100] = {0};
     char* name = (char *)mystring;
-    
+    errno_t rc =-1; 
     retval = FindWifiDestComp();
-	
+    int ind =-1;	
 	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
     
-    snprintf(name, sizeof(mystring), WIFI_DM_BSSISOLATIONENABLE, entry->IndexValue[0].Value.uValue);
+    rc = sprintf_s(name, sizeof(mystring), WIFI_DM_BSSISOLATIONENABLE, entry->IndexValue[0].Value.uValue);
+    if(rc < EOK)
+     {
+         ERR_CHK(rc);
+         return -1;
+     }
+
+
     CcspTraceInfo(("%s: called on entry: %d %s(%d)\n", __func__, entry->IndexValue[0].Value.uValue, mystring, sizeof(mystring)));
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
@@ -887,7 +1164,9 @@ static int getBssIsolationEnable(PCCSP_TABLE_ENTRY entry) {
         return -1;
     }
     
-    retval = _ansc_strncmp("false", valStr[0]->parameterValue, 5) ? 1 : 0;
+    rc =  strcmp_s("false",strlen("false"), valStr[0]->parameterValue, &ind);
+    ERR_CHK(rc);
+    retval = (ind)  ? 1 : 0;
     
     Cosa_FreeParamValues(nval, valStr);
     
@@ -897,9 +1176,10 @@ static int getBssIsolationEnable(PCCSP_TABLE_ENTRY entry) {
 static int setBssIsolationEnable(PCCSP_TABLE_ENTRY entry, int value) {
     parameterValStruct_t valStr;
 	int retval = 0;
-    char str[2][100];
+    char str[2][MAX_VAL_SET];
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
+    errno_t rc =-1;
     
     retval = FindWifiDestComp();
 	
@@ -911,8 +1191,20 @@ static int setBssIsolationEnable(PCCSP_TABLE_ENTRY entry, int value) {
     if (value != 1)
         value = 0;
 
-    sprintf(valStr.parameterName, WIFI_DM_BSSISOLATIONENABLE, entry->IndexValue[0].Value.uValue);
-    sprintf(valStr.parameterValue, "%s", value == 1 ? "true" : "false");
+    rc =sprintf_s(valStr.parameterName,MAX_VAL_SET, WIFI_DM_BSSISOLATIONENABLE, entry->IndexValue[0].Value.uValue);
+   if(rc < EOK)
+     {
+         ERR_CHK(rc);
+         return -1;
+     }
+
+   rc =  sprintf_s(valStr.parameterValue,MAX_VAL_SET, "%s", value == 1 ? "true" : "false");
+   if(rc < EOK)
+     {
+         ERR_CHK(rc);
+         return -1;
+     }
+
     valStr.type = ccsp_boolean;
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
@@ -1011,10 +1303,12 @@ static struct dot11_data_s gDot11Info[] = {
 static int mac_string_to_array(const char *pStr, unsigned char array[6])
 {
     int tmp[6],n,i;
+    errno_t rc =-1;
 	if(pStr == NULL)
 		return -1;
-		
-    memset(array,0,6);
+   		
+    rc = memset_s(array,MAX_ARRAY_VALUE,0,MAX_ARRAY_VALUE);
+    ERR_CHK(rc);
     n = sscanf(pStr,"%02x:%02x:%02x:%02x:%02x:%02x",&tmp[0],&tmp[1],&tmp[2],&tmp[3],&tmp[4],&tmp[5]);
     if(n==6){
         for(i=0;i<n;i++)
@@ -1030,11 +1324,18 @@ static int getBssid(PCCSP_TABLE_ENTRY pEntry, char *macArray)
 {
     char dmStr[128] = {'\0'};
     char mac[18] = {'\0'};
+    errno_t rc =-1;
 
     if(!macArray)
         return -1;
 
-    snprintf(dmStr, sizeof(dmStr), WIFI_DM_BSSID, pEntry->IndexValue[0].Value.uValue);
+     rc = sprintf_s(dmStr, sizeof(dmStr), WIFI_DM_BSSID, pEntry->IndexValue[0].Value.uValue);
+     if(rc < EOK)
+     {
+         ERR_CHK(rc);
+         return -1;
+     }
+
     if(get_dm_value(dmStr, mac, 18))
         return -1;
 
@@ -1045,11 +1346,18 @@ static int getBssid(PCCSP_TABLE_ENTRY pEntry, char *macArray)
 static int getDefaultSsid(PCCSP_TABLE_ENTRY pEntry, char *defaultssid)
 {
     char dmStr[128] = {'\0'};
+    errno_t rc =-1;
 
     if(!defaultssid)
         return -1;
 
-    snprintf(dmStr, sizeof(dmStr), WIFI_DM_DEFAULT_SSID, pEntry->IndexValue[0].Value.uValue);
+    rc = sprintf_s(dmStr, sizeof(dmStr), WIFI_DM_DEFAULT_SSID, pEntry->IndexValue[0].Value.uValue);
+     if(rc < EOK)
+     {
+         ERR_CHK(rc);
+         return -1;
+     }
+
     if(get_dm_value(dmStr, defaultssid, 33))
        return -1;
     	
@@ -1061,11 +1369,17 @@ static int getDefaultSsid(PCCSP_TABLE_ENTRY pEntry, char *defaultssid)
 static int getSsid(PCCSP_TABLE_ENTRY pEntry, char *ssid)
 {
     char dmStr[128] = {'\0'};
-
+    errno_t rc =-1;
     if(!ssid)
         return -1;
 
-    snprintf(dmStr, sizeof(dmStr), WIFI_DM_SSID, pEntry->IndexValue[0].Value.uValue);
+    rc = sprintf_s(dmStr, sizeof(dmStr), WIFI_DM_SSID, pEntry->IndexValue[0].Value.uValue);
+     if(rc < EOK)
+     {
+         ERR_CHK(rc);
+         return -1;
+     }
+
     if(get_dm_value(dmStr, ssid, 33))
         return -1;
 
@@ -1076,10 +1390,10 @@ static int setBssSsid(PCCSP_TABLE_ENTRY pEntry, const char *ssid)
 {
     parameterValStruct_t valStr;
 	int retval = 0;
-    char str[2][100];
+    char str[2][MAX_VAL_SET];
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
-    
+    errno_t rc =-1;    
     retval = FindWifiDestComp();
 	
 	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
@@ -1087,8 +1401,20 @@ static int setBssSsid(PCCSP_TABLE_ENTRY pEntry, const char *ssid)
        return -1;
     }
     
-    sprintf(valStr.parameterName, WIFI_DM_SSID, pEntry->IndexValue[0].Value.uValue);
-    sprintf(valStr.parameterValue, "%s", ssid);
+  rc =   sprintf_s(valStr.parameterName,MAX_VAL_SET, WIFI_DM_SSID, pEntry->IndexValue[0].Value.uValue);
+     if(rc < EOK)
+     {
+         ERR_CHK(rc);
+         return -1;
+     }
+
+   rc =  sprintf_s(valStr.parameterValue,MAX_VAL_SET, "%s", ssid);
+     if(rc < EOK)
+     {
+         ERR_CHK(rc);
+         return -1;
+     }
+
     valStr.type = ccsp_string;
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
@@ -1107,51 +1433,37 @@ static int getBssSecurityMode(PCCSP_TABLE_ENTRY pEntry)
 {
     char dmStr[128] = {'\0'};
     char dmValue[64] = {'\0'};
-    
+    int level = 0; 
     if(!pEntry)
         return -1;
+    errno_t rc =-1;
+    rc = sprintf_s(dmStr, sizeof(dmStr), WIFI_DM_BSS_SECURITY_MODE, pEntry->IndexValue[0].Value.uValue);
+    if(rc < EOK)
+     {
+         ERR_CHK(rc);
+         return -1;
+     }
 
-    snprintf(dmStr, sizeof(dmStr), WIFI_DM_BSS_SECURITY_MODE, pEntry->IndexValue[0].Value.uValue);
 
     if(get_dm_value(dmStr, dmValue, sizeof(dmValue)))
         return -1;
 
-#ifdef _XB6_PRODUCT_REQ_
-	if(!strcmp(dmValue, "None"))
-        return 0;
-	else if (!strcmp(dmValue, "WPA2-Personal"))
-        return 3;
-    else if (!strcmp(dmValue, "WPA2-Enterprise"))
-        return 5;
-	else
-        return 0;
-#else
-    if(!strcmp(dmValue, "None"))
-        return 0;
-    else if(!strcmp(dmValue, "WEP-128"))
-        return 1;
-    else if (!strcmp(dmValue, "WEP-64"))
-        return 1;
-    else if (!strcmp(dmValue, "WPA-Personal"))
-        return 2;
-    else if (!strcmp(dmValue, "WPA2-Personal"))
-        return 3;
-     else if (!strcmp(dmValue, "WPA2-Enterprise"))
-        return 5;
-    else if (!strcmp(dmValue, "WPA-WPA2-Personal"))
-        return 7;
-    else if (!strcmp(dmValue, "WPA-WPA2-Enterprise"))
-        return 8;
-    else
-        return 0;
+if (!dmValue_type_from_name(dmValue, &level))
+         {
+             return 0;
+         }
+#ifdef _XB6_PRODUCT_REQ
+        if((level != 3) && (level != 5))
+         return 0;
 #endif
+        return level;
 }
 
 static int setBssSecurityMode(PCCSP_TABLE_ENTRY pEntry, int mode)
 {
     parameterValStruct_t valStr[2];
 	int retval = 0;
-    char str[4][100];
+    char str[4][MAX_VAL_SET];
     valStr[0].parameterName=str[0];
     valStr[0].parameterValue=str[1];
     valStr[1].parameterName = str[2];
@@ -1159,51 +1471,69 @@ static int setBssSecurityMode(PCCSP_TABLE_ENTRY pEntry, int mode)
     int valCnt =1;
     unsigned int algor = 2;
     char modeStr[64] = {'\0'};
-    
-    switch(mode){
+    errno_t rc = -1;
+
 #ifdef _XB6_PRODUCT_REQ_
-		case 0:
-            _ansc_strcpy(modeStr, "None");
-            break;
+	switch(mode){
+	       case 0:
+               rc =  strcpy_s(modeStr,sizeof(modeStr), "None");
+               if(rc != EOK)
+                {
+                       ERR_CHK(rc);
+                       return -1;
+                }
+                break;
 		case 3:
-            _ansc_strcpy(modeStr, "WPA2-Personal");
-            break;
-		case 5:
-            _ansc_strcpy(modeStr, "WPA2-Enterprise");
-            break;
+                rc = strcpy_s(modeStr,sizeof(modeStr), "WPA2-Personal");
+                 if(rc != EOK)
+                {
+                       ERR_CHK(rc);
+                       return -1;
+                }
+
+                break;
+	        case 5:
+                rc = strcpy_s(modeStr,sizeof(modeStr), "WPA2-Enterprise");
+                if(rc != EOK)
+                {
+                       ERR_CHK(rc);
+                       return -1;
+                }
+           
+                break;
 		default:
             //TODO: do nothing
-            return 0;	
-#else
-        case 0:
-            _ansc_strcpy(modeStr, "None");
-            break;
-        case 1:
-            _ansc_strcpy(modeStr, "WEP-128");
-            break;
-        case 2:
-            _ansc_strcpy(modeStr, "WPA-Personal");
-            break;
-        case 3:
-            _ansc_strcpy(modeStr, "WPA2-Personal");
-            break;
-	case 5:
-            _ansc_strcpy(modeStr, "WPA2-Enterprise");
-            break;
-        case 7:
-            _ansc_strcpy(modeStr, "WPA-WPA2-Personal");
-            break;
-	case 8:
-            _ansc_strcpy(modeStr, "WPA-WPA2-Enterprise");
-            break;
-        default:
-            //TODO: do nothing
             return 0;
-#endif
+        }
+#else
+
+   if (mode >= 0 && mode <= 8)
+   {
+        rc = strcpy_s(modeStr, sizeof(modeStr), dmValue_type_table[mode].name);
+        
+        if (rc != EOK) {
+            ERR_CHK(rc);
+            return -1;
+        }
     }
-    
-    sprintf(valStr[0].parameterName, WIFI_DM_BSS_SECURITY_MODE, pEntry->IndexValue[0].Value.uValue);
-    sprintf(valStr[0].parameterValue, "%s", modeStr);
+    else
+       return 0;   //TODO: do nothing
+      
+#endif
+
+    rc = sprintf_s(valStr[0].parameterName,MAX_VAL_SET, WIFI_DM_BSS_SECURITY_MODE, pEntry->IndexValue[0].Value.uValue);
+    if(rc < EOK)
+    {
+       ERR_CHK(rc);
+       return -1;
+    }
+    rc = sprintf_s(valStr[0].parameterValue,MAX_VAL_SET, "%s", modeStr);
+    if(rc < EOK)
+    {
+       ERR_CHK(rc);
+       return -1;
+    }
+
     valStr[0].type = ccsp_string;
 
     retval = FindWifiDestComp();
@@ -1213,8 +1543,20 @@ static int setBssSecurityMode(PCCSP_TABLE_ENTRY pEntry, int mode)
     }
     if(mode == 3)
     {
-		sprintf(valStr[1].parameterValue, "%s", "AES");
-		sprintf(valStr[1].parameterName, WIFI_DM_BSS_ENCRYPTION, pEntry->IndexValue[0].Value.uValue);
+		rc = sprintf_s(valStr[1].parameterValue,MAX_VAL_SET, "%s", "AES");
+                if(rc < EOK)
+                {
+                  ERR_CHK(rc);
+                  return -1;
+                }
+
+		rc =sprintf_s(valStr[1].parameterName,MAX_VAL_SET, WIFI_DM_BSS_ENCRYPTION, pEntry->IndexValue[0].Value.uValue);
+                if(rc < EOK)
+                {
+                  ERR_CHK(rc);
+                  return -1;
+                }
+
         valStr[1].type = ccsp_string;
 		valCnt = 2;
     }
@@ -1222,8 +1564,21 @@ static int setBssSecurityMode(PCCSP_TABLE_ENTRY pEntry, int mode)
 #ifndef _XB6_PRODUCT_REQ_
     else if(mode == 7)
     {	
-		sprintf(valStr[1].parameterValue, "%s", "AES+TKIP");
-		sprintf(valStr[1].parameterName, WIFI_DM_BSS_ENCRYPTION, pEntry->IndexValue[0].Value.uValue);
+		rc = sprintf_s(valStr[1].parameterValue,MAX_VAL_SET, "%s", "AES+TKIP");
+                if(rc < EOK)
+                {
+                  ERR_CHK(rc);
+                  return -1;
+                }
+
+		rc = sprintf_s(valStr[1].parameterName, MAX_VAL_SET,WIFI_DM_BSS_ENCRYPTION, pEntry->IndexValue[0].Value.uValue);
+                if(rc < EOK)
+                {
+                  ERR_CHK(rc);
+                  return -1;
+                }
+
+               
         valStr[1].type = ccsp_string;
 		valCnt = 2;
     }
@@ -1244,8 +1599,15 @@ static int getBssMaxNumSta(PCCSP_TABLE_ENTRY pEntry)
 {
     char dmStr[128] = {'\0'};
     char dmValue[64] = {'\0'};
+    errno_t rc =-1;
 
-    snprintf(dmStr, sizeof(dmStr), WIFI_DM_BSS_MAX_NUM_STA, pEntry->IndexValue[0].Value.uValue);
+    rc = sprintf_s(dmStr, sizeof(dmStr), WIFI_DM_BSS_MAX_NUM_STA, pEntry->IndexValue[0].Value.uValue);
+   if(rc < EOK)
+   {
+      ERR_CHK(rc);
+      return -1;
+    }
+
 
     if(get_dm_value(dmStr, dmValue, sizeof(dmValue)))
         return -1;
@@ -1257,19 +1619,32 @@ static int setBssMaxNumSta(PCCSP_TABLE_ENTRY pEntry, int num)
 {
     parameterValStruct_t valStr;
 	int retval = 0;
-    char str[2][80];
+    char str[2][MAX_VAL_LEVEL];
     valStr.parameterName = str[0];
     valStr.parameterValue = str[1];
     int valCnt =1;
-
+    errno_t rc =-1;
     retval = FindWifiDestComp();
     CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
     
-    sprintf(valStr.parameterName, WIFI_DM_BSS_MAX_NUM_STA, pEntry->IndexValue[0].Value.uValue);
-    sprintf(valStr.parameterValue, "%u", num);
+    rc = sprintf_s(valStr.parameterName,MAX_VAL_LEVEL, WIFI_DM_BSS_MAX_NUM_STA, pEntry->IndexValue[0].Value.uValue);
+    if(rc < EOK)
+   {
+      ERR_CHK(rc);
+      return -1;
+    }
+
+    rc = sprintf_s(valStr.parameterValue,MAX_VAL_LEVEL, "%u", num);
+    if(rc < EOK)
+   {
+      ERR_CHK(rc);
+      return -1;
+    }
+
+    
     valStr.type = ccsp_int;
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, valCnt))
     {
@@ -1285,9 +1660,16 @@ static int setBssMaxNumSta(PCCSP_TABLE_ENTRY pEntry, int num)
 static int getBssUserStatus(PCCSP_TABLE_ENTRY pEntry)
 {
     char dmStr[128] = {'\0'};
-    char dmValue[64] = {'\0'};
+     char dmValue[64] = {'\0'};
+     errno_t rc =-1;
 
-    snprintf(dmStr, sizeof(dmStr), WIFI_DM_BSS_USER_STATUS, pEntry->IndexValue[0].Value.uValue);
+   rc =   sprintf_s(dmStr, sizeof(dmStr), WIFI_DM_BSS_USER_STATUS, pEntry->IndexValue[0].Value.uValue);
+   if(rc < EOK)
+   {
+      ERR_CHK(rc);
+      return -1;
+    }
+
 
     if(get_dm_value(dmStr, dmValue, sizeof(dmValue)))
         return -1;
@@ -1402,7 +1784,7 @@ int intval = -1; /*RDKB-6911, CID-32993, init before use*/
 int retval=SNMP_ERR_NOERROR;
 PCCSP_TABLE_ENTRY entry = NULL;
 netsnmp_variable_list *vb = NULL;
-unsigned char mac[6] = {'\0'};
+unsigned char mac[MAX_ARRAY_VALUE] = {'\0'};
 char ssid[33] = {'\0'}, defaultssid[33] = {'\0'};
 char mode[33]= {'\0'};
 
@@ -1731,7 +2113,7 @@ static int getCurrentChannel (PCCSP_TABLE_ENTRY entry) {
     int nval = 0, retval = 0;
     char str[2][80];
     char * name[2] = {(char*) str[0], (char*) str[1]};
-    
+    errno_t rc =-1; 
     retval = FindWifiDestComp(); 
 	
 	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
@@ -1739,8 +2121,18 @@ static int getCurrentChannel (PCCSP_TABLE_ENTRY entry) {
        return -1;
     }
     
-    snprintf(str[0], sizeof(str[0]),WIFI_DM_AUTOCHAN,entry->IndexValue[0].Value.uValue);
-    snprintf(str[1], sizeof(str[1]),WIFI_DM_CHANNEL,entry->IndexValue[0].Value.uValue);
+   rc =  sprintf_s(str[0], sizeof(str[0]),WIFI_DM_AUTOCHAN,entry->IndexValue[0].Value.uValue);
+   if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return -1;
+      }
+    rc = sprintf_s(str[1], sizeof(str[1]),WIFI_DM_CHANNEL,entry->IndexValue[0].Value.uValue);
+    if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return -1;
+      }
 
     if (!Cosa_GetParamValues(dstComp, dstPath, name, 2, &nval, &valStr))
     {
@@ -1773,6 +2165,8 @@ static int getWmm(PCCSP_TABLE_ENTRY entry) {
     int nval= 0, retval = 0;
     char mystring[80]= {0};
     char* name = (char *)mystring;
+    errno_t rc =-1;
+    int ind =-1;
     
     CcspTraceInfo(("getWmm called on entry: %d (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
@@ -1784,7 +2178,12 @@ static int getWmm(PCCSP_TABLE_ENTRY entry) {
     }
 	
     /*Only perform get on one accesspoint, since all are set at same time. Assume 1 = 1 and 2 = 2 association in both AccessPoint and Radio tables*/
-    snprintf(name, sizeof(mystring), WIFI_DM_WMM_ENABLE, entry->IndexValue[0].Value.uValue);
+    rc = sprintf_s(name, sizeof(mystring), WIFI_DM_WMM_ENABLE, entry->IndexValue[0].Value.uValue);
+    if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return -1;
+      }
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
         CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
@@ -1797,7 +2196,9 @@ static int getWmm(PCCSP_TABLE_ENTRY entry) {
         return -1;
     }
     
-    retval = _ansc_strncmp("true", valStr[0]->parameterValue, 4) ? 0 : 1;
+    rc = strcmp_s("true",strlen("true"),valStr[0]->parameterValue,&ind);
+    ERR_CHK(rc); 
+    retval = (ind) ? 0 : 1;
     
     Cosa_FreeParamValues(nval, valStr);
     
@@ -1810,6 +2211,7 @@ static int getWmmNoAck(PCCSP_TABLE_ENTRY entry){
     int nval = 0, retval = 0;
     char mystring[80]= {0};
     char* name = (char *)mystring;
+    errno_t rc =-1;
     
     CcspTraceInfo(("getWmmNoAck called on entry: %d (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
@@ -1821,7 +2223,12 @@ static int getWmmNoAck(PCCSP_TABLE_ENTRY entry){
     }
 	
     /*Only perform get on one accesspoint, since all are set at same time. Assume 1 = 1 and 2 = 2 association in both AccessPoint and Radio tables*/
-    snprintf(name, sizeof(mystring), WIFI_DM_WMM_NOACK, entry->IndexValue[0].Value.uValue);
+    rc = sprintf_s(name, sizeof(mystring), WIFI_DM_WMM_NOACK, entry->IndexValue[0].Value.uValue);
+    if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return -1;
+      }
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
         CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
@@ -1847,6 +2254,7 @@ static int getMcastRate(PCCSP_TABLE_ENTRY entry){
     int nval = 0, retval = 0;
     char mystring[80]= {0};
     char* name = (char *)mystring;
+    errno_t rc =-1;
     
     CcspTraceInfo(("getMcastRate called on entry: %d (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
@@ -1858,7 +2266,12 @@ static int getMcastRate(PCCSP_TABLE_ENTRY entry){
     }
 	
     /*Only perform get on one accesspoint, since all are set at same time. Assume 1 = 1 and 2 = 2 association in both AccessPoint and Radio tables*/
-    snprintf(name, sizeof(mystring), WIFI_DM_MCASTRATE, entry->IndexValue[0].Value.uValue);
+    rc = sprintf_s(name, sizeof(mystring), WIFI_DM_MCASTRATE, entry->IndexValue[0].Value.uValue);
+    if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return -1;
+      }
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
         CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
@@ -1885,6 +2298,7 @@ static int getCountry(PCCSP_TABLE_ENTRY entry){
     int nval = 0, retval = 0;
     char mystring[80] =  {0};
     char* name = (char *)mystring;
+    errno_t rc =-1;
 
     CcspTraceInfo(("%s called on entry: %d (%d)\n", __FUNCTION__, entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
@@ -1896,7 +2310,12 @@ static int getCountry(PCCSP_TABLE_ENTRY entry){
     }
 	
     /*Only perform get on one accesspoint, since all are set at same time. Assume 1 = 1 and 2 = 2 association in both AccessPoint and Radio tables*/
-    snprintf(name, sizeof(mystring), WIFI_DM_RADIO_COUNTRY, entry->IndexValue[0].Value.uValue);
+    rc = sprintf_s(name, sizeof(mystring), WIFI_DM_RADIO_COUNTRY, entry->IndexValue[0].Value.uValue);
+    if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return -1;
+      }
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
         CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
@@ -1926,6 +2345,7 @@ static int getMbssUserControl(PCCSP_TABLE_ENTRY entry)
     int nval = 0, retval = 0;
     char mystring[80]= {0};
     char* name = (char *)mystring;
+    errno_t rc =-1;
 
     CcspTraceInfo(("%s called on entry: %d (%d)\n", __FUNCTION__, entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
@@ -1937,7 +2357,12 @@ static int getMbssUserControl(PCCSP_TABLE_ENTRY entry)
     }
 	
     /*Only perform get on one accesspoint, since all are set at same time. Assume 1 = 1 and 2 = 2 association in both AccessPoint and Radio tables*/
-    snprintf(name, sizeof(mystring), WIFI_DM_RADIO_USERCONTROL, entry->IndexValue[0].Value.uValue);
+    rc = sprintf_s(name, sizeof(mystring), WIFI_DM_RADIO_USERCONTROL, entry->IndexValue[0].Value.uValue);
+    if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return -1;
+      }
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
         CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
@@ -1965,6 +2390,7 @@ static int getMbssAdminControl(PCCSP_TABLE_ENTRY entry)
     int nval = 0, retval = 0;
     char mystring[80] = {0};
     char* name = (char *)mystring;
+    errno_t rc =-1;
     
     CcspTraceInfo(("%s called on entry: %d (%d)\n", __FUNCTION__, entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
@@ -1976,7 +2402,13 @@ static int getMbssAdminControl(PCCSP_TABLE_ENTRY entry)
     }
 	
     /*Only perform get on one accesspoint, since all are set at same time. Assume 1 = 1 and 2 = 2 association in both AccessPoint and Radio tables*/
-    snprintf(name, sizeof(mystring),  WIFI_DM_RADIO_ADMINCONTROL, entry->IndexValue[0].Value.uValue);
+    rc = sprintf_s(name, sizeof(mystring),  WIFI_DM_RADIO_ADMINCONTROL, entry->IndexValue[0].Value.uValue);
+     if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return -1;
+      }
+
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
         CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
@@ -2003,7 +2435,7 @@ static int getOperMode(PCCSP_TABLE_ENTRY entry){
     int nval = 0, retval = 0;
     char str[80] = {0};
     char * name = (char*) str;
-    
+    errno_t rc =-1; 
     /*Fetching*/
     retval = FindWifiDestComp(); 
 	
@@ -2012,7 +2444,14 @@ static int getOperMode(PCCSP_TABLE_ENTRY entry){
        return -1;
     }
     
-    snprintf(str, sizeof(str),WIFI_DM_RADIO_ENABLE,entry->IndexValue[0].Value.uValue);
+    rc = sprintf_s(str, sizeof(str),WIFI_DM_RADIO_ENABLE,entry->IndexValue[0].Value.uValue);
+    if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return -1;
+      }
+
+    
     
 
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
@@ -2044,13 +2483,13 @@ static int getOperMode(PCCSP_TABLE_ENTRY entry){
 static int setCurrentChannel(PCCSP_TABLE_ENTRY entry, int val){
     parameterValStruct_t valStr[2];
 	int retval = 0;
-    char str[4][80];
+    char str[4][MAX_VAL_LEVEL];
     valStr[0].parameterName = str[0];
     valStr[0].parameterValue = str[1];
     valStr[1].parameterName = str[2];
     valStr[1].parameterValue = str[3];
     int valCnt =1;
-    
+    errno_t rc =-1; 
     retval = FindWifiDestComp(); 
 	
 	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
@@ -2058,20 +2497,50 @@ static int setCurrentChannel(PCCSP_TABLE_ENTRY entry, int val){
        return -1;
     }
     
-    sprintf(valStr[0].parameterName, WIFI_DM_AUTOCHAN, entry->IndexValue[0].Value.uValue);
+    rc = sprintf_s(valStr[0].parameterName,MAX_VAL_LEVEL, WIFI_DM_AUTOCHAN, entry->IndexValue[0].Value.uValue);
+    if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return -1;
+      }
+
     valStr[0].type = ccsp_boolean;
     if (val == 0) {
         /*Set Autochannel*/
-        sprintf(valStr[0].parameterValue, "%s", "true");
+       rc =      sprintf_s(valStr[0].parameterValue,MAX_VAL_LEVEL, "%s", "true");
+        if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return -1;
+      }
+
 	//Log will be printed inside SNMP.txt in rdklogs//RDKB-23380
 	CcspTraceInfo(("RDKB_SNMP : Autochannel is Enabled through SNMP for Radio %u\n",entry->IndexValue[0].Value.uValue));
     } else {
         /*Explicitly set the channel*/
-        sprintf(valStr[0].parameterValue, "%s", "false");
-        sprintf(valStr[1].parameterName, WIFI_DM_CHANNEL, entry->IndexValue[0].Value.uValue);
+        rc = sprintf_s(valStr[0].parameterValue,MAX_VAL_LEVEL, "%s", "false");
+        if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return -1;
+      }
+
+       rc =  sprintf_s(valStr[1].parameterName,MAX_VAL_LEVEL, WIFI_DM_CHANNEL, entry->IndexValue[0].Value.uValue);
+       if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return -1;
+      }
+
         valStr[1].type = ccsp_unsignedInt;
         valCnt = 2;
-        sprintf(valStr[1].parameterValue, "%u", val);
+       rc =  sprintf_s(valStr[1].parameterValue,MAX_VAL_LEVEL, "%u", val);
+       if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return -1;
+      }
+
 	//Log will be printed inside SNMP.txt in rdklogs//RDKB-23380
 	CcspTraceInfo(("RDKB_SNMP : Autochannel is Disabled through SNMP\n"));
 	CcspTraceInfo(("RDKB_SNMP : Channel is Modified for Radio %u and channel selected is %u \n",entry->IndexValue[0].Value.uValue,val));
@@ -2093,6 +2562,7 @@ static int setWmm(PCCSP_TABLE_ENTRY entry, int val){
     char str[MAX_APS_PER_RADIO][50] = {0};
     char valueString[10]= {0};
     int aps = MAX_APS_PER_RADIO;
+    errno_t rc =-1;
     
     retval = FindWifiDestComp(); 
 	
@@ -2101,7 +2571,13 @@ static int setWmm(PCCSP_TABLE_ENTRY entry, int val){
        return -1;
     }
 
-    sprintf(valueString, "%s", val ? "true" : "false");
+    rc = sprintf_s(valueString,sizeof(valueString), "%s", val ? "true" : "false");
+     if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return -1;
+      }
+
     
     // When enabling first enable Wmm then UAPSD
     if (val == 1) {
@@ -2151,8 +2627,13 @@ static int setWmmNoAck(PCCSP_TABLE_ENTRY entry, int val){
     char str[MAX_APS_PER_RADIO][60];
     char valueString[5];
     int aps = MAX_APS_PER_RADIO;
-    
-    sprintf(valueString, "%d", val);
+    errno_t rc =-1;   
+     rc = sprintf_s(valueString,sizeof(valueString), "%d", val);
+     if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return -1;
+      }
     
     SetAllAPsonRadio(entry->IndexValue[0].Value.uValue, valStr, str, 60, &aps, WIFI_DM_WMM_NOACK, valueString, ccsp_int);
     
@@ -2179,8 +2660,15 @@ static int setMcastRate(PCCSP_TABLE_ENTRY entry, int val){
     char str[MAX_APS_PER_RADIO][60] = {0};
     char valueString[5] = {0};
     int aps = MAX_APS_PER_RADIO;
+    errno_t rc =-1;
     
-    sprintf(valueString, "%d", val);
+    rc = sprintf_s(valueString,sizeof(valueString), "%d", val);
+    if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return -1;
+      }
+
     
     SetAllAPsonRadio(entry->IndexValue[0].Value.uValue, valStr, str, 60, &aps, WIFI_DM_MCASTRATE, valueString, ccsp_int);
     
@@ -2208,10 +2696,11 @@ static int setMbssUserControl(PCCSP_TABLE_ENTRY entry, int val)
 {
     parameterValStruct_t valStr;
 	int retval = 0;
-    char str[2][80];
+    char str[2][MAX_VAL_LEVEL];
     valStr.parameterName = str[0];
     valStr.parameterValue = str[1];
     int valCnt =1;
+    errno_t rc =-1;
     
     retval = FindWifiDestComp(); 
 	
@@ -2220,9 +2709,20 @@ static int setMbssUserControl(PCCSP_TABLE_ENTRY entry, int val)
        return -1;
     }
     
-    sprintf(valStr.parameterName, WIFI_DM_RADIO_USERCONTROL, entry->IndexValue[0].Value.uValue);
+    rc = sprintf_s(valStr.parameterName,MAX_VAL_LEVEL, WIFI_DM_RADIO_USERCONTROL, entry->IndexValue[0].Value.uValue);
+    if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return -1;
+      }
+    
     val = (val >> 16);
-    sprintf(valStr.parameterValue, "%u", val );
+    rc = sprintf_s(valStr.parameterValue,MAX_VAL_LEVEL, "%u", val );
+    if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return -1;
+      }
     valStr.type = ccsp_int;
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, valCnt))
     {
@@ -2237,10 +2737,11 @@ static int setMbssAdminControl(PCCSP_TABLE_ENTRY entry, int val)
 {
     parameterValStruct_t valStr;
 	int retval = 0;
-    char str[2][80];
+    char str[2][MAX_VAL_LEVEL];
     valStr.parameterName = str[0];
     valStr.parameterValue = str[1];
     int valCnt =1;
+    errno_t rc =-1;
     
     retval = FindWifiDestComp(); 
 	
@@ -2249,9 +2750,21 @@ static int setMbssAdminControl(PCCSP_TABLE_ENTRY entry, int val)
        return -1;
     }
     
-    sprintf(valStr.parameterName, WIFI_DM_RADIO_ADMINCONTROL, entry->IndexValue[0].Value.uValue);
+    rc = sprintf_s(valStr.parameterName,MAX_VAL_LEVEL, WIFI_DM_RADIO_ADMINCONTROL, entry->IndexValue[0].Value.uValue);
+    if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return -1;
+      }
+
     val = (val >> 16);
-    sprintf(valStr.parameterValue, "%u", val );
+   rc =  sprintf_s(valStr.parameterValue,MAX_VAL_LEVEL ,"%u", val );
+   if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return -1;
+      }
+
     valStr.type = ccsp_int;
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, valCnt))
     {
@@ -2265,19 +2778,30 @@ static int setMbssAdminControl(PCCSP_TABLE_ENTRY entry, int val)
 static int setOperMode(PCCSP_TABLE_ENTRY entry, int val){
     parameterValStruct_t valStr;
 	int retval = 0;
-    char str[2][100];
+    char str[2][MAX_VAL_SET];
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
     
     retval = FindWifiDestComp(); 
+    errno_t rc =-1;
 	
 	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
 
-    sprintf(valStr.parameterName, WIFI_DM_RADIO_ENABLE, entry->IndexValue[0].Value.uValue);
-    sprintf(valStr.parameterValue, "%s", val == 1 || val == 0 ? "false" : "true");
+    rc = sprintf_s(valStr.parameterName,MAX_VAL_SET, WIFI_DM_RADIO_ENABLE, entry->IndexValue[0].Value.uValue);
+    if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return -1;
+      }
+   rc =  sprintf_s(valStr.parameterValue,MAX_VAL_SET, "%s", val == 1 || val == 0 ? "false" : "true");
+    if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return -1;
+      }
     valStr.type = ccsp_boolean;
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
@@ -2601,7 +3125,7 @@ int getNMode(PCCSP_TABLE_ENTRY entry)
 #endif
     char mystring[50]= {0};
     char* name = (char *)mystring;
-    
+     errno_t rc =-1; 
     //AnscTraceWarning(("getBssEnable called on entry: %d (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
     retval = FindWifiDestComp(); 
@@ -2611,7 +3135,12 @@ int getNMode(PCCSP_TABLE_ENTRY entry)
        return -1;
     }
     
-    snprintf(name, sizeof(mystring), WIFI_DM_OPERSTD, entry->IndexValue[0].Value.uValue);
+    rc = sprintf_s(name, sizeof(mystring), WIFI_DM_OPERSTD, entry->IndexValue[0].Value.uValue);  
+    if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return -1;
+      }
   
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
@@ -2690,10 +3219,11 @@ int setNMode(PCCSP_TABLE_ENTRY entry, int val)
 {
     parameterValStruct_t valStr;
 	int retval = 0;
-    char str[2][100];
+    char str[2][MAX_VAL_SET];
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
     int fiveG;
+    errno_t rc =-1;
     
     retval = FindWifiDestComp(); 
 	
@@ -2702,7 +3232,12 @@ int setNMode(PCCSP_TABLE_ENTRY entry, int val)
        return -1;
     }
 
-    sprintf(valStr.parameterName, WIFI_DM_OPERSTD, entry->IndexValue[0].Value.uValue);
+    rc = sprintf_s(valStr.parameterName,MAX_VAL_SET, WIFI_DM_OPERSTD, entry->IndexValue[0].Value.uValue);
+     if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return -1;
+      }
 
     // Init string
     valStr.parameterValue[0]  = '\0';
@@ -2736,27 +3271,60 @@ int setNMode(PCCSP_TABLE_ENTRY entry, int val)
 
     if (fiveG) { // 5 GHz
         if (val & kAMask) {
-            strcat(valStr.parameterValue,"a,");
+            rc = strcat_s(valStr.parameterValue,MAX_VAL_SET,"a,");
+              if(rc != EOK)
+             {
+                  ERR_CHK(rc);
+                  return -1;
+             }
+
         }
         if (val & kACMask) {
-            strcat(valStr.parameterValue,"ac,");
+               rc =    strcat_s(valStr.parameterValue,MAX_VAL_SET,"ac,");
+               if(rc != EOK)
+             {
+                  ERR_CHK(rc);
+                  return -1;
+             }
         }
     } else { // 2.4 GHz
         if (val & kBMask) {
-            strcat(valStr.parameterValue,"b,");
+            rc = strcat_s(valStr.parameterValue,MAX_VAL_SET,"b,");
+             if(rc != EOK)
+             {
+                  ERR_CHK(rc);
+                  return -1;
+             }
         }
         if (val & kGMask) {
-            strcat(valStr.parameterValue,"g,");
+            rc = strcat_s(valStr.parameterValue,MAX_VAL_SET,"g,");
+            if(rc != EOK)
+             {
+                  ERR_CHK(rc);
+                  return -1;
+             }
         }
     }
 
     // Can be on both 2.4 or 5
     if (val & kNMask) {
-        strcat(valStr.parameterValue,"n,");
+         rc = strcat_s(valStr.parameterValue,MAX_VAL_SET,"n,");
+          if(rc != EOK)
+             {
+                  ERR_CHK(rc);
+                  return -1;
+             }
+
     }
 #if defined (_WIFI_AX_SUPPORT_)
     if (val & kAXMask) {
-        strcat(valStr.parameterValue,"ax,");
+      rc =   strcat_s(valStr.parameterValue,MAX_VAL_SET,"ax,");
+      if(rc != EOK)
+             {
+                  ERR_CHK(rc);
+                  return -1;
+             }
+
     }
 #endif
     // remove last comma
@@ -2779,8 +3347,10 @@ int getNPhyRate(PCCSP_TABLE_ENTRY entry) {
     char* name = (char *)mystring;
     CcspTraceInfo(("%s: not implemented\n", __func__));
     return 0; //TODO: DATA MODEL NOT READY. IMPLEMENTATION DEFERRED.
+    errno_t rc =-1;    
+
     //AnscTraceWarning(("getBssEnable called on entry: %d (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
-/*CID: 67296 Structurally dead code*/
+    /*CID: 67296 Structurally dead code*/
 #if 0 
     retval = FindWifiDestComp(); 
 	
@@ -2789,7 +3359,12 @@ int getNPhyRate(PCCSP_TABLE_ENTRY entry) {
        return -1;
     }
     
-    snprintf(name, sizeof(mystring), WIFI_DM_NPHYRATE, entry->IndexValue[0].Value.uValue);
+    rc = sprintf_s(name, sizeof(mystring), WIFI_DM_NPHYRATE, entry->IndexValue[0].Value.uValue);
+    if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return -1;
+      }
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
         CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
@@ -2813,13 +3388,16 @@ int getNPhyRate(PCCSP_TABLE_ENTRY entry) {
 int setNPhyRate(PCCSP_TABLE_ENTRY entry, int val) {
     parameterValStruct_t valStr;
 	int retval = 0;
-    char str[2][100];
+    char str[2][MAX_VAL_SET];
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
     CcspTraceInfo(("%s: not implemented\n", __func__));
     return 0; //TODO: DATA MODEL NOT READY. IMPLEMENTATION DEFERRED.
+    errno_t rc =-1;
+
     /* CID: 70719 Structurally dead code*/
 #if 0
+    
     retval = FindWifiDestComp(); 
 	
 	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
@@ -2827,8 +3405,19 @@ int setNPhyRate(PCCSP_TABLE_ENTRY entry, int val) {
        return -1;
     }
 
-    sprintf(valStr.parameterName, WIFI_DM_NPHYRATE, entry->IndexValue[0].Value.uValue);
-    sprintf(valStr.parameterValue, "%s", val == 1 ? "true" : "false"); //TODO: MAPPING
+    rc = sprintf_s(valStr.parameterName,MAX_VAL_SET, WIFI_DM_NPHYRATE, entry->IndexValue[0].Value.uValue);
+    if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return -1;
+      }
+   rc =  sprintf_s(valStr.parameterValue,MAX_VAL_SET, "%s", val == 1 ? "true" : "false"); //TODO: MAPPING
+    if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return -1;
+      }
+
     valStr.type = ccsp_boolean;
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
@@ -2990,15 +3579,19 @@ handleNExtTable(
 static int getWpaDefaultPSK(PCCSP_TABLE_ENTRY pEntry, char *key)
 {
     char dmStr[128] = {'\0'};
-
-	
+    errno_t rc =-1;	
 
     if(!key)
         return -1;
 
 	
 
-    snprintf(dmStr, sizeof(dmStr), WIFI_DM_DEFAULT_PSK, pEntry->IndexValue[0].Value.uValue);
+    rc =sprintf_s(dmStr, sizeof(dmStr), WIFI_DM_DEFAULT_PSK, pEntry->IndexValue[0].Value.uValue);
+    if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return -1;
+      }
     if(get_dm_value(dmStr, key, 64))
         return -1;
 
@@ -3010,11 +3603,17 @@ static int getWpaDefaultPSK(PCCSP_TABLE_ENTRY pEntry, char *key)
 static int getWpaPSK(PCCSP_TABLE_ENTRY pEntry, char *key)
 {
     char dmStr[128] = {'\0'};
+    errno_t rc =-1;
 
     if(!key)
         return -1;
 
-    snprintf(dmStr, sizeof(dmStr), WIFI_DM_PSK, pEntry->IndexValue[0].Value.uValue);
+   rc =  sprintf_s(dmStr, sizeof(dmStr), WIFI_DM_PSK, pEntry->IndexValue[0].Value.uValue);
+   if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return -1;
+      }
     if(get_dm_value(dmStr, key, 64))
         return -1;
 
@@ -3024,11 +3623,12 @@ static int getWpaPSK(PCCSP_TABLE_ENTRY pEntry, char *key)
 int setWpaPSK(PCCSP_TABLE_ENTRY entry, char *key, int keyLen) {
     parameterValStruct_t valStr;
 	int retval = 0;
-    char str[2][100];
+    char str[2][MAX_VAL_SET];
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
     char *mappedVal;
     int fiveG;
+    errno_t rc =-1;
     
     retval = FindWifiDestComp(); 
 	
@@ -3037,8 +3637,18 @@ int setWpaPSK(PCCSP_TABLE_ENTRY entry, char *key, int keyLen) {
        return -1;
     }
 
-    sprintf(valStr.parameterName, WIFI_DM_PSK, entry->IndexValue[0].Value.uValue);
-    sprintf(valStr.parameterValue, "%s", key); 
+    rc =  sprintf_s(valStr.parameterName,MAX_VAL_SET, WIFI_DM_PSK, entry->IndexValue[0].Value.uValue);
+    if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return -1;
+      }
+     rc = sprintf_s(valStr.parameterValue,MAX_VAL_SET, "%s", key); 
+     if(rc < EOK)
+     {
+            ERR_CHK(rc);
+            return -1;
+      }
     valStr.type = ccsp_string;
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, &valStr, 1))
@@ -3067,6 +3677,8 @@ handleDot11WpaTable(
     char value[64]={'\0'},defpskvalue[64]={'\0'};
     char buf[10]={'\0'};
     char emptyString[] = {'\0'};
+    errno_t rc=-1;
+    int ind =-1;
 
     //Initializing syscfg here
     syscfg_init();
@@ -3104,16 +3716,18 @@ handleDot11WpaTable(
                     {
                         syscfg_get( NULL, "SNMPPSWDCTRLFLAG", buf, sizeof(buf));
                         /*  CID: 60053 -Array name cant be NULL - remove the check buf != NULL*/
-                        // if SNMPPSWDCTRLFLAG == false, then Get is not allowed
-                        if (strcmp(buf, "false") == 0)
-                        {
-                             snmp_set_var_typed_value(req->requestvb, (u_char)ASN_OCTET_STR, (u_char *)&emptyString, strlen(emptyString));
-                         }
-                         else
-                         {
-                             getWpaPSK(entry,value);
-                             snmp_set_var_typed_value(req->requestvb, (u_char)ASN_OCTET_STR, (u_char *)&value, strlen(value));
-                          }
+                            // if SNMPPSWDCTRLFLAG == false, then Get is not allowed
+                            rc =strcmp_s( "false",strlen("false"),buf,&ind);
+                            ERR_CHK(rc);
+                            if((!ind) && (rc == EOK))
+                            {
+                                snmp_set_var_typed_value(req->requestvb, (u_char)ASN_OCTET_STR, (u_char *)&emptyString, strlen(emptyString));
+                            }
+                            else
+                            {
+                                getWpaPSK(entry,value);
+                                snmp_set_var_typed_value(req->requestvb, (u_char)ASN_OCTET_STR, (u_char *)&value, strlen(value));
+                            }
                     }
                      // This parameter can't be read, but snmp was defined as read/write
                     //unsigned char value = '\0';
@@ -3160,7 +3774,10 @@ handleDot11WpaTable(
                         if( buf != NULL )
                         {
                             // if SNMPPSWDCTRLFLAG == false, Set is not allowed
-                            if (strcmp(buf, "false") == 0)
+                             rc =strcmp_s( "false",strlen("false"),buf,&ind);
+                            ERR_CHK(rc);
+                            if((!ind) && (rc == EOK))
+
                             {
                                 netsnmp_request_set_error(req, SNMP_ERR_NOTWRITABLE);
                                 return SNMP_ERR_GENERR;
@@ -3208,7 +3825,9 @@ handleDot11WpaTable(
                         if( buf != NULL )
                         {
                             // if SNMPPSWDCTRLFLAG == false, Set is not allowed
-                            if (strcmp(buf, "false") == 0)
+                            rc =strcmp_s( "false",strlen("false"),buf,&ind);
+                            ERR_CHK(rc);
+                            if((!ind) && (rc == EOK))
                             {
                                 netsnmp_request_set_error(req, SNMP_ERR_NOTWRITABLE);
                                 return SNMP_ERR_GENERR;

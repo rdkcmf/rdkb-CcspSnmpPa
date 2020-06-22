@@ -42,6 +42,7 @@
 #include "ccsp_snmp_common.h"
 #include "ccsp_mib_definitions.h"
 #include <stdlib.h>
+#include "safec_lib_common.h"
 
 typedef struct fw_traffic_block_s fw_traffic_block_t;
 struct fw_traffic_block_s {
@@ -199,6 +200,8 @@ static int mac_filter_get_mode(const char *dm, int *value)
 {
     char strVal[BUF_MAX_SIZE] = {'\0'};
     int i;
+    errno_t rc =-1;
+    int ind =-1;
 
     if(dm == NULL || value == NULL) {
         CcspTraceError(("%s(%d) bad parameter.\n", __func__, __LINE__));
@@ -211,7 +214,10 @@ static int mac_filter_get_mode(const char *dm, int *value)
     }
 
     for(i=SNMP_BLOCK; i<=SNMP_PERMIT; i++) {
-        if(strcmp(strVal, filterMode[i].allowAll) == 0) {
+        rc = strcmp_s(strVal,BUF_MAX_SIZE, filterMode[i].allowAll,&ind);
+        ERR_CHK(rc);
+        if((!ind) && (rc == EOK)) 
+        {
             *value = i;
             break;
         }
@@ -251,11 +257,16 @@ static int setFwFactoryReset(int value)
 static int isFwCustomLevel(void)
 {
     char strVal[BUF_MAX_SIZE] = {'\0'};
+    errno_t rc =-1;
+    int ind =-1;
 
     if (get_dm_value(FW_LEVEL_DM, strVal, sizeof(strVal)))
         return 0;
 
-    if (strcmp(strVal, COMCAST_FW_CUSTOM_LEVEL)){
+    rc = strcmp_s(COMCAST_FW_CUSTOM_LEVEL,strlen(COMCAST_FW_CUSTOM_LEVEL),strVal ,&ind);
+    ERR_CHK(rc);
+    if((ind) && (rc == EOK)) 
+    {
         return 0;    /* If not at custom level, always return false */
     }
 
@@ -266,6 +277,8 @@ static int getFwCustomBlock(const oid lastOid, int *value)
 {
     char strVal[BUF_MAX_SIZE] = {'\0'};
     int i;
+    errno_t rc =-1;
+    int ind =-1;
 
     if (NULL == value)
         return -1;
@@ -288,8 +301,12 @@ static int getFwCustomBlock(const oid lastOid, int *value)
     bzero(strVal, sizeof(strVal));
     if (get_dm_value(fwTrafficBlcok[i].dmName, strVal, sizeof(strVal)))
         return -1;
-    if (!strcmp(strVal, "true"))
-        *value = 1;
+    rc = strcmp_s("true",strlen("true"),strVal,&ind);
+    ERR_CHK(rc);
+        if((!ind) && (rc == EOK)) 
+        {
+          *value = 1;
+        }
     else
         *value = 2;
 
@@ -300,6 +317,7 @@ static int setFwCustomBlock(const oid lastOid, int value)
 {
     char strVal[BUF_MAX_SIZE] = {'\0'};
     int i;
+    errno_t rc =-1;
     
     if (value != 1 && value != 2)
         return -1;
@@ -318,10 +336,11 @@ static int setFwCustomBlock(const oid lastOid, int value)
     }
 
     bzero(strVal, sizeof(strVal));
-    if (value == 1)
-        strncpy(strVal, "true", sizeof(strVal));
-    else 
-        strncpy(strVal, "false", sizeof(strVal));
+    rc = strcpy_s(strVal, sizeof(strVal), (value == 1) ? "true" : "false");
+    if (rc != EOK) {
+        ERR_CHK(rc);
+        return -1;
+    }
 
     if (set_dm_value(fwTrafficBlcok[i].dmName, strVal, strlen(strVal)))
         return -1;
@@ -426,6 +445,8 @@ static int getFwTrafficBlock(unsigned char *value)
 {
     int i;
     char strVal[BUF_MAX_SIZE] = {'\0'};
+    errno_t rc = -1;
+    int ind = -1;
 
     if (value == NULL)
         return -1;
@@ -435,6 +456,7 @@ static int getFwTrafficBlock(unsigned char *value)
     if (!isFwCustomLevel()){
         return 0;
     }
+       int length = strlen("false");
 
     for (i = 0; i < 3; i++){    /* not include http & p2p */
         bzero(strVal, sizeof(strVal));
@@ -442,7 +464,10 @@ static int getFwTrafficBlock(unsigned char *value)
         if (get_dm_value(fwTrafficBlcok[i].dmName, strVal, sizeof(strVal))) {
             return -1;
         }
-        if (!strcmp(strVal, "false")){    /* not filter, then passthru */
+        rc =strcmp_s("false",length,strVal ,&ind);
+        ERR_CHK(rc);
+        if((!ind) && (rc == EOK)) 
+        {    /* not filter, then passthru */
             *value |= fwTrafficBlcok[i].maskValue;
         }else{
             *value &= ~fwTrafficBlcok[i].maskValue;
@@ -483,6 +508,8 @@ static int getFwWanBlock(unsigned char *value)
 {
     int i;
     char strVal[BUF_MAX_SIZE] = {'\0'};
+    errno_t rc =-1;
+    int ind  =-1;
 
     if (value == NULL)
         return -1;
@@ -491,14 +518,17 @@ static int getFwWanBlock(unsigned char *value)
 
     if (!isFwCustomLevel())
         return 0;
-
+        int length = strlen("true");
     for (i = 0; i < sizeof(fwTrafficBlcok)/sizeof(fwTrafficBlcok[0]); i++){
         bzero(strVal, sizeof(strVal));
         /*CID: 62333 Unchecked return value*/
         if(get_dm_value(fwTrafficBlcok[i].dmName, strVal, sizeof(strVal))) {
            return -1;
         }
-        if (!strcmp(strVal, "true")){    /* if filter, return true */
+        rc = strcmp_s("true",length,strVal, &ind);
+        ERR_CHK(rc);
+        if((!ind) && (rc == EOK)) 
+        {    /* if filter, return true */
             *value = 1;
             break;
         }
@@ -519,6 +549,7 @@ int handleFwBlockRequests(
     oid                      subid         = 0;
     unsigned char            value;
     unsigned char            strVal[BUF_MAX_SIZE]    = {'\0'};
+    errno_t rc = -1;
 
     for (request = requests; request != NULL; request = request->next){
         requestvb = request->requestvb;
@@ -559,7 +590,14 @@ int handleFwBlockRequests(
             case MODE_SET_RESERVE2:
                 if (subid  == saRgFwTrafficPassthru_lastOid){
                     bzero(strVal, sizeof(strVal));
-                    sprintf(strVal, "%x", requestvb->val.string[0]);  /* only 1 octet, OCTET->ASCII */
+                    rc = sprintf_s(strVal,sizeof(strVal), "%x", requestvb->val.string[0]);  /* only 1 octet, OCTET->ASCII */
+                     if(rc < EOK)
+                     {
+                          ERR_CHK(rc);
+                          netsnmp_set_request_error(reqinfo, requests , SNMP_ERR_GENERR);
+                          return SNMP_ERR_GENERR;
+
+                      }
                     if (setFwTrafficBlock(strVal)){
                         netsnmp_set_request_error(reqinfo, requests, SNMP_ERR_INCONSISTENTVALUE);
                     }
@@ -610,21 +648,27 @@ static int validate_block_days(const char *buf)
     int i, j, is_string_days = 0;
     int bitmap = 0, rc = 0;
     char strVal[BUF_MAX_SIZE] = {'\0'};
-
-
+    size_t len = 0;
+    errno_t rc1 =-1;
+    int ind = -1;
     if(buf == NULL) 
         return -1;
 
     str = strdup(buf);
     save = str;
-
+    len = strlen(str);
     for(j = 0; ; j++, str = NULL) {
-        substr = strtok_r(str, ",", &saveptr);
-        if(substr == NULL) 
+        if(!len)
+          break;
+        substr = strtok_s(str,&len, ",", &saveptr);
+        if(substr == NULL)
             break;
-
+         int length = strlen(substr);
         for (i=SUN; i<=SAT; i++) {
-            if(strcasecmp(substr, blockDays[i].day) == 0) {
+            rc1 = strcasecmp_s(substr,length, blockDays[i].day,&ind);
+            ERR_CHK(rc1);
+            if ((!ind) && (rc == EOK))
+            {
                 is_string_days = 1;
                 break;
             }
@@ -656,6 +700,9 @@ static int get_block_days(const char *dmName, unsigned char *octet)
     char strVal[BUF_MAX_SIZE] = {'\0'};
     char *ptr, *substr, *saveptr;
     int i;
+    size_t len = 0;
+    errno_t rc =-1;
+    int ind =-1;
 
     if(dmName == NULL || octet == NULL) 
         return -1;
@@ -664,15 +711,21 @@ static int get_block_days(const char *dmName, unsigned char *octet)
         return -1;
 
     CcspTraceInfo(("%s(%d) strVal %s.\n", __func__, __LINE__, strVal));
-
+    len = strlen(strVal);
+    
     for(ptr=strVal; ; ptr=NULL) {
-        substr = strtok_r(ptr, ",", &saveptr);
+       if(!len)
+       break;
+        substr = strtok_s(ptr,&len, ",", &saveptr);
         if(substr == NULL) 
             break;
         CcspTraceInfo(("%s(%d) substr %s.\n", __func__, __LINE__, substr));
-
+        int length = strlen(substr);
         for(i=SUN; i<=SAT; i++) {
-            if(strcasecmp(substr, blockDays[i].day) == 0) {
+            rc = strcasecmp_s(substr,length, blockDays[i].day,&ind);
+            ERR_CHK(rc);
+            if ((!ind) && (rc == EOK))
+             {
                 *octet |= blockDays[i].bitmap;
                 break;
             }
@@ -687,12 +740,12 @@ static int set_block_days(const char *dmName, char *octetStr)
 {
     char preStr[BUF_MAX_SIZE] = {'\0'};
     int bitmap, i, j=0;
+    errno_t rc =-1;
 
     if(dmName == NULL || octetStr == NULL) 
         return -1;
 
-    sprintf(preStr, "%x", octetStr[0]);  // one octet str -> presentation
-    bitmap = strtoul(preStr, NULL, 16);
+    bitmap = ((unsigned char) octetStr[0]) & 0xFF;
     CcspTraceInfo(("%s(%d) bitmap 0x%x.\n", __func__, __LINE__, bitmap));
 
     bzero(preStr, sizeof(preStr));
@@ -701,22 +754,42 @@ static int set_block_days(const char *dmName, char *octetStr)
         if(bitmap & blockDays[i].bitmap) {
             if(j==0) 
             {
-                 if(strlen(blockDays[i].day) < sizeof( preStr ))
-                 {  
-                    _ansc_strcpy(preStr, blockDays[i].day);
-                 }
-            }
+                if(strlen(blockDays[i].day) < sizeof( preStr ))
+                 {
+
+                    rc = strcpy_s(preStr,sizeof(preStr), blockDays[i].day);
+                    if(rc != EOK)
+                    {
+                       ERR_CHK(rc);
+                       return -1;
+                    }
+                 
+                } 
+            }  
             else{
-                _ansc_strcat(preStr, ",");
-                 /*Coverity Fix  CID: 135448: STRING_OVERFLOW */
-               if( ( strlen( preStr ) + strlen( blockDays[i].day )) < BUF_MAX_SIZE ) {
-                _ansc_strcat(preStr, blockDays[i].day);
-               }
-               else
+                rc = strcat_s(preStr,sizeof(preStr), ",");
+                if(rc != EOK)
+                 {
+                       ERR_CHK(rc);
+                       return -1;
+                  }
+                /*Coverity Fix  CID: 135448: STRING_OVERFLOW */
+                 if( ( strlen( preStr ) + strlen( blockDays[i].day )) < BUF_MAX_SIZE ) {
+
+                rc = strcat_s(preStr, sizeof(preStr),blockDays[i].day);
+                if(rc != EOK)
+                 {
+                       ERR_CHK(rc);
+                       return -1;
+                  }
+                }
+                else
                {
                  CcspTraceError(("Buffer value more than BUF_MAX_SIZE\n"));
                  return -1;
-               }  
+               }
+
+
             }
             j++;
         }
@@ -741,6 +814,7 @@ int handleFwPortFilter(
     PCCSP_TABLE_ENTRY        pEntry;
     char                     dmStr[BUFF_MAX_SIZE] = {'\0'};
     unsigned char            octet = 0;
+    errno_t rc =-1;
 
     for (request = requests; request != NULL; request = request->next){
         vb = request->requestvb;
@@ -763,7 +837,13 @@ int handleFwPortFilter(
         case MODE_GET:
             if(subid == saRgFwPortFilterBlockDays_lastOid) {
 
-                snprintf(dmStr, sizeof(dmStr), PORT_FILTER_BLOCK_DAYS_DM, ins);
+                rc = sprintf_s(dmStr, sizeof(dmStr), PORT_FILTER_BLOCK_DAYS_DM, ins);
+                if(rc < EOK)
+                 {
+                       ERR_CHK(rc);
+                       netsnmp_set_request_error(reqinfo, request, SNMP_ERR_GENERR);
+                       continue;
+                   }
                 CcspTraceInfo(("%s(%d) dmStr %s.\n", __func__, __LINE__, dmStr));
 
                 if(get_block_days(dmStr, &octet) < 0) 
@@ -800,7 +880,14 @@ int handleFwPortFilter(
         case MODE_SET_RESERVE2:
             if(subid == saRgFwPortFilterBlockDays_lastOid) {
                 if(strlen(vb->val.string) == 1) { // hex format: one octet
-                    snprintf(dmStr, sizeof(dmStr), PORT_FILTER_BLOCK_DAYS_DM, ins);
+                  rc =  sprintf_s(dmStr, sizeof(dmStr), PORT_FILTER_BLOCK_DAYS_DM, ins);
+                  if(rc < EOK)
+                 {
+                       ERR_CHK(rc);
+                       netsnmp_request_set_error(request, SNMP_ERR_GENERR);
+                       continue;
+                   }
+
                     if(set_block_days(dmStr, vb->val.string) < 0) {
                         CcspTraceError(("%s set failed.\n", dmStr));
                         netsnmp_request_set_error(request, SNMP_ERR_GENERR);
@@ -837,6 +924,8 @@ int handleFwMacFilter(
     PCCSP_TABLE_ENTRY        pEntry;
     char                     dmStr[BUFF_MAX_SIZE] = {'\0'};
     unsigned char            octet = 0;
+    errno_t rc =-1;
+    int ind =-1;
 
     for (request = requests; request != NULL; request = request->next){
         vb = request->requestvb;
@@ -867,13 +956,22 @@ int handleFwMacFilter(
                         netsnmp_request_set_error(request, SNMP_ERR_GENERR);
                         continue;
                     }
-                    snprintf(typeDm, sizeof(typeDm), MAC_FILTER_TYPE_DM, ins);
+                   rc = sprintf_s(typeDm, sizeof(typeDm), MAC_FILTER_TYPE_DM, ins);
+                    if(rc < EOK)
+                    {
+                          ERR_CHK(rc);
+                          netsnmp_request_set_error(request, SNMP_ERR_GENERR);
+                          continue;
+                     }
                     if (get_dm_value(typeDm, typeVal, sizeof(typeVal))){
                         netsnmp_request_set_error(request, SNMP_ERR_GENERR);
                         continue;
                     }
 
-                    if(strcmp(typeVal, filterMode[snmpFilterMode].type)) {
+                    rc = strcmp_s(typeVal,sizeof(typeVal), filterMode[snmpFilterMode].type,&ind);
+                    ERR_CHK(rc);
+                    if((ind) && (rc == EOK)) 
+                    {
                         netsnmp_request_set_error(request, SNMP_NOSUCHINSTANCE);
                         CcspTraceInfo(("%s(%d) blockAll %d type %s.\n", __func__, __LINE__, snmpFilterMode, typeVal));
                         continue;
@@ -887,7 +985,14 @@ int handleFwMacFilter(
         case MODE_GET:
             if(subid == saRgFwMacFilterBlockDays_lastOid) {
 
-                snprintf(dmStr, sizeof(dmStr), MAC_FILTER_BLOCK_DAYS_DM, ins);
+                rc = sprintf_s(dmStr, sizeof(dmStr), MAC_FILTER_BLOCK_DAYS_DM, ins);
+                if(rc < EOK)
+                {
+                          ERR_CHK(rc);
+                          netsnmp_set_request_error(reqinfo, request, SNMP_ERR_GENERR);
+                          return SNMP_ERR_GENERR;
+                 }
+
                 CcspTraceInfo(("%s(%d) dmStr %s.\n", __func__, __LINE__, dmStr));
 
                 if(get_block_days(dmStr, &octet) < 0) 
@@ -924,7 +1029,14 @@ int handleFwMacFilter(
         case MODE_SET_RESERVE2:
             if(subid == saRgFwMacFilterBlockDays_lastOid) {
                 if(strlen(vb->val.string) == 1) { // hex format: one octet
-                    snprintf(dmStr, sizeof(dmStr), MAC_FILTER_BLOCK_DAYS_DM, ins);
+                 rc =  sprintf_s(dmStr, sizeof(dmStr), MAC_FILTER_BLOCK_DAYS_DM, ins);
+                 if(rc < EOK)
+                  {
+                          ERR_CHK(rc);
+                          netsnmp_request_set_error(request, SNMP_ERR_GENERR);
+                          return SNMP_ERR_GENERR;
+                   }
+
                     if(set_block_days(dmStr, vb->val.string) < 0) {
                         CcspTraceError(("%s set failed.\n", dmStr));
                         netsnmp_request_set_error(request, SNMP_ERR_GENERR);
@@ -957,7 +1069,14 @@ int handleFwMacFilter(
 
                         if(mac_filter_get_mode(MAC_FILTER_MODE_DM, &snmpFilterMode) < 0)
                             CcspTraceWarning(("%s(%d) %s failed.\n", __func__, __LINE__, MAC_FILTER_MODE_DM));
-                        snprintf(typeDm, sizeof(typeDm), MAC_FILTER_TYPE_DM, ins);
+                      rc =   sprintf_s(typeDm, sizeof(typeDm), MAC_FILTER_TYPE_DM, ins);
+                      if(rc < EOK)
+                      {
+                          ERR_CHK(rc);
+                          netsnmp_set_request_error(reqinfo, request, SNMP_ERR_GENERR);
+                          return SNMP_ERR_GENERR;
+                      }
+
                         if(set_dm_value(typeDm, filterMode[snmpFilterMode].type, strlen(filterMode[snmpFilterMode].type))) 
                             CcspTraceError(("%s(%d) %s set failed.\n", __func__, __LINE__, typeDm));
                     }
@@ -993,6 +1112,7 @@ int handleFwUrlKeywordFilter(
     PCCSP_TABLE_ENTRY        pEntry;
     char                     dmStr[BUFF_MAX_SIZE] = {'\0'};
     unsigned char            octet = 0;
+    errno_t rc =-1;
 
     for (request = requests; request != NULL; request = request->next){
         vb = request->requestvb;
@@ -1015,7 +1135,16 @@ int handleFwUrlKeywordFilter(
         case MODE_GET:
             if(subid == saRgFwUrlFilterBlockDays_lastOid) {
 
-                snprintf(dmStr, sizeof(dmStr), URL_FILTER_BLOCK_DAYS_DM, ins);
+                rc = sprintf_s(dmStr, sizeof(dmStr), URL_FILTER_BLOCK_DAYS_DM, ins);
+                 if(rc < EOK)
+                  {
+                      ERR_CHK(rc);
+                      netsnmp_set_request_error(reqinfo, request, SNMP_ERR_GENERR);
+                      return SNMP_ERR_GENERR;
+                      
+                   }
+                                                   
+                
                 CcspTraceInfo(("%s(%d) dmStr %s.\n", __func__, __LINE__, dmStr));
 
                 if(get_block_days(dmStr, &octet) < 0) 
@@ -1052,7 +1181,14 @@ int handleFwUrlKeywordFilter(
         case MODE_SET_RESERVE2:
             if(subid == saRgFwUrlFilterBlockDays_lastOid) {
                 if(strlen(vb->val.string) == 1) { // hex format: one octet
-                    snprintf(dmStr, sizeof(dmStr), URL_FILTER_BLOCK_DAYS_DM, ins);
+                 rc =    sprintf_s(dmStr, sizeof(dmStr), URL_FILTER_BLOCK_DAYS_DM, ins);
+                   if(rc < EOK)
+                  {
+                      ERR_CHK(rc);
+                      netsnmp_request_set_error(request, SNMP_ERR_GENERR);
+                      return SNMP_ERR_GENERR;
+                   }
+
                     if(set_block_days(dmStr, vb->val.string) < 0) {
                         CcspTraceError(("%s set failed.\n", dmStr));
                         netsnmp_request_set_error(request, SNMP_ERR_GENERR);
@@ -1246,19 +1382,39 @@ static struct
 trusted_user_entry* lookup_trusted_user_entry(const char *ip)
 {
     int i;
+    errno_t rc =-1;
+    int ind =-1;
 
     for (i=0; i<IP_FILTER_MAX_ENTRIES; i++) {
-        if(strcmp(ipFilter[i].start_ip, ip) == 0) 
+        rc = strcmp_s(ip, BUF_MAX_SIZE,ipFilter[i].start_ip,&ind);
+        ERR_CHK(rc);
+        if((!ind) && (rc == EOK)) 
+        { 
             return &ipFilter[i];    // existing entry
+
+        }
     }
 
     for(i=0; i<IP_FILTER_MAX_ENTRIES; i++) {
         if(ipFilter[i].start_ip[0] == 0){
             // set default values
-            /*Coverity  Fix: CID:135536:Buffer_Size_Warning */
-            strncpy(ipFilter[i].start_ip, ip, sizeof(ipFilter[i].start_ip) -1 );
-            /*Coverity  Fix: CID:135536:Buffer_Size_Warning */
-            strncpy(ipFilter[i].end_ip, ip, sizeof(ipFilter[i].end_ip) -1);
+             /*Coverity  Fix: CID:135536:Buffer_Size_Warning */
+
+            rc = strcpy_s(ipFilter[i].start_ip, sizeof(ipFilter[i].start_ip),ip);
+            if(rc != EOK)
+             {
+                 ERR_CHK(rc);
+                 return NULL;
+             }
+           /*Coverity  Fix: CID:135536:Buffer_Size_Warning */
+
+            rc = strcpy_s(ipFilter[i].end_ip, sizeof(ipFilter[i].end_ip),ip);
+            if(rc != EOK)
+             {
+                 ERR_CHK(rc);
+                 return NULL;
+             }
+
             ipFilter[i].trust = BLOCK;
             ipFilter[i].policy = NONE; 
             return &ipFilter[i];    // first unused entry
@@ -1311,12 +1467,18 @@ commit_trusted_user_entry(struct trusted_user_entry *pUserEntry, const char *ip)
     int i;
     char dm[BUFF_MAX_SIZE] = {'\0'};
     parameterValStruct_t *pValueArray = NULL;
+    errno_t rc =-1;
 
     AnscTraceWarning(("%s(%d): Entering...\n", __func__, __LINE__));
 
     // create the entry in ManagedSites table
     if(pUserEntry->ins[URLKEYWORD-1] == -1) {
-        snprintf(dm, sizeof(dm), TRUSTED_USER_OBJ, policy[URLKEYWORD]);
+        rc = sprintf_s(dm, sizeof(dm), TRUSTED_USER_OBJ, policy[URLKEYWORD]);
+         if(rc < EOK)
+          {
+                ERR_CHK(rc);
+                return SNMP_ERR_RESOURCEUNAVAILABLE;
+           }
         pUserEntry->ins[URLKEYWORD-1] = Cosa_AddEntry(dstComp, dstPath, dm);
         if(pUserEntry->ins[URLKEYWORD-1] == 0) {
             CcspTraceError(("%s(%d): failed to create entry %s.\n", __func__, __LINE__, dm));
@@ -1327,7 +1489,13 @@ commit_trusted_user_entry(struct trusted_user_entry *pUserEntry, const char *ip)
 
     // create the entry in ManagedServices table
     if(pUserEntry->ins[PORT-1] == -1) {
-        snprintf(dm, sizeof(dm), TRUSTED_USER_OBJ, policy[PORT]);
+       rc = sprintf_s(dm, sizeof(dm), TRUSTED_USER_OBJ, policy[PORT]);
+       if(rc < EOK)
+          {
+                ERR_CHK(rc);
+                return SNMP_ERR_RESOURCEUNAVAILABLE;
+           }
+
         pUserEntry->ins[PORT-1] = Cosa_AddEntry(dstComp, dstPath, dm);
         if(pUserEntry->ins[PORT-1] == 0) {
             CcspTraceError(("%s(%d): failed to create entry %s.\n", __func__, __LINE__, dm));
@@ -1343,7 +1511,13 @@ commit_trusted_user_entry(struct trusted_user_entry *pUserEntry, const char *ip)
     }
 
     for(i=URLKEYWORD-1; i<PORT; i++) {
-        snprintf(dm, sizeof(dm), TRUSTED_USER_IPADDR, policy[i+1], pUserEntry->ins[i]);
+       rc =  sprintf_s(dm, sizeof(dm), TRUSTED_USER_IPADDR, policy[i+1], pUserEntry->ins[i]);
+       if(rc < EOK)
+          {
+                ERR_CHK(rc);
+                return SNMP_ERR_RESOURCEUNAVAILABLE;
+           }
+
         pValueArray[i].parameterName = AnscCloneString(dm);
         pValueArray[i].type = ccsp_string;
         pValueArray[i].parameterValue = AnscCloneString(ip);
@@ -1351,36 +1525,72 @@ commit_trusted_user_entry(struct trusted_user_entry *pUserEntry, const char *ip)
 
     if(pUserEntry->trust == BLOCK) {
         for(i=PORT; i<4; i++) {
-            snprintf(dm, sizeof(dm), TRUSTED_USER_TRUST, policy[i-PORT+1], pUserEntry->ins[i-PORT]);
+         rc =   sprintf_s(dm, sizeof(dm), TRUSTED_USER_TRUST, policy[i-PORT+1], pUserEntry->ins[i-PORT]);
+         if(rc < EOK)
+          {
+                ERR_CHK(rc);
+                return SNMP_ERR_RESOURCEUNAVAILABLE;
+           }
+
             pValueArray[i].parameterName = AnscCloneString(dm);
             pValueArray[i].type = ccsp_boolean;
             pValueArray[i].parameterValue = trust[BLOCK];
         }
     }else{ // add trusted user
         if(pUserEntry->policy == PORT) {
-            snprintf(dm, sizeof(dm), TRUSTED_USER_TRUST, policy[URLKEYWORD], pUserEntry->ins[URLKEYWORD-1]);
+           rc =  sprintf_s(dm, sizeof(dm), TRUSTED_USER_TRUST, policy[URLKEYWORD], pUserEntry->ins[URLKEYWORD-1]);
+           if(rc < EOK)
+          {
+                ERR_CHK(rc);
+                return SNMP_ERR_RESOURCEUNAVAILABLE;
+           }
+
             pValueArray[2].parameterName = AnscCloneString(dm);
             pValueArray[2].type = ccsp_boolean;
             pValueArray[2].parameterValue = trust[BLOCK];
 
-            snprintf(dm, sizeof(dm), TRUSTED_USER_TRUST, policy[PORT], pUserEntry->ins[PORT-1]);
+          rc =   sprintf_s(dm, sizeof(dm), TRUSTED_USER_TRUST, policy[PORT], pUserEntry->ins[PORT-1]);
+           if(rc < EOK)
+          {
+                ERR_CHK(rc);
+                return SNMP_ERR_RESOURCEUNAVAILABLE;
+           }
+
             pValueArray[3].parameterName = AnscCloneString(dm);
             pValueArray[3].type = ccsp_boolean;
             pValueArray[3].parameterValue = trust[PERMIT];
 
         }else if(pUserEntry->policy == URLKEYWORD){
-            snprintf(dm, sizeof(dm), TRUSTED_USER_TRUST, policy[URLKEYWORD], pUserEntry->ins[URLKEYWORD-1]);
+          rc =   sprintf_s(dm, sizeof(dm), TRUSTED_USER_TRUST, policy[URLKEYWORD], pUserEntry->ins[URLKEYWORD-1]);
+          if(rc < EOK)
+          {
+                ERR_CHK(rc);
+                return SNMP_ERR_RESOURCEUNAVAILABLE;
+           }
+
             pValueArray[2].parameterName = AnscCloneString(dm);
             pValueArray[2].type = ccsp_boolean;
             pValueArray[2].parameterValue = trust[PERMIT];
 
-            snprintf(dm, sizeof(dm), TRUSTED_USER_TRUST, policy[PORT], pUserEntry->ins[PORT-1]);
+           rc =  sprintf_s(dm, sizeof(dm), TRUSTED_USER_TRUST, policy[PORT], pUserEntry->ins[PORT-1]);
+            if(rc < EOK)
+          {
+                ERR_CHK(rc);
+                return SNMP_ERR_RESOURCEUNAVAILABLE;
+           }
+
             pValueArray[3].parameterName = AnscCloneString(dm);
             pValueArray[3].type = ccsp_boolean;
             pValueArray[3].parameterValue = trust[BLOCK];
         }else {
             for(i=PORT; i<4; i++) {
-                snprintf(dm, sizeof(dm), TRUSTED_USER_TRUST, policy[i-PORT+1], pUserEntry->ins[i-PORT]);
+                rc = sprintf_s(dm, sizeof(dm), TRUSTED_USER_TRUST, policy[i-PORT+1], pUserEntry->ins[i-PORT]);
+                if(rc < EOK)
+          {
+                ERR_CHK(rc);
+                return SNMP_ERR_RESOURCEUNAVAILABLE;
+           }
+
                 pValueArray[i].parameterName = AnscCloneString(dm);
                 pValueArray[i].type = ccsp_boolean;
                 pValueArray[i].parameterValue = trust[PERMIT];
@@ -1426,6 +1636,7 @@ static int set_trusted_user_entry(netsnmp_request_info *requests)
     char ip[BUF_MAX_SIZE] = {'\0'};
     int subid, index, ins;
     int lastIndex = -1;
+    errno_t rc =-1;
 
     AnscTraceWarning(("%s(%d): Entering...\n", __func__, __LINE__));
 
@@ -1443,7 +1654,14 @@ static int set_trusted_user_entry(netsnmp_request_info *requests)
         }
         ins = pEntry->IndexValue[0].Value.iValue;
         if(lastIndex != index) {
-            snprintf(dm, sizeof(dm), HOSTS_HOST_IPADDR, ins);
+            rc = sprintf_s(dm, sizeof(dm), HOSTS_HOST_IPADDR, ins);
+             if(rc < EOK)
+            {
+                ERR_CHK(rc);
+                netsnmp_request_set_error(request, SNMP_ERR_GENERR);
+                continue;
+            }
+
             if(get_dm_value(dm, ip, sizeof(ip))) {
                 CcspTraceError(("%s(%d) %s failed.\n", __func__, __LINE__, dm));
                 netsnmp_request_set_error(request, SNMP_ERR_GENERR);
@@ -1492,29 +1710,49 @@ static int load_trusted_user_entry(netsnmp_tdata *table)
     int j;  // instance number array loop
     int k;  // trusted user entires loop
     struct trusted_user_entry *pEntry = NULL;
+    errno_t rc =-1;
+    int ind =-1;
 
     AnscTraceWarning(("%s(%d): Entering...\n", __func__, __LINE__));
 
     for (k=0; k<IP_FILTER_MAX_ENTRIES; k++){
-        memset(ipFilter[k].start_ip, 0, sizeof(ipFilter[k].start_ip));
+      rc =   memset_s(ipFilter[k].start_ip,sizeof(ipFilter[k].start_ip), 0, sizeof(ipFilter[k].start_ip));
+      ERR_CHK(rc);
         for(i=URLKEYWORD-1; i<PORT; i++)
             ipFilter[k].ins[i] = -1;
     }
 
     for(i=URLKEYWORD; i<=PORT; i++) {
-        snprintf(pTemp, sizeof(pTemp), TRUSTED_USER_OBJ, policy[i]);
+       rc =  sprintf_s(pTemp, sizeof(pTemp), TRUSTED_USER_OBJ, policy[i]);
+       if(rc < EOK)
+        {
+                       ERR_CHK(rc);
+                       continue;
+        }            
 
         if(Cosa_GetInstanceNums(dstComp, dstPath, pTemp, &insArray, &insCount)){
             AnscTraceWarning(("%s(%d): %s insCount %d.\n", __func__, __LINE__, pTemp, insCount));
 
             for(j=0; j<insCount; j++) {
-                snprintf(pTemp, sizeof(pTemp), TRUSTED_USER_IPADDR, policy[i], insArray[j]);
+             rc =  sprintf_s(pTemp, sizeof(pTemp), TRUSTED_USER_IPADDR, policy[i], insArray[j]);
+             if(rc < EOK)
+             {
+                   ERR_CHK(rc);
+                   continue;
+             }
+
                 if(get_dm_value(pTemp, ip, sizeof(ip))) {
                     CcspTraceError(("%s(%d): %s failed.\n", __func__, __LINE__, pTemp));
                     continue;
                 }
 
-                snprintf(pTemp, sizeof(pTemp), TRUSTED_USER_TRUST, policy[i], insArray[j]);
+                rc = sprintf_s(pTemp, sizeof(pTemp), TRUSTED_USER_TRUST, policy[i], insArray[j]);
+                if(rc < EOK)
+                {
+                    ERR_CHK(rc);
+                    continue;
+                 }
+
                 if(get_dm_value(pTemp, trusted, sizeof(trusted))) {
                     CcspTraceError(("%s(%d): %s failed.\n", __func__, __LINE__, pTemp));
                     continue;
@@ -1524,7 +1762,11 @@ static int load_trusted_user_entry(netsnmp_tdata *table)
 
                 pEntry = lookup_trusted_user_entry(ip);
                 if(pEntry) {
-                    if(strcmp(trusted, "true") == 0){
+                
+                    rc = strcmp_s("true",strlen("true"),trusted, &ind);
+                    ERR_CHK(rc);
+                    if((!ind) && (rc == EOK))
+                    {
                         pEntry->trust = PERMIT;
                         pEntry->policy |= i;
                     }else
@@ -1534,7 +1776,14 @@ static int load_trusted_user_entry(netsnmp_tdata *table)
                         pEntry->ins[i-1] = insArray[j];
 
                     if(pEntry->start_ip[0] == 0) 
-                        strncpy(pEntry->start_ip, ip, sizeof(pEntry->start_ip)  );
+                    {
+                      rc = strcpy_s(pEntry->start_ip, sizeof(pEntry->start_ip),ip);
+                      if(rc != EOK)
+                      {
+                          ERR_CHK(rc);
+                          return -1;
+                       }
+                     }
                 }else{
                     CcspTraceInfo(("%s(%d): trusted user entry is full.\n", __func__, __LINE__));
                     return -1;
@@ -1576,6 +1825,7 @@ int handleFwIpFilterRequests(netsnmp_mib_handler *handler,
     int                      lastIndex = -1;
     int                      index;
     int                      reqCount = 0;
+    errno_t rc =-1;
 
     AnscTraceWarning(("%s(%d): Entering with mode %d.\n", __func__, __LINE__, reqinfo->mode));
 
@@ -1594,7 +1844,13 @@ int handleFwIpFilterRequests(netsnmp_mib_handler *handler,
             }
             ins = pEntry->IndexValue[0].Value.iValue;
             if(lastIndex != index) {
-                snprintf(dm, sizeof(dm), HOSTS_HOST_IPADDR, ins);
+                rc = sprintf_s(dm, sizeof(dm), HOSTS_HOST_IPADDR, ins);
+                if(rc < EOK)
+                 {
+                         ERR_CHK(rc);
+                         netsnmp_request_set_error(request, SNMP_ERR_GENERR);
+                         continue;
+                  }
                 if(get_dm_value(dm, ip, sizeof(ip))) {
                     CcspTraceError(("%s(%d) %s failed.\n", __func__, __LINE__, dm));
                     netsnmp_request_set_error(request, SNMP_ERR_GENERR);

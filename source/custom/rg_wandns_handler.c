@@ -40,6 +40,7 @@
 #include "ansc_platform.h"
 #include "ccsp_snmp_common.h"
 #include "ccsp_mib_definitions.h"
+#include "safec_lib_common.h"
 
 static oid saRgIpMgmtWanMode_lastOid = 1;
 static oid saRgIpMgmtWanMtu_lastOid = 2;
@@ -47,32 +48,50 @@ static oid saRgIpMgmtWanTtl_lastOid = 3;
 
 static int getRgIpMgmtWanDns(int *value, oid lastOid)
 {
-    char dmStr[256];
-    char retStrVal[256];
+    char dmStr[256]={0};
+    char retStrVal[256]={0};
     int status;
+    errno_t rc =-1;
 
     if (value == NULL)
         return -1;
     
-    memset(dmStr, 0, sizeof(dmStr));
-    memset(retStrVal,0, sizeof(retStrVal));
 
-    sprintf(dmStr, "com.cisco.spvtg.ccsp.pam.Helper.FirstUpstreamIpInterface");
+   rc =  sprintf_s(dmStr,sizeof(dmStr), "com.cisco.spvtg.ccsp.pam.Helper.FirstUpstreamIpInterface");
+    if(rc < EOK)
+    {
+          ERR_CHK(rc);
+          return -1;
+     }
 
     if (get_dm_value(dmStr, retStrVal, sizeof(retStrVal))){
         return -1;
     }
 
-    memset(dmStr, 0, sizeof(dmStr));
+    rc = memset_s(dmStr,sizeof(dmStr), 0, sizeof(dmStr));
+    ERR_CHK(rc);
 
     if (lastOid == saRgIpMgmtWanMtu_lastOid){
-        sprintf(dmStr, "%s" "MaxMTUSize", retStrVal);
+        rc = sprintf_s(dmStr,sizeof(dmStr), "%s" "MaxMTUSize", retStrVal);
+        if(rc < EOK)
+        {
+          ERR_CHK(rc);
+          return -1;
+        }
+
     }else if(lastOid == saRgIpMgmtWanTtl_lastOid){
-        sprintf(dmStr, "%s" "X_CISCO_COM_WanTTL", retStrVal);
+        rc = sprintf_s(dmStr,sizeof(dmStr), "%s" "X_CISCO_COM_WanTTL", retStrVal);
+        if(rc < EOK)
+        {
+          ERR_CHK(rc); 
+          return -1;
+        }
+
     }else
         return -1;
 
-    memset(retStrVal, 0, sizeof(retStrVal));
+  rc =   memset_s(retStrVal,sizeof(retStrVal), 0, sizeof(retStrVal));
+  ERR_CHK(rc);
     if (get_dm_value(dmStr, retStrVal, sizeof(retStrVal)))
         return -1;
     
@@ -83,45 +102,90 @@ static int getRgIpMgmtWanDns(int *value, oid lastOid)
 
 static int setRgIpMgmtWanDns(int value, oid lastOid)
 {
-    char dmStr[256];
-    char strVal[256];
+    char dmStr[256] = {0};
+    char strVal[256] = {0};
     int status;
+    errno_t rc =-1;
     
-    memset(dmStr, 0, sizeof(dmStr));
-    memset(strVal,0, sizeof(strVal));
 
-    sprintf(dmStr, "com.cisco.spvtg.ccsp.pam.Helper.FirstUpstreamIpInterface");
+    rc = sprintf_s(dmStr,sizeof(dmStr) ,"com.cisco.spvtg.ccsp.pam.Helper.FirstUpstreamIpInterface");
+    if(rc < EOK)
+        {
+          ERR_CHK(rc);
+          return -1;
+        }
+
 
     if (get_dm_value(dmStr, strVal, sizeof(strVal))){
         return -1;
     }
 
-    memset(dmStr, 0, sizeof(dmStr));
+   rc =  memset_s(dmStr,sizeof(dmStr), 0, sizeof(dmStr));
+   ERR_CHK(rc);
 
     if (lastOid == saRgIpMgmtWanMode_lastOid){
-        sprintf(dmStr, "Device.X_CISCO_COM_DeviceControl.WanAddressMode");
+        rc = sprintf_s(dmStr,sizeof(dmStr) , "Device.X_CISCO_COM_DeviceControl.WanAddressMode");
+        if(rc < EOK)
+        {
+          ERR_CHK(rc);
+          return -1;
+        }
+
     }
     else if (lastOid == saRgIpMgmtWanMtu_lastOid){
-        sprintf(dmStr, "%s" "MaxMTUSize", strVal);
+       rc =  sprintf_s(dmStr,sizeof(dmStr), "%s" "MaxMTUSize", strVal);
+        if(rc < EOK)
+        {
+          ERR_CHK(rc);
+          return -1;
+        }
+
     }else if(lastOid == saRgIpMgmtWanTtl_lastOid){
-        sprintf(dmStr, "%s" "X_CISCO_COM_WanTTL", strVal);
+        rc = sprintf_s(dmStr,sizeof(dmStr), "%s" "X_CISCO_COM_WanTTL", strVal);
+        if(rc < EOK)
+        {
+          ERR_CHK(rc);
+          return -1;
+        }
+
     }else
         return -1;
 
-    memset(strVal, 0, sizeof(strVal));
+   rc =   memset_s(strVal,sizeof(strVal), 0, sizeof(strVal));
+   ERR_CHK(rc);
+ 
 
     if (lastOid == saRgIpMgmtWanMode_lastOid){
         switch (value) {
             case 1:
-                sprintf(strVal, "DHCP");
+                rc = sprintf_s(strVal,sizeof(strVal), "DHCP");
+                if(rc < EOK)
+                {
+                 ERR_CHK(rc);
+                 return -1;
+                }
+
                 break;
             case 2:
-                sprintf(strVal, "Static");
+                rc = sprintf_s(strVal,sizeof(strVal), "Static");
+                if(rc < EOK)
+                {
+                 ERR_CHK(rc);
+                 return -1;
+                }
+
                 break;
         }
     }
     else
-        sprintf(strVal, "%d", value);
+    {
+       rc = sprintf_s(strVal,sizeof(strVal), "%d", value);
+       if(rc < EOK)
+                {
+                 ERR_CHK(rc);
+                 return -1;
+                }
+    }
 
     if (set_dm_value(dmStr, strVal, sizeof(strVal))){
         return -1;
@@ -222,8 +286,14 @@ static int verifyDNSServerType(PCCSP_TABLE_ENTRY pEntry, oid lastOid)
 {
     char dmStr[128] = {'\0'};
     char value[64]={'\0'};
+    errno_t rc =-1;
 
-    snprintf(dmStr, sizeof(dmStr), DNSSERVER_DM, pEntry->IndexValue[0].Value.uValue);
+    rc = sprintf_s(dmStr, sizeof(dmStr), DNSSERVER_DM, pEntry->IndexValue[0].Value.uValue);
+    if(rc < EOK)
+     {
+         ERR_CHK(rc);
+         return -1;
+      }
 
     get_dm_value(dmStr, value, 32);
 

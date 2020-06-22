@@ -40,6 +40,7 @@
 #include "net-snmp/net-snmp-config.h"
 #include "net-snmp/net-snmp-includes.h"
 #include "net-snmp/agent/net-snmp-agent-includes.h"
+#include "safec_lib_common.h"
 
 #define NUM_NTPSERV             3
 #define NUM_ETHPORTS            4
@@ -88,6 +89,7 @@ static BOOL GetNtpServer(struct NTPServer *ntpServ)
     parameterValStruct_t **valStr = NULL;
     int nval = 0;
     char *name[1];
+    errno_t rc = -1;
 
     name[0] = ntpServ->dmName;
     if (!Cosa_GetParamValues(dstComp, dstPath, name, 1, &nval, &valStr))
@@ -102,7 +104,12 @@ static BOOL GetNtpServer(struct NTPServer *ntpServ)
         return FALSE;
     }
 
-    snprintf(ntpServ->server, sizeof(ntpServ->server), "%s", valStr[0]->parameterValue);
+    rc = sprintf_s(ntpServ->server, sizeof(ntpServ->server), "%s", valStr[0]->parameterValue);
+    if(rc < EOK)
+     {
+           ERR_CHK(rc);
+           return FALSE;
+      }
     Cosa_FreeParamValues(nval, valStr);
 
     return TRUE;
@@ -160,7 +167,7 @@ static int LoadNtpServTable(netsnmp_tdata *table)
     int i;
     netsnmp_tdata_row *row;
     struct NTPServer *ntpServ;
-    
+    errno_t rc =-1;
     if (!table)
         return FALSE;
 
@@ -169,10 +176,15 @@ static int LoadNtpServTable(netsnmp_tdata *table)
         if ((ntpServ = AnscAllocateMemory(sizeof(struct NTPServer))) == NULL)
             goto errout;
 
-        memset(ntpServ, 0, sizeof(struct NTPServer));
+        rc = memset_s(ntpServ,sizeof(struct NTPServer), 0, sizeof(struct NTPServer));
+        ERR_CHK(rc);
         ntpServ->ins = i + 1;
-        snprintf(ntpServ->dmName, sizeof(ntpServ->dmName), NTPSERV_DM_PARAM_PAT, ntpServ->ins);
-
+        rc = sprintf_s(ntpServ->dmName, sizeof(ntpServ->dmName), NTPSERV_DM_PARAM_PAT, ntpServ->ins);
+         if(rc < EOK)
+         {
+                ERR_CHK(rc);
+                goto errout;
+          }
         if ((row = netsnmp_tdata_create_row()) == NULL)
         {
             AnscFreeMemory(ntpServ);
@@ -199,6 +211,7 @@ int NtpServer_HandleRequest(netsnmp_mib_handler *handler,
     netsnmp_request_info        *req;
     struct NTPServer            *ntpServ;
     int                         ret, ncp;
+    errno_t rc =-1;
 
     switch (reqinfo->mode) {
     case MODE_GET:
@@ -257,10 +270,18 @@ int NtpServer_HandleRequest(netsnmp_mib_handler *handler,
              * we couldn't assume "requestvb.val.string" is ascii string ('\0' ended)
              * so do not use snprintf/strncpy directly.
              */
-            memset(ntpServ->server, 0, sizeof(ntpServ->server));
+            rc = memset_s(ntpServ->server,sizeof(ntpServ->server), 0, sizeof(ntpServ->server));
+            ERR_CHK(rc);
             ncp = req->requestvb->val_len > sizeof(ntpServ->server) - 1 ?
                 sizeof(ntpServ->server) - 1 : req->requestvb->val_len;
-            strncpy(ntpServ->server, (char *)req->requestvb->val.string, ncp);
+           rc =  strncpy_s(ntpServ->server,sizeof(ntpServ->server), (char *)req->requestvb->val.string,ncp);
+           if(rc != EOK)
+           {
+                 ERR_CHK(rc);
+                 return SNMP_ERR_GENERR;;
+            }
+           
+           
 
             if (!SetNtpServer(ntpServ))
             {
@@ -360,6 +381,8 @@ static BOOL GetPortMode(struct PortMode *portMode)
     parameterValStruct_t **valStr = NULL;
     int nval = 0;
     char *name[1];
+    errno_t rc =-1;
+    int ind =-1;
     
     if (portMode->ins != 4) {
         portMode->bValue = 0;
@@ -379,9 +402,14 @@ static BOOL GetPortMode(struct PortMode *portMode)
         return -1;
     }
 
-    if (strcmp(valStr[0]->parameterValue, "1") == 0
-                || strcasecmp(valStr[0]->parameterValue, "true") == 0)
+    
+      rc = strcasecmp_s( "true",strlen("true"),valStr[0]->parameterValue,&ind);
+      ERR_CHK(rc);
+      if ( ((valStr[0]->parameterValue[0] =='1') && (valStr[0]->parameterValue[1] =='\0')) 
+           || ( (rc == EOK) && (!ind) ))  
+     {   
         portMode->bValue = 1;
+     }
     else
         portMode->bValue = 0;
     
@@ -562,7 +590,7 @@ static int LoadPortModeTable(netsnmp_tdata *table)
     int i;
     netsnmp_tdata_row *row;
     struct PortMode *portMode;
-    
+    errno_t rc =-1; 
     if (!table)
         return FALSE;
 
@@ -571,7 +599,8 @@ static int LoadPortModeTable(netsnmp_tdata *table)
         if ((portMode = AnscAllocateMemory(sizeof(struct PortMode))) == NULL)
             goto errout;
 
-        memset(portMode, 0, sizeof(struct PortMode));
+       rc =  memset_s(portMode,sizeof(struct PortMode), 0, sizeof(struct PortMode));
+       ERR_CHK(rc );
         portMode->ins = i + 1;
 
         if ((row = netsnmp_tdata_create_row()) == NULL)

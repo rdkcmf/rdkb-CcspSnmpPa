@@ -115,6 +115,7 @@
 #define  CCSP_MIB_LIMIT_MIN         1
 #define  CCSP_MIB_LIMIT_MAX         2
 #define  CCSP_MIB_LIMIT_BOTH        3
+#define  CCSP_MIB_DEFAULT_LIMIT     4
 
 /* Counter64 defintion */
 typedef  struct

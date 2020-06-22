@@ -60,6 +60,8 @@
 #include "ccsp_mib_helper.h"
 #include "cosa_api.h"
 
+#include "safec_lib_common.h"
+
 #ifdef INCLUDE_BREAKPAD
 #include "breakpad_wrapper.h"
 #endif /* INCLUDE_BREAKPAD */
@@ -83,6 +85,8 @@ set_debug_level(void)
 {
     char *ccspDbg;
     int i;
+    errno_t     rc =  -1;
+    int ind = -1;
     struct {
         char *name;
         int level;
@@ -96,16 +100,20 @@ set_debug_level(void)
         {"alert",       CCSP_TRACE_LEVEL_ALERT, },
         {"emergency",   CCSP_TRACE_LEVEL_EMERGENCY, },
     };
+         
 
             pComponentName = "CCSP_SNMNP_Plugin";
 
     ccspDbg = getenv("CCSPDBG");
     if (!ccspDbg)
         return;
-
+    int strlength = strlen(ccspDbg);
+    
     for (i = 0; i < NELEMS(levelTab); i++)
     {
-        if (AnscEqualString(ccspDbg, levelTab[i].name, TRUE))
+        rc = strcmp_s (ccspDbg,strlength,levelTab[i].name,&ind);
+        ERR_CHK(rc);
+        if((!ind) && (rc == EOK))
         {
             AnscSetTraceLevel(levelTab[i].level);
             //pComponentName = "CCSP_SNMNP_Plugin";
@@ -224,8 +232,12 @@ init_ccsp_snmp_plugin(void)
     {
 		AnscZeroMemory(buffer, 64);
 		uLength = 63;
+                 errno_t     rc =  -1;
+                 int ind = -1;
 
-		if(AnscEqualString(pChildNode->GetName(pChildNode),CCSP_MIB_FILE_NODE_NAME, TRUE))
+		rc = strcmp_s(CCSP_MIB_FILE_NODE_NAME,strlen(CCSP_MIB_FILE_NODE_NAME),pChildNode->GetName(pChildNode),&ind);
+                ERR_CHK(rc);
+                if((!ind) && (rc == EOK))
         {
             pChildNode->GetDataString(pChildNode, NULL, buffer, &uLength);
 

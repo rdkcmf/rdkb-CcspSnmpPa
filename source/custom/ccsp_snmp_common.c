@@ -36,6 +36,9 @@
 
 #include "cosa_api.h"
 #include "ccsp_snmp_common.h"
+#include "safec_lib_common.h"
+
+
 
 /* 
  * gets a string from the model 
@@ -48,6 +51,7 @@ int get_dm_value(const char *param, char *val, size_t len)
     int                     size = 0;
     parameterValStruct_t ** parameterVal = NULL;
     int                     iReturn = 0;
+    errno_t rc =-1;
     
     //check for NULL string
     if( NULL == param || val == NULL)
@@ -73,7 +77,12 @@ int get_dm_value(const char *param, char *val, size_t len)
      }
     
      if(size >= 1){
-        snprintf(val, len, "%s", parameterVal[0]->parameterValue);
+       rc =  sprintf_s(val, len, "%s", parameterVal[0]->parameterValue);
+       if(rc < EOK)
+        {
+               ERR_CHK(rc);
+               return -1;
+         }
         Cosa_FreeParamValues(size, parameterVal);
      }
      
@@ -93,7 +102,10 @@ int set_dm_value(const char *param, char *val, size_t vlen)
     char                    *paramNames[1];
     /* Coverity Fix CID:59340 UnInit var */
     int                     valNum = 0;
-    
+    errno_t rc =-1;
+    int ind =-1;
+ 
+    int ret = 0;
     if (!param || !val){
         AnscTraceWarning(("%s: bad parameters\n", __FUNCTION__));
         return -1;
@@ -115,8 +127,24 @@ int set_dm_value(const char *param, char *val, size_t vlen)
         AnscTraceWarning(("Failed to get parameter value for '%s'\n", param));
         return -1;
     }
+     
+    if ( valNum != 1 )
+    {
+       ret = 1;
+    }
     
-    if (valNum != 1 || strcmp(structGet[0]->parameterName, param) != 0)
+    else
+    {
+       rc = strcmp_s(structGet[0]->parameterName,strlen(structGet[0]->parameterName),param,&ind);
+       ERR_CHK(rc);
+
+       if( ( rc ==EOK ) && ( ind ))
+      {
+             ret = 1;
+      }
+   }
+    
+    if( ret == 1 )
     {
         AnscTraceWarning(("%s: miss match\n", __FUNCTION__));
         Cosa_FreeParamValues(valNum, structGet);
