@@ -525,7 +525,8 @@ static int32_t freqMaskToValue(uint32_t mask)
     int i;
     int32_t freq = 0;
 
-    for(i=0; i <= 32; i++) {
+    /* CID: 64030 Bad bit shift operation*/
+    for(i=0; i < 32; i++) {
         if(mask & (1<<i)) {
             freq += 800 + 25 * i;
         }

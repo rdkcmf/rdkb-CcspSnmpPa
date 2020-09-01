@@ -245,7 +245,8 @@ int setInsertDhcpOption(int value)
 
     if (set_dm_value(HOTSPOT_DM_OPTION82_CURCUIT_ID, curcuit, strlen(curcuit)) ||
         set_dm_value(HOTSPOT_DM_OPTION82_REMOTE_ID, remote, strlen(remote))) {
-		CcspTraceWarning(("set_dm_value: '%s' \ '%s' failed\n",HOTSPOT_DM_OPTION82_CURCUIT_ID, HOTSPOT_DM_OPTION82_REMOTE_ID));
+          /* CID: 63012- Unrecognized char escape*/
+		CcspTraceWarning(("set_dm_value: '%s' \\ '%s' failed\n",HOTSPOT_DM_OPTION82_CURCUIT_ID, HOTSPOT_DM_OPTION82_REMOTE_ID));
         return FALSE;
     }
 

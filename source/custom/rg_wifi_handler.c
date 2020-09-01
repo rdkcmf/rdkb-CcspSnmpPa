@@ -425,6 +425,7 @@ netsnmp_request_info* req;
 
     case MODE_SET_RESERVE1:
         /* sanity check */
+        /* TODO CID: 69343 Structurally dead code - due to break*/
         for (req = requests; req != NULL; req = req->next)
         {
             ret = netsnmp_check_vb_type(req->requestvb, ASN_INTEGER);
@@ -494,6 +495,7 @@ netsnmp_request_info* req;
 
     case MODE_SET_RESERVE1:
         /* sanity check */
+        /*TODO CID: 65239 Structurally dead code - due to break*/
         for (req = requests; req != NULL; req = req->next)
         {
             ret = netsnmp_check_vb_type(req->requestvb, ASN_INTEGER);
@@ -1216,6 +1218,8 @@ static int setBssSecurityMode(PCCSP_TABLE_ENTRY pEntry, int mode)
         valStr[1].type = ccsp_string;
 		valCnt = 2;
     }
+/*CID: 92586 Logically dead code*/
+#ifndef _XB6_PRODUCT_REQ_
     else if(mode == 7)
     {	
 		sprintf(valStr[1].parameterValue, "%s", "AES+TKIP");
@@ -1223,6 +1227,7 @@ static int setBssSecurityMode(PCCSP_TABLE_ENTRY pEntry, int mode)
         valStr[1].type = ccsp_string;
 		valCnt = 2;
     }
+#endif
     
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, valCnt))
     {
@@ -1344,8 +1349,8 @@ find_retry:
             status = -1;
             goto ret;
         }
-       
-        memset(pEntry,0,sizeof(pEntry));
+        /*CID: 151642 Wrong sizeof argument*/
+        memset(pEntry,0,sizeof(CCSP_TABLE_ENTRY));
 
         dmIns = insArray[i];
                    if (WIFI_IF_MAX <= dmIns)
@@ -2772,9 +2777,11 @@ int getNPhyRate(PCCSP_TABLE_ENTRY entry) {
     int nval = 0, retval = 0;
     char mystring[50] = {0};
     char* name = (char *)mystring;
+    CcspTraceInfo(("%s: not implemented\n", __func__));
     return 0; //TODO: DATA MODEL NOT READY. IMPLEMENTATION DEFERRED.
     //AnscTraceWarning(("getBssEnable called on entry: %d (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
-    
+/*CID: 67296 Structurally dead code*/
+#if 0 
     retval = FindWifiDestComp(); 
 	
 	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
@@ -2800,6 +2807,7 @@ int getNPhyRate(PCCSP_TABLE_ENTRY entry) {
     Cosa_FreeParamValues(nval, valStr);
     
     return retval;
+#endif
 }
 
 int setNPhyRate(PCCSP_TABLE_ENTRY entry, int val) {
@@ -2808,8 +2816,10 @@ int setNPhyRate(PCCSP_TABLE_ENTRY entry, int val) {
     char str[2][100];
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
+    CcspTraceInfo(("%s: not implemented\n", __func__));
     return 0; //TODO: DATA MODEL NOT READY. IMPLEMENTATION DEFERRED.
-    
+    /* CID: 70719 Structurally dead code*/
+#if 0
     retval = FindWifiDestComp(); 
 	
 	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
@@ -2828,6 +2838,7 @@ int setNPhyRate(PCCSP_TABLE_ENTRY entry, int val) {
     }
 
     return 0;
+#endif
 }
 
 int
@@ -3092,19 +3103,17 @@ handleDot11WpaTable(
                             (entry->IndexValue[0].Value.uValue == 14))
                     {
                         syscfg_get( NULL, "SNMPPSWDCTRLFLAG", buf, sizeof(buf));
-                        if( buf != NULL )
+                        /*  CID: 60053 -Array name cant be NULL - remove the check buf != NULL*/
+                        // if SNMPPSWDCTRLFLAG == false, then Get is not allowed
+                        if (strcmp(buf, "false") == 0)
                         {
-                            // if SNMPPSWDCTRLFLAG == false, then Get is not allowed
-                            if (strcmp(buf, "false") == 0)
-                            {
-                                snmp_set_var_typed_value(req->requestvb, (u_char)ASN_OCTET_STR, (u_char *)&emptyString, strlen(emptyString));
-                            }
-                            else
-                            {
-                                getWpaPSK(entry,value);
-                                snmp_set_var_typed_value(req->requestvb, (u_char)ASN_OCTET_STR, (u_char *)&value, strlen(value));
-                            }
-                        }
+                             snmp_set_var_typed_value(req->requestvb, (u_char)ASN_OCTET_STR, (u_char *)&emptyString, strlen(emptyString));
+                         }
+                         else
+                         {
+                             getWpaPSK(entry,value);
+                             snmp_set_var_typed_value(req->requestvb, (u_char)ASN_OCTET_STR, (u_char *)&value, strlen(value));
+                          }
                     }
                      // This parameter can't be read, but snmp was defined as read/write
                     //unsigned char value = '\0';

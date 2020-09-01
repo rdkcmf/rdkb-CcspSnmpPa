@@ -162,6 +162,9 @@ CcspMibHelperLoadCcspMibFile
 	 /* parse the XML file */
 	pBackBuffer = pXMLContent;
 
+    /*CID: 137526 String not null terminated*/
+    *(pBackBuffer + uBufferSize -1) = '\0';
+
     pRootNode = (PANSC_XML_DOM_NODE_OBJECT)
         AnscXmlDomParseString((ANSC_HANDLE)NULL, (PCHAR*)&pBackBuffer, uBufferSize);
 

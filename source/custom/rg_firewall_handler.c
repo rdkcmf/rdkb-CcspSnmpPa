@@ -438,7 +438,10 @@ static int getFwTrafficBlock(unsigned char *value)
 
     for (i = 0; i < 3; i++){    /* not include http & p2p */
         bzero(strVal, sizeof(strVal));
-        get_dm_value(fwTrafficBlcok[i].dmName, strVal, sizeof(strVal));
+        /* CID: 71304 Unchecked return value*/
+        if (get_dm_value(fwTrafficBlcok[i].dmName, strVal, sizeof(strVal))) {
+            return -1;
+        }
         if (!strcmp(strVal, "false")){    /* not filter, then passthru */
             *value |= fwTrafficBlcok[i].maskValue;
         }else{
@@ -491,7 +494,10 @@ static int getFwWanBlock(unsigned char *value)
 
     for (i = 0; i < sizeof(fwTrafficBlcok)/sizeof(fwTrafficBlcok[0]); i++){
         bzero(strVal, sizeof(strVal));
-        get_dm_value(fwTrafficBlcok[i].dmName, strVal, sizeof(strVal));
+        /*CID: 62333 Unchecked return value*/
+        if(get_dm_value(fwTrafficBlcok[i].dmName, strVal, sizeof(strVal))) {
+           return -1;
+        }
         if (!strcmp(strVal, "true")){    /* if filter, return true */
             *value = 1;
             break;
@@ -1385,10 +1391,13 @@ commit_trusted_user_entry(struct trusted_user_entry *pUserEntry, const char *ip)
     for(i=0; i<4; i++) 
         CcspTraceInfo(("param %d name %s value %s.\n", i, pValueArray[i].parameterName, pValueArray[i].parameterValue));
 
-    Cosa_SetParamValuesNoCommit(dstComp,
+    /* CID: 74838 Unchecked return value*/
+    if(!Cosa_SetParamValuesNoCommit(dstComp,
                                 dstPath,
                                 pValueArray,
-                                4);
+                                4)) {
+       return -1;
+    }
 
     /* free the memory */
     if(pValueArray != NULL){
@@ -1468,6 +1477,9 @@ static int set_trusted_user_entry(netsnmp_request_info *requests)
       CcspTraceInfo(("%s - (%d): pUserEntry is NULL \n", __func__, __LINE__));
        
     }
+    /* CID: 144057 Missing return statement*/
+    CcspTraceInfo(("%s(%d): Exiting...\n", __func__, __LINE__));
+    return 0;
 }
 
 static int load_trusted_user_entry(netsnmp_tdata *table)

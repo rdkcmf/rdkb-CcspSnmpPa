@@ -440,6 +440,9 @@ CcspUtilParseOidValueString
     {
         ulCharOffset     = 0;
         pTokenEnumCode   = AnscTcUnlinkToken(pTokenChainEnums);
+        /* CID: 52963 Dereference null return value*/
+        if (!pTokenEnumCode)
+                return FALSE;
 
 		pArray[uSize] = _ansc_atoi(pTokenEnumCode->Name);
 		uSize ++;
@@ -1416,6 +1419,9 @@ CcspUtilParseEnumString
         ulCharOffset     = 0;
         pTokenEnumString = AnscTcUnlinkToken(pTokenChainEnums);
         pTokenEnumCode   = AnscTcUnlinkToken(pTokenChainEnums);
+        /* CID:57262 Dereference null return value*/
+        if (!pTokenEnumString || !pTokenEnumCode)
+             return FALSE;
 
         while ( pTokenEnumString->Name[ulCharOffset] == ' ' ||  pTokenEnumString->Name[ulCharOffset] == ',')
         {
@@ -1889,7 +1895,8 @@ CcspUtilDMFilterToNamespace
 	}
 
 	/* get the ins count */
-	if( !Cosa_GetInstanceNums(*ppDestName, *ppDestPath, pBuffer, &insArray, &insCount) || insNumber == 0 || insArray == NULL)
+        /* CID: 65738 Logically dead code*/
+	if( !Cosa_GetInstanceNums(*ppDestName, *ppDestPath, pBuffer, &insArray, &insCount))
 	{
 		return insNumber;
 	}
@@ -2532,6 +2539,7 @@ utilBitsToDMString
 
 		for( j = 0 ; j < 8; j ++ )
 		{
+                        /* TODO CID: 63306 Expression with no effect*/
 			uValueBit << 1;
 
 			if( pArray[i] && uValueBit)
