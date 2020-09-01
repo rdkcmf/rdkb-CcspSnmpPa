@@ -130,7 +130,10 @@ static int setRgIpMgmtWanDns(int value, oid lastOid)
     char rebootStr[] = "Device delay";
     char rebootObj[] = "Device.X_CISCO_COM_DeviceControl.RebootDevice";
     if (lastOid == saRgIpMgmtWanMode_lastOid){
-        set_dm_value(rebootObj, rebootStr, sizeof(rebootStr));
+        /* CID: 67915 Unchecked return value*/
+        if(set_dm_value(rebootObj, rebootStr, sizeof(rebootStr))) {
+           return -1;
+        }
     }
 
     return 0;

@@ -303,8 +303,7 @@ tableGroupSetReserve2
 	for (request = requests; request != NULL; request = request->next) 
 	{
 		if( request->processed != 0) { continue;}
-
-		pEntry = (PCCSP_TABLE_ENTRY)netsnmp_tdata_extract_entry(request);
+                /* CID: 60371 Unused value, Removig pEntry*/
 		table_info = netsnmp_extract_table_info(request);
 
 		requestvb = request->requestvb;

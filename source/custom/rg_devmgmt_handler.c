@@ -381,13 +381,12 @@ Call appropriate DML parameter based on the reset case
        			return -1;
     		}
 		break;
-        case 3 : 
+        case 3 :
 		if (set_dm_value(FACTORY_RESET_DM_WIFI, "1,2;1,2", strlen("1,2;1,2"))){
        			return -1;
     		}
 		break;
-	default :
-		break;
+        /* CID: 69718 Dead default case in switch, value should be 0,1,2,3 */
 	}
     return 0;
 }

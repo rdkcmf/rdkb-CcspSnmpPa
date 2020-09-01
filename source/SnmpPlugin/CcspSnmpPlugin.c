@@ -199,6 +199,9 @@ init_ccsp_snmp_plugin(void)
 	/* close the file handle */
     AnscCloseFile(pFileHandle);
 
+   /*CID: 137497 String not null terminated*/
+    *(pXMLContent + uBufferSize - 1) = '\0';
+
 	/* parse the XML file */
 	pBackBuffer = pXMLContent;
 
