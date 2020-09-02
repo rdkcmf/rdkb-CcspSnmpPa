@@ -191,6 +191,49 @@ main(int argc, char *argv[])
 
     snmp_log(LOG_INFO,"%s is up and running.\n", AGNT_NAME);
     system("sysevent set snmp_subagent-status started");
+
+#if defined(_XF3_PRODUCT_REQ_) || defined(_CBR_PRODUCT_REQ_) || ( (defined(_XB6_PRODUCT_REQ_) || defined (_XB7_PRODUCT_REQ_)) && defined (_COSA_BCM_ARM_))
+    char buff[10] = {0};
+    int rc = 0;
+    syscfg_init();
+    rc = syscfg_get(NULL, "V2Support", buff, 10);
+    if (!rc)
+    {
+        fprintf(stderr, "syscfg get for V2Support success: %s\n", buff);
+        snmp_log(LOG_INFO,"Value for V2Support is %s.\n", buff);
+        if (0 == strcmp(buff, "true"))
+        {
+            if (access("/tmp/snmp_subagent_v2_initialized", F_OK) != 0)
+            {
+                system("print_uptime \"boot_to_snmp_subagent_v2_uptime\"");
+            }
+            system("touch /tmp/snmp_subagent_v2_initialized");
+        }
+    }
+    else
+    {
+        fprintf(stderr, "syscfg get for V2Support failed with errno:%d\n", rc);
+    }
+    memset(buff, 0, sizeof(buff));
+    rc = syscfg_get(NULL, "V3Support", buff, 10);
+    if (!rc)
+    {
+        fprintf(stderr, "syscfg get for V3Support success:%s\n", buff);
+        snmp_log(LOG_INFO,"Value for V3Support is %s.\n", buff);
+        if (0 == strcmp(buff, "true"))
+        {
+            if (access("/tmp/snmp_subagent_v3_initialized", F_OK) != 0)
+            {
+                system("print_uptime \"boot_to_snmp_subagent_v3_uptime\"");
+            }
+            system("touch /tmp/snmp_subagent_v3_initialized");
+        }
+    }  
+    else
+    {
+        fprintf(stderr, "syscfg get for V3Support failed with errno:%d\n", rc);
+    }
+#else
     if(2 == instance_number)
     {
         if (access("/tmp/snmp_subagent_v3_initialized", F_OK) != 0)
@@ -207,6 +250,7 @@ main(int argc, char *argv[])
         }
         system("touch /tmp/snmp_subagent_v2_initialized");
     }
+#endif
 
     /* main loop */
     while(keep_running) {
