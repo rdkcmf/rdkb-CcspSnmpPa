@@ -39,6 +39,8 @@
 #include <net-snmp/agent/net-snmp-agent-includes.h>
 #include <unistd.h>
 #include "CcspSnmpPlugin.h"
+#include "syscfg.h"
+#include "ansc_platform.h"
 
 #include "safec_lib_common.h"
 
@@ -60,6 +62,7 @@ static int  instance_number = DEF_MASTER_INSTANCE;
 static void
 stop_server(int signo) 
 {
+    UNREFERENCED_PARAMETER(signo);
     keep_running = 0;
 }
 

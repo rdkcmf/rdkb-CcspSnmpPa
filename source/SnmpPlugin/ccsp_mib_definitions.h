@@ -72,17 +72,6 @@
 #include <net-snmp/net-snmp-includes.h>
 #include <net-snmp/agent/net-snmp-agent-includes.h>
 
-#ifdef CCSP_DEBUG
-#define  AnscTraceInfo(a)                       printf a
-#define  AnscTraceWarning(a)                    printf a
-#define  AnscTraceError(a)                      printf a
-#define  CcspTraceDebug(a)                      printf a
-#else
-#define  AnscTraceInfo(a)
-#define  AnscTraceWarning(a)
-#define  AnscTraceError(a)
-#define  CcspTraceDebug(a)
-#endif
 
 #define  MAXI_MIB_COUNT_IN_GROUP                128
 #define  MAXI_MIB_INDEX_COUNT                   6

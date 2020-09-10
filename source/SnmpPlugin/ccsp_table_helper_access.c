@@ -101,14 +101,11 @@ CcspTableHelperGetMibValues
         netsnmp_request_info		*requests
 	)
 {
-	PCCSP_TABLE_HELPER_OBJECT       pThisObject     = (PCCSP_TABLE_HELPER_OBJECT)hThisObject;
+    UNREFERENCED_PARAMETER(hThisObject);
 	PCCSP_MIB_VALUE                 pMibValueObj    = (PCCSP_MIB_VALUE)NULL;
     netsnmp_request_info            *request		= NULL;
-    netsnmp_variable_list           *requestvb		= NULL;
     oid                             subid			= 0;
     netsnmp_table_request_info*		table_info      = NULL;
-    netsnmp_tdata*					table_data      = NULL;
-    netsnmp_tdata_row*				table_row       = NULL;
     PCCSP_TABLE_ENTRY				table_entry     = NULL;
 
 
@@ -126,7 +123,6 @@ CcspTableHelperGetMibValues
 				continue;
 			}
 
-			requestvb = request->requestvb;
 			pMibValueObj = CcspUtilLookforMibValueObjWithOid(&table_entry->MibValueQueue, subid);
 
 			if( pMibValueObj != NULL)
@@ -284,6 +280,7 @@ tableGroupSetReserve2
         netsnmp_request_info		*requests
 	)
 {
+        UNREFERENCED_PARAMETER(reqinfo);
 	PCCSP_TABLE_HELPER_OBJECT       pThisObject     = (PCCSP_TABLE_HELPER_OBJECT)hThisObject;
 	PCCSP_MIB_VALUE                 pMibValueObj    = (PCCSP_MIB_VALUE)NULL;
     netsnmp_request_info            *request		= NULL;
@@ -296,8 +293,6 @@ tableGroupSetReserve2
 	BOOL							bResult         = FALSE;
 	PCCSP_TABLE_ENTRY				pEntry          = (PCCSP_TABLE_ENTRY)NULL;
 	netsnmp_table_request_info*     table_info      = NULL;
-	netsnmp_tdata*					table_data      = NULL;
-	netsnmp_tdata_row*			    table_row       = NULL;
 	ULONG                           indexes[8]      = { 0 };
 
 	/* first round check how many parameters will be set */
@@ -351,7 +346,7 @@ tableGroupSetReserve2
 		pMapping  = CcspUtilLookforMibMapWithOid(&pThisObject->MibObjQueue, subid);
 		pMibValueObj = CcspUtilLookforMibValueObjWithOid(&pEntry->MibValueQueue, subid);
 
-		for( i = 0; i < pEntry->IndexCount; i ++)
+		for( i = 0; i < (int)pEntry->IndexCount; i ++)
 		{
 			indexes[i] = pEntry->IndexValue[i].Value.uValue;
 		}
@@ -411,7 +406,7 @@ tableGroupSetReserve2
 	/* free the memory */
 	if( pValueArray != NULL)
 	{
-		for( i = 0; i < uCount; i ++)
+		for( i = 0; i < (int)uCount; i ++)
 		{
 			if( pValueArray[i].parameterValue != NULL) AnscFreeMemory(pValueArray[i].parameterValue);
 		}
@@ -438,17 +433,13 @@ tableGroupSetFree
         netsnmp_request_info		*requests
 	)
 {
-	PCCSP_TABLE_HELPER_OBJECT       pThisObject     = (PCCSP_TABLE_HELPER_OBJECT)hThisObject;
+    UNREFERENCED_PARAMETER(hThisObject);
+    UNREFERENCED_PARAMETER(reqinfo);
 	PCCSP_MIB_VALUE                 pMibValueObj    = (PCCSP_MIB_VALUE)NULL;
     netsnmp_request_info            *request		= NULL;
-    netsnmp_variable_list           *requestvb		= NULL;
     oid                             subid			= 0;
 	PCCSP_TABLE_ENTRY				pEntry          = (PCCSP_TABLE_ENTRY)NULL;
 	netsnmp_table_request_info*     table_info      = NULL;
-	netsnmp_tdata*					table_data      = NULL;
-	netsnmp_tdata_row*			    table_row       = NULL;
-	ULONG                           indexes[8]      = { 0 };
-	ULONG							i				= 0;
 
 	AnscTraceInfo(("Enter 'tableGroupSetFree'\n"));
 
@@ -499,7 +490,6 @@ tableGroupSetFree
 		pEntry = (PCCSP_TABLE_ENTRY)netsnmp_tdata_extract_entry(request);
 		table_info = netsnmp_extract_table_info(request);
 
-		requestvb = request->requestvb;
 		subid     = table_info->colnum;
 
 		if( pEntry == NULL) return SNMP_ERR_NOERROR;
@@ -641,7 +631,7 @@ CcspTableHelperSetMibValues
 					{
 						next = table_info->indexes;
 
-						for( i = 0; i < table_info->number_indexes; i ++)
+						for( i = 0; i < (int)table_info->number_indexes; i ++)
 						{
 							indexes[i] = *next->val.integer;
 							next = next->next_variable;
@@ -662,7 +652,7 @@ CcspTableHelperSetMibValues
 							pEntry = (PCCSP_TABLE_ENTRY)table_row->data;
 
 							/* the indexes array is the array of CCSP instance numbers */
-							for( i = 0; i < table_info->number_indexes; i ++)
+							for( i = 0; i < (int)table_info->number_indexes; i ++)
 							{
 								pEntry->IndexValue[i].Value.iValue = indexes[i];
 							}
@@ -740,7 +730,7 @@ CcspTableHelperSetMibValues
 								break;
 							case RS_DESTROY:
 
-								for( i = 0; i < pEntry->IndexCount; i ++)
+								for( i = 0; i < (int)pEntry->IndexCount; i ++)
 								{
 									indexes[i] = pEntry->IndexValue[i].Value.uValue;
 								}
@@ -822,7 +812,6 @@ tableGroupGetCosaValues
 	parameterValStruct_t**			paramValues	    = NULL;
 	parameterValStruct_t*			pValue          = NULL;
 	int								i				= 0;
-	int								j               = 0;
 	char*                           CacheDMName[MAXI_MIB_COUNT_IN_GROUP]  = { 0 };        
 	ULONG                           CacheMibOid[MAXI_MIB_COUNT_IN_GROUP]  = { 0 };        
 	ULONG							nCacheMibCount  = 0;
@@ -942,7 +931,7 @@ tableGroupGetCosaValues
 
 #else
 	/* put them in the value array */
-	for( i = 0; i< nCacheMibCount; i ++)
+	for( i = 0; i< (int)nCacheMibCount; i ++)
 	{
 		size = 0;
 		paramValues = NULL;
@@ -983,9 +972,8 @@ tableGroupGetCosaValues
 
     bReturn = TRUE;
 
-EXIT:
 
-	for( i = 0; i < nCacheMibCount; i ++)
+	for( i = 0; i < (int)nCacheMibCount; i ++)
 	{
 		if( CacheDMName[i] != NULL)
 		{
@@ -1055,9 +1043,6 @@ CcspTableHelperRefreshCache
 {
 	PCCSP_TABLE_HELPER_OBJECT       pThisObject     = (PCCSP_TABLE_HELPER_OBJECT)hThisObject;
 	char*							pDMString       = pThisObject->pStrSampleDM;
-	char*							pDestComp       = NULL;
-	char*							pDestPath       = NULL;
-	PCCSP_MIB_MAPPING				pMibMap			= (PCCSP_MIB_MAPPING)NULL;
 	PCCSP_INDEX_MAPPING				pIndexMap		= (PCCSP_INDEX_MAPPING)NULL;
 	PSINGLE_LINK_ENTRY              pSLinkEntry     = (PSINGLE_LINK_ENTRY)NULL;
 	char                            pTemp[256]      = { 0 };
@@ -1177,7 +1162,7 @@ CcspTableHelperRefreshCache
                     insCount1 = 0;
 				}
 
-				for( i = 0; i < insCount1; i ++)
+				for( i = 0; i < (int)insCount1; i ++)
 				{
 					indexCount = 1;
                                         if (pIndexMap->uMapType == CCSP_MIB_MAP_TO_INSNUMBER) {
@@ -1188,7 +1173,7 @@ CcspTableHelperRefreshCache
 						}
 					} else if (pIndexMap->uMapType == CCSP_MIB_MAP_TO_SUBDM) {
 						subDMIns[0] = insArray1[i];
-						indexes[0] = tableGroupGetSubDMMapping(pThisObject, pIndexMap->Mapping.SubDMMappingInfo.pSubDMName, subDMIns);
+						indexes[0] = (ULONG)tableGroupGetSubDMMapping(pThisObject, pIndexMap->Mapping.SubDMMappingInfo.pSubDMName, (int *)subDMIns);
 						if( indexes[0] == 0 )
 						{
 							AnscTraceError(("Unable to find the sub DM value to index mapping for '%d'\n", insArray1[i]));
@@ -1251,7 +1236,7 @@ CcspTableHelperRefreshCache
                     insCount1 = 0;
 				}
 
-				for( i = 0; i < insCount1; i ++)
+				for( i = 0; i < (int)insCount1; i ++)
 				{
 					indexes[0] = CcspUtilLookforInsNumMapping(&pIndexMap->IndexQueue, insArray1[i], FALSE);
 					indexCount = 1;
@@ -1291,7 +1276,7 @@ CcspTableHelperRefreshCache
                                 insCount2 = 0;
 							}
 
-							for( j = 0; j < insCount2; j ++)
+							for( j = 0; j < (int)insCount2; j ++)
 							{
 								indexes[1] = CcspUtilLookforInsNumMapping(&pIndexMap->IndexQueue, insArray2[j], FALSE);
 								indexCount = 2;
@@ -1372,7 +1357,7 @@ CcspTableHelperRefreshCache
                     insCount1 = 0;
 				}
 
-				for( i = 0; i < insCount1; i ++)
+				for( i = 0; i < (int)insCount1; i ++)
 				{
 					indexes[0] = CcspUtilLookforInsNumMapping(&pIndexMap->IndexQueue, insArray1[i], FALSE);
 					indexCount = 1;
@@ -1412,7 +1397,7 @@ CcspTableHelperRefreshCache
                                 insCount2 = 0;
 							}
 
-							for( j = 0; j < insCount2; j ++)
+							for( j = 0; j < (int)insCount2; j ++)
 							{
 								indexes[1] = CcspUtilLookforInsNumMapping(&pIndexMap->IndexQueue, insArray2[j], FALSE);
 								indexCount = 2;
@@ -1451,7 +1436,7 @@ CcspTableHelperRefreshCache
                                             insCount3 = 0;
 										}
 
-										for( k = 0; k < insCount3; k ++)
+										for( k = 0; k < (int)insCount3; k ++)
 										{
 											indexes[2] = CcspUtilLookforInsNumMapping(&pIndexMap->IndexQueue, insArray3[k], FALSE);
 											indexCount = 3;

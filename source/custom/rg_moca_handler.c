@@ -374,6 +374,8 @@ handleMocaDevicePower(
     netsnmp_request_info		 	*requests
 )
 {
+UNREFERENCED_PARAMETER(handler);
+UNREFERENCED_PARAMETER(reginfo);
 netsnmp_request_info* req;
 int subid;
 int intval;
@@ -557,8 +559,6 @@ static struct saMocaFrequencies saMocaFrequencies_list[kMax_FreqIndex] = {
 static void freqMaskToBinaryStr(int freqCurrentMaskSetting, char * pvalue)
 {
     int i;
-    int j;
-    int k = 0;
     int mask = freqCurrentMaskSetting;
 
     CcspTraceInfo(("freqCurrentMaskSetting: %08x\n", freqCurrentMaskSetting));
@@ -604,7 +604,6 @@ static int getFreqCurrentMaskSetting(char * pvalue) {
     char mystring[STR_MAX] = {0};
     char* name = (char *)mystring;
     uint freqCurrentMaskSetting = 0;
-    uint mask = 0;
     uint freq_mask = 0;
     int freq;
     int i, j;
@@ -643,7 +642,7 @@ static int getFreqCurrentMaskSetting(char * pvalue) {
 
             for(j=0; j<kMax_FreqIndex; j++) {
 
-                if(saMocaFrequencies_list[j].frequency == freq) {
+                if((int)saMocaFrequencies_list[j].frequency == freq) {
                     CcspTraceInfo(("psFrequency: %s\n", saMocaFrequencies_list[j].psFrequency));
                     CcspTraceInfo(("frequency: %d\n", saMocaFrequencies_list[j].frequency));
 
@@ -732,7 +731,6 @@ static int getX_CISCO_COM_ChannelScanMask(char * pvalue) {
     char mystring[STR_MAX]= {0};
     char* name = (char *)mystring;
     uint X_CISCO_COM_ChannelScanMask = 0;
-    uint mask = 0;
     uint scan_mask = 0;
     int freq;
     int i, j;
@@ -772,7 +770,7 @@ static int getX_CISCO_COM_ChannelScanMask(char * pvalue) {
 
             for(j=0; j<kMax_FreqIndex; j++) {
 
-                if(saMocaFrequencies_list[j].frequency == freq) {
+                if((int)saMocaFrequencies_list[j].frequency == freq) {
                     CcspTraceInfo(("psFrequency: %s\n", saMocaFrequencies_list[j].psFrequency));
                     CcspTraceInfo(("frequency: %d\n", saMocaFrequencies_list[j].frequency));
 
@@ -875,6 +873,8 @@ handleMocaDeviceChannel(
     netsnmp_request_info		 	*requests
 )
 {
+UNREFERENCED_PARAMETER(handler);
+UNREFERENCED_PARAMETER(reginfo);
 netsnmp_request_info* req;
 int subid;
 int intval;
@@ -957,7 +957,7 @@ for (req = requests; req != NULL; req = req->next)
                 CcspTraceInfo(("val_len %d\n", req->requestvb->val_len));
 
                 if(req->requestvb->val_len < kMax_FreqIndex) {
-                    intval = setFreqCurrentMaskSetting(req->requestvb->val.string, 
+                    intval = setFreqCurrentMaskSetting((char *)req->requestvb->val.string, 
                                                        req->requestvb->val_len);
                     if(intval < 0) {
                         netsnmp_request_set_error(req, SNMP_ERR_GENERR);
@@ -979,7 +979,7 @@ for (req = requests; req != NULL; req = req->next)
                 CcspTraceInfo(("val_len %d\n", req->requestvb->val_len));
 
                 if(req->requestvb->val_len < kMax_FreqIndex) {
-                    intval = setX_CISCO_COM_ChannelScanMask(req->requestvb->val.string, 
+                    intval = setX_CISCO_COM_ChannelScanMask((char *)req->requestvb->val.string, 
                                                        req->requestvb->val_len);
                     if(intval < 0) {
                         netsnmp_request_set_error(req, SNMP_ERR_GENERR);
@@ -1026,7 +1026,6 @@ static int getTabooMaskSetting(char * pvalue) {
     char mystring[STR_MAX] = {0};
     char* name = (char *)mystring;
     uint freqCurrentMaskSetting = 0;
-    uint mask = 0;
     uint freq_mask = 0;
     int freq;
     int i, j;
@@ -1065,7 +1064,7 @@ static int getTabooMaskSetting(char * pvalue) {
 
             for(j=0; j<kMax_FreqIndex; j++) {
 
-                if(saMocaFrequencies_list[j].frequency == freq) {
+                if((int)saMocaFrequencies_list[j].frequency == freq) {
                     CcspTraceInfo(("psFrequency: %s\n", saMocaFrequencies_list[j].psFrequency));
                     CcspTraceInfo(("frequency: %d\n", saMocaFrequencies_list[j].frequency));
 
@@ -1154,6 +1153,8 @@ handleMocaDeviceBase(
     netsnmp_request_info		 	*requests
 )
 {
+UNREFERENCED_PARAMETER(handler);
+UNREFERENCED_PARAMETER(reginfo);
 netsnmp_request_info* req;
 int subid;
 int intval;
@@ -1222,7 +1223,7 @@ for (req = requests; req != NULL; req = req->next)
                 CcspTraceInfo(("val_len %d\n", req->requestvb->val_len));
 
                 if(req->requestvb->val_len < kMax_FreqIndex) {
-                    intval = setTabooMaskSetting(req->requestvb->val.string, 
+                    intval = setTabooMaskSetting((char *)req->requestvb->val.string, 
                                                        req->requestvb->val_len);
                     if(intval < 0) {
                         netsnmp_request_set_error(req, SNMP_ERR_GENERR);

@@ -272,8 +272,8 @@ scalarGroupSetReserve2
         netsnmp_request_info		*requests
 	)
 {
+        UNREFERENCED_PARAMETER(reqinfo);
 	PCCSP_SCALAR_HELPER_OBJECT      pThisObject     = (PCCSP_SCALAR_HELPER_OBJECT)hThisObject;
-	PCCSP_MIB_VALUE                 pMibValueObj    = (PCCSP_MIB_VALUE)NULL;
     netsnmp_request_info            *request		= NULL;
     netsnmp_variable_list           *requestvb		= NULL;
 	PCCSP_MIB_MAPPING				pMapping        = NULL;
@@ -282,7 +282,6 @@ scalarGroupSetReserve2
 	ULONG							uCount          = 0;
 	parameterValStruct_t*			pValueArray	    = NULL;
 	BOOL							bResult         = FALSE;
-
 	/* first round check how many parameters will be set */
 	for (request = requests; request != NULL; request = request->next) 
 	{
@@ -321,7 +320,6 @@ scalarGroupSetReserve2
 		requestvb = request->requestvb;
 		subid     = requestvb->name[pThisObject->uOidLen];
 		pMapping  = CcspUtilLookforMibMapWithOid(&pThisObject->MibObjQueue, subid);
-		pMibValueObj = CcspUtilLookforMibValueObjWithOid(&pThisObject->MibValueQueue, subid);
 
 		if( pMapping && pMapping->bHasMapping)
 		{
@@ -390,7 +388,7 @@ scalarGroupSetReserve2
 	/* free the memory */
 	if( pValueArray != NULL)
 	{
-		for( i = 0; i < uCount; i ++)
+		for( i = 0; i < (int)uCount; i ++)
 		{
 			if( pValueArray[i].parameterValue != NULL) AnscFreeMemory(pValueArray[i].parameterValue);
 		}
@@ -417,12 +415,9 @@ scalarGroupSetFree
         netsnmp_request_info		*requests
 	)
 {
-	PCCSP_SCALAR_HELPER_OBJECT      pThisObject     = (PCCSP_SCALAR_HELPER_OBJECT)hThisObject;
-	PCCSP_MIB_VALUE                 pMibValueObj    = (PCCSP_MIB_VALUE)NULL;
-    netsnmp_request_info            *request		= NULL;
-    netsnmp_variable_list           *requestvb		= NULL;
-    oid                             subid			= 0;
-
+        UNREFERENCED_PARAMETER(reqinfo);
+        UNREFERENCED_PARAMETER(requests);
+	UNREFERENCED_PARAMETER(hThisObject);
 #if 0  /* don't need to do anything. The cache will be refreshed anyway */
 	/* roll back the save values */
 	for (request = requests; request != NULL; request = request->next) 
@@ -469,7 +464,6 @@ CcspScalarHelperSetMibValues
 	)
 {
 	PCCSP_SCALAR_HELPER_OBJECT      pThisObject     = (PCCSP_SCALAR_HELPER_OBJECT)hThisObject;
-	PCCSP_MIB_VALUE                 pMibValueObj    = (PCCSP_MIB_VALUE)NULL;
     netsnmp_request_info            *request		= NULL;
     netsnmp_variable_list           *requestvb		= NULL;
 	PCCSP_MIB_MAPPING				pMapping        = NULL;
@@ -757,7 +751,7 @@ CcspScalarHelperRefreshCache
                     return -1;
                   }  
 
-			for( j= 0; j < pThisObject->nCacheMibCount; j ++)
+			for( j= 0; j < (int)pThisObject->nCacheMibCount; j ++)
 			{
                                
 				if( pValue->parameterName != NULL )
@@ -819,7 +813,6 @@ CcspScalarHelperClearCache
         ANSC_HANDLE                 hThisObject
 	)
 {
-	PCCSP_SCALAR_HELPER_OBJECT      pThisObject        = (PCCSP_SCALAR_HELPER_OBJECT)hThisObject;
-
+        UNREFERENCED_PARAMETER(hThisObject);
 	/* there's nothing to do for now */
 }

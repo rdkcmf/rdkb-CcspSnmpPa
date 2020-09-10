@@ -266,7 +266,7 @@ int setInsertDhcpOption(int value)
  return TRUE;
  error_return:
   /* CID: 63012- Unrecognized char escape*/
- CcspTraceWarning(("set_dm_value: '%s' \ '%s' failed\n",HOTSPOT_DM_OPTION82_CURCUIT_ID, HOTSPOT_DM_OPTION82_REMOTE_ID));
+ CcspTraceWarning(("set_dm_value: '%s' \\ '%s' failed\n",HOTSPOT_DM_OPTION82_CURCUIT_ID, HOTSPOT_DM_OPTION82_REMOTE_ID));
  return FALSE;
         
 }
@@ -371,6 +371,7 @@ int setRemoteEpAddr(int oid, char *ip)
     return ret;
 }
 
+#if 0
 static int is_wifi_hotspot_ssid(char *localIntf, int ins)
 {
     char wifiSsid[32] = {'\0'};
@@ -387,6 +388,7 @@ static int is_wifi_hotspot_ssid(char *localIntf, int ins)
 
     return TRUE;
 }
+#endif
 
 static int hotspot_get_if_enabled(int ins, int *bEnabled)
 {
@@ -429,6 +431,7 @@ static int hotspot_get_if_enabled(int ins, int *bEnabled)
 
 static int hotspot_set_if_enabled(int ins, int bEnabled)
 {
+    UNREFERENCED_PARAMETER(bEnabled);
     char ssidDm[32] = {'\0'};
     errno_t rc =-1;
     // char localIf[256] = {'\0'};
@@ -652,7 +655,7 @@ static int hotspot_vlan_tag_func(int ins, int *vlan_id, int cmd)
             }
         }
 
-        pMode = (*vlan_id == 0) ? gVlanMode[VLAN_TAGGING] : gVlanMode[VLAN_PASSTHROUGH];
+        pMode = (*vlan_id == 0) ? (char *)gVlanMode[VLAN_TAGGING] : (char *)gVlanMode[VLAN_PASSTHROUGH];
 
         if(set_dm_value(vlanModeDm, pMode, strlen(pMode))) {
             printf("Failed to get DM %s!\n", vlanModeDm);
@@ -673,11 +676,12 @@ handleL2ogreBase(
     netsnmp_request_info            *requests
 )
 {
+    UNREFERENCED_PARAMETER(handler);
+    UNREFERENCED_PARAMETER(reginfo);
     netsnmp_request_info* req;
     int subid;
     int status, intval;
     int retval=SNMP_ERR_NOERROR;
-    PCCSP_TABLE_ENTRY entry = NULL; 
     netsnmp_variable_list *vb = NULL;
     char ip[256] = {'\0'};
 
@@ -735,7 +739,7 @@ handleL2ogreBase(
             case MODE_SET_RESERVE2:
             /* set value to backend with no commit */
                 if (subid == PriEpAddr_lastOid || subid == SecEpAddr_lastOid) {
-                    status = setRemoteEpAddr(subid, vb->val.string);
+                    status = setRemoteEpAddr(subid, (char *)vb->val.string);
                     req->processed = 1;
             
                     if (FALSE == status) {
@@ -773,6 +777,8 @@ handleHotspotIf(
     netsnmp_request_info            *requests
 )
 {
+    UNREFERENCED_PARAMETER(handler);
+    UNREFERENCED_PARAMETER(reginfo);
     netsnmp_request_info* req;
     int subid;
     int intval, status;
@@ -879,6 +885,8 @@ handleL2ogreSourceIf(
     netsnmp_request_info            *requests
 )
 {
+    UNREFERENCED_PARAMETER(handler);
+    UNREFERENCED_PARAMETER(reginfo);
     netsnmp_request_info* req;
     int subid;
     int intval, status;
@@ -965,7 +973,7 @@ handleL2ogreSourceIf(
             case MODE_SET_RESERVE2:
                 /* set value to backend with no commit */
                 if(subid == VlanTag_lastOid) {
-                    status = hotspot_vlan_tag_func(index, (vb->val.integer), SET_VLAN_TAG);
+                    status = hotspot_vlan_tag_func(index, (int *)(vb->val.integer), SET_VLAN_TAG);
                     req->processed = 1;
             
                     if (FALSE == status) {
@@ -1017,17 +1025,16 @@ handleWifiAssocatedDevice(
     netsnmp_request_info            *requests
 )
 {
+    UNREFERENCED_PARAMETER(handler);
+    UNREFERENCED_PARAMETER(reginfo);
+    UNREFERENCED_PARAMETER(reqinfo);
     netsnmp_request_info* req;
-    int subid;
-    int intval, status;
-    int retval=SNMP_ERR_NOERROR;
     PCCSP_TABLE_ENTRY entry = NULL; 
     netsnmp_variable_list *vb = NULL;
     int index;
 
     for (req = requests; req != NULL; req = req->next) {
         vb = req->requestvb;
-        subid = vb->name[vb->name_length - 3];     /* we got two indexes */
         CcspTraceInfo(("WifiAssociatedDevice last 4: %d.%d.%d.%d!\n", vb->name[vb->name_length-4],vb->name[vb->name_length-3],vb->name[vb->name_length-2],vb->name[vb->name_length-1]));
         entry = (PCCSP_TABLE_ENTRY)netsnmp_tdata_extract_entry(req);
         if (entry == NULL) {

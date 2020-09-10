@@ -102,7 +102,6 @@ CcspMibHelperLoadCcspMibFile
 	PCCSP_MIB_HELPER_OBJECT			pThisObject        = (PCCSP_MIB_HELPER_OBJECT)hThisObject;
     ANSC_HANDLE                     pFileHandle        = NULL;
     char*                           pXMLContent        = NULL;
-    ULONG                           uXMLLength         = 0;
     ULONG                           uFileLength        = 0;
     ULONG                           uBufferSize        = 0;
     PANSC_XML_DOM_NODE_OBJECT       pRootNode          = (PANSC_XML_DOM_NODE_OBJECT)NULL;
@@ -290,7 +289,7 @@ CcspMibHelperRemove
 	}
 
 	/* release all the libraries */
-	for( i = 0; i < pThisObject->uLibCount; i ++)
+	for( i = 0; i < (int)pThisObject->uLibCount; i ++)
 	{
 		if( pThisObject->hLibArray[i] != NULL)
 		{

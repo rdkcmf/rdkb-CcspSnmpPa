@@ -45,35 +45,36 @@
 #include "ccsp_mib_definitions.h"
 #include <time.h>
 #include "safec_lib_common.h"
+#include "syscfg.h"
 
 #define WIFI_DM_OBJ          "Device.WiFi."
-#define WIFI_DM_BSSENABLE    "Device.WiFi.SSID.%d.Enable"
+#define WIFI_DM_BSSENABLE    "Device.WiFi.SSID.%lu.Enable"
 #define WIFI_DM_APPLY        "Device.WiFi.Radio.%d.X_CISCO_COM_ApplySetting"
-#define WIFI_DM_MACF_ENABLE  "Device.WiFi.AccessPoint.%d.X_CISCO_COM_MACFilter.Enable"
-#define WIFI_DM_MACF_ASBL    "Device.WiFi.AccessPoint.%d.X_CISCO_COM_MACFilter.FilterAsBlackList"
-#define WIFI_DM_CHANNEL      "Device.WiFi.Radio.%d.Channel"
-#define WIFI_DM_AUTOCHAN     "Device.WiFi.Radio.%d.AutoChannelEnable"
-#define WIFI_DM_ADVERTISE    "Device.WiFi.AccessPoint.%d.SSIDAdvertisementEnabled"
+#define WIFI_DM_MACF_ENABLE  "Device.WiFi.AccessPoint.%lu.X_CISCO_COM_MACFilter.Enable"
+#define WIFI_DM_MACF_ASBL    "Device.WiFi.AccessPoint.%lu.X_CISCO_COM_MACFilter.FilterAsBlackList"
+#define WIFI_DM_CHANNEL      "Device.WiFi.Radio.%lu.Channel"
+#define WIFI_DM_AUTOCHAN     "Device.WiFi.Radio.%lu.AutoChannelEnable"
+#define WIFI_DM_ADVERTISE    "Device.WiFi.AccessPoint.%lu.SSIDAdvertisementEnabled"
 #define WIFI_DM_RADIO_ENABLE "Device.WiFi.Radio.%d.Enable"
-#define WIFI_DM_RADIO_COUNTRY "Device.WiFi.Radio.%d.RegulatoryDomain"
-#define WIFI_DM_WMM_ENABLE   "Device.WiFi.AccessPoint.%d.WMMEnable"
+#define WIFI_DM_RADIO_COUNTRY "Device.WiFi.Radio.%lu.RegulatoryDomain"
+#define WIFI_DM_WMM_ENABLE   "Device.WiFi.AccessPoint.%lu.WMMEnable"
 #define WIFI_DM_WMM_UAPSD_ENABLE   "Device.WiFi.AccessPoint.%d.UAPSDEnable"
-#define WIFI_DM_WMM_NOACK    "Device.WiFi.AccessPoint.%d.X_CISCO_COM_WmmNoAck"
-#define WIFI_DM_MCASTRATE    "Device.WiFi.AccessPoint.%d.X_CISCO_COM_MulticastRate"
-#define WIFI_DM_OPERSTD      "Device.WiFi.Radio.%d.OperatingStandards"
-#define WIFI_DM_NPHYRATE     "Device.WiFi.Radio.%d.MCS"
-#define WIFI_DM_PSK          "Device.WiFi.AccessPoint.%d.Security.X_COMCAST-COM_KeyPassphrase"
+#define WIFI_DM_WMM_NOACK    "Device.WiFi.AccessPoint.%lu.X_CISCO_COM_WmmNoAck"
+#define WIFI_DM_MCASTRATE    "Device.WiFi.AccessPoint.%lu.X_CISCO_COM_MulticastRate"
+#define WIFI_DM_OPERSTD      "Device.WiFi.Radio.%lu.OperatingStandards"
+#define WIFI_DM_NPHYRATE     "Device.WiFi.Radio.%lu.MCS"
+#define WIFI_DM_PSK          "Device.WiFi.AccessPoint.%lu.Security.X_COMCAST-COM_KeyPassphrase"
 #define WIFI_DM_NUMBER_APS   "Device.WiFi.AccessPointNumberOfEntries"
-#define WIFI_DM_BSSHOTSPOT  "Device.WiFi.AccessPoint.%d.X_CISCO_COM_BssHotSpot"
-#define WIFI_DM_BSSISOLATIONENABLE"Device.WiFi.AccessPoint.%d.IsolationEnable"
-#define WIFI_DM_RADIO_USERCONTROL "Device.WiFi.Radio.%d.X_CISCO_COM_MbssUserControl" 
-#define WIFI_DM_RADIO_ADMINCONTROL "Device.WiFi.Radio.%d.X_CISCO_COM_AdminControl"
-#define WIFI_DM_BSSID         "Device.WiFi.SSID.%d.BSSID"
-#define WIFI_DM_SSID          "Device.WiFi.SSID.%d.SSID"
+#define WIFI_DM_BSSHOTSPOT  "Device.WiFi.AccessPoint.%lu.X_CISCO_COM_BssHotSpot"
+#define WIFI_DM_BSSISOLATIONENABLE "Device.WiFi.AccessPoint.%lu.IsolationEnable"
+#define WIFI_DM_RADIO_USERCONTROL "Device.WiFi.Radio.%lu.X_CISCO_COM_MbssUserControl"
+#define WIFI_DM_RADIO_ADMINCONTROL "Device.WiFi.Radio.%lu.X_CISCO_COM_AdminControl"
+#define WIFI_DM_BSSID         "Device.WiFi.SSID.%lu.BSSID"
+#define WIFI_DM_SSID          "Device.WiFi.SSID.%lu.SSID"
 #define WIFI_DM_WPS           "Device.WiFi.AccessPoint.%d.WPS.Enable"
 #define WIFI_DM_WPSTIME       "Device.WiFi.AccessPoint.%d.WPS.X_CISCO_COM_WpsPushButton"
-#define WIFI_DM_DEFAULT_SSID  "Device.WiFi.SSID.%d.X_COMCAST-COM_DefaultSSID"
-#define WIFI_DM_DEFAULT_PSK   "Device.WiFi.AccessPoint.%d.Security.X_COMCAST-COM_DefaultKeyPassphrase"
+#define WIFI_DM_DEFAULT_SSID  "Device.WiFi.SSID.%lu.X_COMCAST-COM_DefaultSSID"
+#define WIFI_DM_DEFAULT_PSK   "Device.WiFi.AccessPoint.%lu.Security.X_COMCAST-COM_DefaultKeyPassphrase"
 
 #define MAX_APS_PER_RADIO 16
 
@@ -107,7 +108,7 @@ int dmValue_type_from_name(char *name, int *type_ptr)
 {
   int rc = -1;
   int ind = -1;
-  int i = 0;
+  unsigned int i = 0;
   if((name == NULL) || (type_ptr == NULL))
      return 0;
   int length = strlen(name);
@@ -238,8 +239,7 @@ static int getNumAPs( ) {
  * ccsp error code
  */
 static int SetAllAPsonRadio(int radioInst, parameterValStruct_t valStr[], char* namestrings, int strSize, int* aps, const char* dmFormat, char* value, int type) {
-    int i = 0;
-    int offset = 0;
+    UNREFERENCED_PARAMETER(strSize);
     errno_t rc =-1;
 
     // Radio 1 has odd AP instance numbers 1,3,5,... and Radio 2 has even numbers.  Currently supporting 2 AP per radio
@@ -251,6 +251,8 @@ static int SetAllAPsonRadio(int radioInst, parameterValStruct_t valStr[], char* 
 
     *aps = numAPs/2;
  #if 0
+    int i = 0;
+    int offset = 0;
     for(i = 0; i < *aps; i++) {
         offset = (i == 0) ? 0 : (i*strSize);
         valStr[i].parameterValue = value;
@@ -356,6 +358,7 @@ static int applyDot11Settings(int val) {
 }
 
 static void* wifiCommitThread(void* arg) {
+    UNREFERENCED_PARAMETER(arg);
     while(1) {
         pthread_mutex_lock(&commitMutex);
         while(!bPendingCommit)
@@ -365,10 +368,12 @@ static void* wifiCommitThread(void* arg) {
         pthread_mutex_unlock(&commitMutex);
         Cosa_SetCommit(dstComp, dstPath, TRUE);
     }
+    return NULL;
 }
 
 static int getWps(PCCSP_TABLE_ENTRY entry)
 {
+    UNREFERENCED_PARAMETER(entry);
     /* Coverity Fix CID :61965 , 65350 UnInit var */
     parameterValStruct_t **valStr = NULL;
     int nval = 0, retval = 0;
@@ -436,6 +441,7 @@ static int getWps(PCCSP_TABLE_ENTRY entry)
 
 int setWps(PCCSP_TABLE_ENTRY entry, int wpsTime)
 {
+    UNREFERENCED_PARAMETER(entry);
     int retval = 0;
 	
 	parameterValStruct_t valStr;
@@ -550,6 +556,8 @@ handleDot11Wps(
     netsnmp_request_info		 	*requests
 )
 {
+ UNREFERENCED_PARAMETER(handler);
+ UNREFERENCED_PARAMETER(reginfo);
  int value;
  int ret;
 netsnmp_request_info* req;
@@ -623,6 +631,8 @@ handleDot11ApplySettings(
     netsnmp_agent_request_info		*reqinfo,
     netsnmp_request_info		 	*requests
 ){
+ UNREFERENCED_PARAMETER(handler);
+ UNREFERENCED_PARAMETER(reginfo);
  int value = 2;
  int ret;
 netsnmp_request_info* req;
@@ -1339,7 +1349,7 @@ static int getBssid(PCCSP_TABLE_ENTRY pEntry, char *macArray)
     if(get_dm_value(dmStr, mac, 18))
         return -1;
 
-    return mac_string_to_array(mac, macArray);
+    return mac_string_to_array(mac, (unsigned char *)macArray);
 
 }
 
@@ -1426,8 +1436,8 @@ static int setBssSsid(PCCSP_TABLE_ENTRY pEntry, const char *ssid)
     return 0;
 }
 
-#define WIFI_DM_BSS_SECURITY_MODE "Device.WiFi.AccessPoint.%d.Security.ModeEnabled"
-#define WIFI_DM_BSS_ENCRYPTION "Device.WiFi.AccessPoint.%d.Security.X_CISCO_COM_EncryptionMethod"
+#define WIFI_DM_BSS_SECURITY_MODE "Device.WiFi.AccessPoint.%lu.Security.ModeEnabled"
+#define WIFI_DM_BSS_ENCRYPTION "Device.WiFi.AccessPoint.%lu.Security.X_CISCO_COM_EncryptionMethod"
 
 static int getBssSecurityMode(PCCSP_TABLE_ENTRY pEntry)
 {
@@ -1469,7 +1479,6 @@ static int setBssSecurityMode(PCCSP_TABLE_ENTRY pEntry, int mode)
     valStr[1].parameterName = str[2];
     valStr[1].parameterValue = str[3];
     int valCnt =1;
-    unsigned int algor = 2;
     char modeStr[64] = {'\0'};
     errno_t rc = -1;
 
@@ -1593,7 +1602,7 @@ static int setBssSecurityMode(PCCSP_TABLE_ENTRY pEntry, int mode)
     return 0;
 }
 
-#define WIFI_DM_BSS_MAX_NUM_STA "Device.WiFi.AccessPoint.%d.X_CISCO_COM_BssMaxNumSta"
+#define WIFI_DM_BSS_MAX_NUM_STA "Device.WiFi.AccessPoint.%lu.X_CISCO_COM_BssMaxNumSta"
 
 static int getBssMaxNumSta(PCCSP_TABLE_ENTRY pEntry)
 {
@@ -1655,7 +1664,7 @@ static int setBssMaxNumSta(PCCSP_TABLE_ENTRY pEntry, int num)
     return 0;
 }
 
-#define WIFI_DM_BSS_USER_STATUS "Device.WiFi.AccessPoint.%d.X_CISCO_COM_BssUserStatus"
+#define WIFI_DM_BSS_USER_STATUS "Device.WiFi.AccessPoint.%lu.X_CISCO_COM_BssUserStatus"
 
 static int getBssUserStatus(PCCSP_TABLE_ENTRY pEntry)
 {
@@ -1685,7 +1694,7 @@ int Dot11BssTableCacheHelper(netsnmp_tdata *table)
     PCCSP_TABLE_ENTRY pEntry = NULL;
     int mibIndex, dmIns;
     unsigned int *insArray = NULL;
-    unsigned int *insCount = 0;
+    unsigned int insCount = 0;
     const char *ssidDm = "Device.WiFi.SSID.";
     struct timespec ts;
     int nr_retry = 0;
@@ -1710,12 +1719,12 @@ find_retry:
     }
 
 
-    if (!Cosa_GetInstanceNums(dstComp, dstPath, ssidDm, &insArray, &insCount)){
+    if (!Cosa_GetInstanceNums(dstComp, dstPath, (char *)ssidDm, &insArray, &insCount)){
         status = -1;
         goto ret;
     }
 
-    for(i = 0; i < insCount; i++){
+    for(i = 0; i < (int)insCount; i++){
         
        row = netsnmp_tdata_create_row();
         if(!row){
@@ -1776,7 +1785,8 @@ Dot11BssTableHelper(
     netsnmp_request_info		 	*requests
 )
 {
-
+UNREFERENCED_PARAMETER(handler);
+UNREFERENCED_PARAMETER(reginfo);
 
 netsnmp_request_info* req;
 int subid = 0;
@@ -1786,7 +1796,6 @@ PCCSP_TABLE_ENTRY entry = NULL;
 netsnmp_variable_list *vb = NULL;
 unsigned char mac[MAX_ARRAY_VALUE] = {'\0'};
 char ssid[33] = {'\0'}, defaultssid[33] = {'\0'};
-char mode[33]= {'\0'};
 
 for (req = requests; req != NULL; req = req->next)
 {
@@ -1817,7 +1826,7 @@ for (req = requests; req != NULL; req = req->next)
             } else if (subid == saRgDot11BssIsolationEnable_subid) {
                 intval = getBssIsolationEnable(entry);
             } else if (subid == saRgDot11BssId_subid){
-                getBssid(entry, mac);
+                getBssid(entry, (char *)mac);
                 snmp_set_var_typed_value(req->requestvb, (u_char)ASN_OCTET_STR, (u_char *)mac, 6);
                 req->processed = 1;
                 break;
@@ -1933,7 +1942,7 @@ for (req = requests; req != NULL; req = req->next)
                 intval = setBssIsolationEnable(entry, *(vb->val.integer));
                 req->processed = 1;
             } else if (subid == saRgDot11BssSsid_subid){
-                intval = setBssSsid(entry, vb->val.string);
+                intval = setBssSsid(entry, (const char *)vb->val.string);
                 req->processed = 1;
             } else if (subid == saRgDot11BssSecurityMode_subid){
                 intval = setBssSecurityMode(entry, *(vb->val.integer));
@@ -2027,17 +2036,13 @@ handleRadiusTable(
     netsnmp_request_info		 	*requests
 )
 {
+    UNREFERENCED_PARAMETER(handler);
+    UNREFERENCED_PARAMETER(reginfo);
     netsnmp_request_info* req;
-    int subid;
-    int intval;
-    int retval=SNMP_ERR_NOERROR;
     PCCSP_TABLE_ENTRY entry = NULL;
-    netsnmp_variable_list *vb = NULL;
 
     for (req = requests; req != NULL; req = req->next)
     {
-        vb = req->requestvb;
-        subid = vb->name[vb->name_length -2];
         entry = (PCCSP_TABLE_ENTRY)netsnmp_tdata_extract_entry(req);
         if (entry == NULL) {
             netsnmp_request_set_error(req, SNMP_NOSUCHINSTANCE);
@@ -2444,7 +2449,7 @@ static int getOperMode(PCCSP_TABLE_ENTRY entry){
        return -1;
     }
     
-    rc = sprintf_s(str, sizeof(str),WIFI_DM_RADIO_ENABLE,entry->IndexValue[0].Value.uValue);
+    rc = sprintf_s(str, sizeof(str),WIFI_DM_RADIO_ENABLE,(int)entry->IndexValue[0].Value.uValue);
     if(rc < EOK)
      {
             ERR_CHK(rc);
@@ -2557,9 +2562,9 @@ static int setCurrentChannel(PCCSP_TABLE_ENTRY entry, int val){
 
 static int setWmm(PCCSP_TABLE_ENTRY entry, int val){
    /* Coverity Fix CID :61641 UnInit var */ 
-   parameterValStruct_t valStr[MAX_APS_PER_RADIO] = {0};
+   parameterValStruct_t valStr[MAX_APS_PER_RADIO] = {{0}};
 	int retval = 0;
-    char str[MAX_APS_PER_RADIO][50] = {0};
+    char str[MAX_APS_PER_RADIO][50] = {{0}};
     char valueString[10]= {0};
     int aps = MAX_APS_PER_RADIO;
     errno_t rc =-1;
@@ -2582,7 +2587,7 @@ static int setWmm(PCCSP_TABLE_ENTRY entry, int val){
     // When enabling first enable Wmm then UAPSD
     if (val == 1) {
 	
-	SetAllAPsonRadio(entry->IndexValue[0].Value.uValue, valStr, str, 50, &aps, WIFI_DM_WMM_ENABLE, valueString, ccsp_boolean);
+	SetAllAPsonRadio(entry->IndexValue[0].Value.uValue, valStr, (char *)str, 50, &aps, WIFI_DM_WMM_ENABLE, valueString, ccsp_boolean);
 
 	if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, 1))
 	{
@@ -2590,7 +2595,7 @@ static int setWmm(PCCSP_TABLE_ENTRY entry, int val){
 	    return -1;
 	}
 
-	SetAllAPsonRadio(entry->IndexValue[0].Value.uValue, valStr, str, 50, &aps, WIFI_DM_WMM_UAPSD_ENABLE, valueString, ccsp_boolean);
+	SetAllAPsonRadio(entry->IndexValue[0].Value.uValue, valStr, (char *)str, 50, &aps, WIFI_DM_WMM_UAPSD_ENABLE, valueString, ccsp_boolean);
 
 	if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, 1))
 	{
@@ -2599,7 +2604,7 @@ static int setWmm(PCCSP_TABLE_ENTRY entry, int val){
 	}
     } else {
     // When disabling first disable UAPSD then Wmm
-	SetAllAPsonRadio(entry->IndexValue[0].Value.uValue, valStr, str, 50, &aps, WIFI_DM_WMM_UAPSD_ENABLE, valueString, ccsp_boolean);
+	SetAllAPsonRadio(entry->IndexValue[0].Value.uValue, valStr, (char *)str, 50, &aps, WIFI_DM_WMM_UAPSD_ENABLE, valueString, ccsp_boolean);
 	
 	if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, 1))
 	{
@@ -2607,7 +2612,7 @@ static int setWmm(PCCSP_TABLE_ENTRY entry, int val){
 	    return -1;
 	}
 
-	SetAllAPsonRadio(entry->IndexValue[0].Value.uValue, valStr, str, 50, &aps, WIFI_DM_WMM_ENABLE, valueString, ccsp_boolean);
+	SetAllAPsonRadio(entry->IndexValue[0].Value.uValue, valStr, (char *)str, 50, &aps, WIFI_DM_WMM_ENABLE, valueString, ccsp_boolean);
 
 	if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, 1))
 	{
@@ -2622,7 +2627,7 @@ static int setWmm(PCCSP_TABLE_ENTRY entry, int val){
 
 static int setWmmNoAck(PCCSP_TABLE_ENTRY entry, int val){
     /*Coverity Fix CID :72254  UnInit var */
-    parameterValStruct_t valStr[MAX_APS_PER_RADIO] = {0};
+    parameterValStruct_t valStr[MAX_APS_PER_RADIO] = {{0}};
 	int retval = 0;
     char str[MAX_APS_PER_RADIO][60];
     char valueString[5];
@@ -2635,7 +2640,7 @@ static int setWmmNoAck(PCCSP_TABLE_ENTRY entry, int val){
             return -1;
       }
     
-    SetAllAPsonRadio(entry->IndexValue[0].Value.uValue, valStr, str, 60, &aps, WIFI_DM_WMM_NOACK, valueString, ccsp_int);
+    SetAllAPsonRadio(entry->IndexValue[0].Value.uValue, valStr, (char *)str, 60, &aps, WIFI_DM_WMM_NOACK, valueString, ccsp_int);
     
     retval = FindWifiDestComp(); 
 	
@@ -2655,9 +2660,9 @@ static int setWmmNoAck(PCCSP_TABLE_ENTRY entry, int val){
 
 static int setMcastRate(PCCSP_TABLE_ENTRY entry, int val){
     /*Coverity Fix CID :61890 UnInit var */
-    parameterValStruct_t valStr[MAX_APS_PER_RADIO] = {0};
+    parameterValStruct_t valStr[MAX_APS_PER_RADIO] = {{0}};
 	int retval = 0;
-    char str[MAX_APS_PER_RADIO][60] = {0};
+    char str[MAX_APS_PER_RADIO][60] = {{0}};
     char valueString[5] = {0};
     int aps = MAX_APS_PER_RADIO;
     errno_t rc =-1;
@@ -2670,7 +2675,7 @@ static int setMcastRate(PCCSP_TABLE_ENTRY entry, int val){
       }
 
     
-    SetAllAPsonRadio(entry->IndexValue[0].Value.uValue, valStr, str, 60, &aps, WIFI_DM_MCASTRATE, valueString, ccsp_int);
+    SetAllAPsonRadio(entry->IndexValue[0].Value.uValue, valStr, (char *)str, 60, &aps, WIFI_DM_MCASTRATE, valueString, ccsp_int);
     
     retval = FindWifiDestComp(); 
 	
@@ -2689,6 +2694,8 @@ static int setMcastRate(PCCSP_TABLE_ENTRY entry, int val){
 }
 
 static int setCountry(PCCSP_TABLE_ENTRY entry, int val){
+    UNREFERENCED_PARAMETER(entry);
+    UNREFERENCED_PARAMETER(val);
     return 0;
 }
 
@@ -2790,7 +2797,7 @@ static int setOperMode(PCCSP_TABLE_ENTRY entry, int val){
        return -1;
     }
 
-    rc = sprintf_s(valStr.parameterName,MAX_VAL_SET, WIFI_DM_RADIO_ENABLE, entry->IndexValue[0].Value.uValue);
+    rc = sprintf_s(valStr.parameterName,MAX_VAL_SET, WIFI_DM_RADIO_ENABLE, (int)entry->IndexValue[0].Value.uValue);
     if(rc < EOK)
      {
             ERR_CHK(rc);
@@ -2821,10 +2828,11 @@ handleExtMgmtTable(
     netsnmp_request_info		 	*requests
 )
 {
+    UNREFERENCED_PARAMETER(handler);
+    UNREFERENCED_PARAMETER(reginfo);
     netsnmp_request_info* req;
     int subid;
     int intval;
-    unsigned long ulongval;
     int retval=SNMP_ERR_NOERROR;
     PCCSP_TABLE_ENTRY entry = NULL;
     netsnmp_variable_list *vb = NULL;
@@ -3341,17 +3349,15 @@ int setNMode(PCCSP_TABLE_ENTRY entry, int val)
 }
 
 int getNPhyRate(PCCSP_TABLE_ENTRY entry) {
-    parameterValStruct_t **valStr = NULL;
-    int nval = 0, retval = 0;
-    char mystring[50] = {0};
-    char* name = (char *)mystring;
+    UNREFERENCED_PARAMETER(entry);
+   // char mystring[50] = {0};
     CcspTraceInfo(("%s: not implemented\n", __func__));
     return 0; //TODO: DATA MODEL NOT READY. IMPLEMENTATION DEFERRED.
-    errno_t rc =-1;    
 
     //AnscTraceWarning(("getBssEnable called on entry: %d (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     /*CID: 67296 Structurally dead code*/
 #if 0 
+    errno_t rc =-1;
     retval = FindWifiDestComp(); 
 	
 	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
@@ -3386,18 +3392,21 @@ int getNPhyRate(PCCSP_TABLE_ENTRY entry) {
 }
 
 int setNPhyRate(PCCSP_TABLE_ENTRY entry, int val) {
-    parameterValStruct_t valStr;
-	int retval = 0;
+#if 0
     char str[2][MAX_VAL_SET];
+    parameterValStruct_t valStr;
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
+#endif
+    UNREFERENCED_PARAMETER(entry);
+    UNREFERENCED_PARAMETER(val);
     CcspTraceInfo(("%s: not implemented\n", __func__));
     return 0; //TODO: DATA MODEL NOT READY. IMPLEMENTATION DEFERRED.
-    errno_t rc =-1;
 
     /* CID: 70719 Structurally dead code*/
 #if 0
-    
+    int retval = 0;
+    errno_t rc =-1;
     retval = FindWifiDestComp(); 
 	
 	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
@@ -3438,6 +3447,8 @@ handleNExtTable(
     netsnmp_request_info		 	*requests
 )
 {
+    UNREFERENCED_PARAMETER(handler);
+    UNREFERENCED_PARAMETER(reginfo);
     netsnmp_request_info* req;
     int subid;
     int intval;
@@ -3621,13 +3632,12 @@ static int getWpaPSK(PCCSP_TABLE_ENTRY pEntry, char *key)
 }
 
 int setWpaPSK(PCCSP_TABLE_ENTRY entry, char *key, int keyLen) {
+    UNREFERENCED_PARAMETER(keyLen);
     parameterValStruct_t valStr;
 	int retval = 0;
     char str[2][MAX_VAL_SET];
     valStr.parameterName=str[0];
     valStr.parameterValue=str[1];
-    char *mappedVal;
-    int fiveG;
     errno_t rc =-1;
     
     retval = FindWifiDestComp(); 
@@ -3668,6 +3678,8 @@ handleDot11WpaTable(
     netsnmp_request_info		 	*requests
 )
 {
+    UNREFERENCED_PARAMETER(handler);
+    UNREFERENCED_PARAMETER(reginfo);
     netsnmp_request_info* req;
     int subid;
     int intval;

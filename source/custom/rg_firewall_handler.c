@@ -232,7 +232,7 @@ static int mac_filter_set_mode(const char *dm, int value)
     if(dm == NULL) 
         return -1;
 
-    if(set_dm_value(dm, filterMode[value].allowAll, strlen(filterMode[value].allowAll))) {
+    if(set_dm_value(dm, (char *)filterMode[value].allowAll, strlen(filterMode[value].allowAll))) {
         CcspTraceError(("%s(%d) %s set failed.\n", __func__, __LINE__, dm));
         return -1;
     }
@@ -276,7 +276,7 @@ static int isFwCustomLevel(void)
 static int getFwCustomBlock(const oid lastOid, int *value)
 {
     char strVal[BUF_MAX_SIZE] = {'\0'};
-    int i;
+    unsigned int i;
     errno_t rc =-1;
     int ind =-1;
 
@@ -316,7 +316,7 @@ static int getFwCustomBlock(const oid lastOid, int *value)
 static int setFwCustomBlock(const oid lastOid, int value)
 {
     char strVal[BUF_MAX_SIZE] = {'\0'};
-    int i;
+    unsigned int i;
     errno_t rc =-1;
     
     if (value != 1 && value != 2)
@@ -336,7 +336,8 @@ static int setFwCustomBlock(const oid lastOid, int value)
     }
 
     bzero(strVal, sizeof(strVal));
-    rc = strcpy_s(strVal, sizeof(strVal), (value == 1) ? "true" : "false");
+    char * src = (value == 1) ? "true" : "false";
+    rc = strcpy_s(strVal, sizeof(strVal), src);
     if (rc != EOK) {
         ERR_CHK(rc);
         return -1;
@@ -354,6 +355,8 @@ int handleFwRequests(
     netsnmp_agent_request_info    *reqinfo,
     netsnmp_request_info          *requests)
 {
+    UNREFERENCED_PARAMETER(handler);
+    UNREFERENCED_PARAMETER(reginfo);
     netsnmp_request_info     *request      = NULL;
     netsnmp_variable_list    *requestvb    = NULL;
     int                      ret;
@@ -487,7 +490,7 @@ static int setFwTrafficBlock(unsigned char *strval)
     if (!isFwCustomLevel())   /* set firewall to custom level first */
         return -1;
     
-    value = strtoul(strval, NULL, 16);
+    value = strtoul((const char *)strval, NULL, 16);
 
     for (i = 0; i < 3; i++){    /* not include http & p2p */
         if (value & fwTrafficBlcok[i].maskValue){    /* passthru */
@@ -506,7 +509,7 @@ static int setFwTrafficBlock(unsigned char *strval)
 
 static int getFwWanBlock(unsigned char *value)
 {
-    int i;
+    unsigned int i;
     char strVal[BUF_MAX_SIZE] = {'\0'};
     errno_t rc =-1;
     int ind  =-1;
@@ -516,10 +519,11 @@ static int getFwWanBlock(unsigned char *value)
 
     *value = 2;    /* default false */
 
-    if (!isFwCustomLevel())
+    if (!isFwCustomLevel()) {
         return 0;
-        int length = strlen("true");
-    for (i = 0; i < sizeof(fwTrafficBlcok)/sizeof(fwTrafficBlcok[0]); i++){
+    }
+    int length = strlen("true");
+    for (i = 0; i < (sizeof(fwTrafficBlcok)/sizeof(fwTrafficBlcok[0])); i++){
         bzero(strVal, sizeof(strVal));
         /*CID: 62333 Unchecked return value*/
         if(get_dm_value(fwTrafficBlcok[i].dmName, strVal, sizeof(strVal))) {
@@ -543,6 +547,8 @@ int handleFwBlockRequests(
     netsnmp_agent_request_info    *reqinfo,
     netsnmp_request_info          *requests)
 {
+    UNREFERENCED_PARAMETER(handler);
+    UNREFERENCED_PARAMETER(reginfo);
     netsnmp_request_info     *request      = NULL;
     netsnmp_variable_list    *requestvb    = NULL;
     int                      ret;
@@ -590,7 +596,7 @@ int handleFwBlockRequests(
             case MODE_SET_RESERVE2:
                 if (subid  == saRgFwTrafficPassthru_lastOid){
                     bzero(strVal, sizeof(strVal));
-                    rc = sprintf_s(strVal,sizeof(strVal), "%x", requestvb->val.string[0]);  /* only 1 octet, OCTET->ASCII */
+                    rc = sprintf_s((char *)strVal,sizeof(strVal), "%x", requestvb->val.string[0]);  /* only 1 octet, OCTET->ASCII */
                      if(rc < EOK)
                      {
                           ERR_CHK(rc);
@@ -646,8 +652,7 @@ static int validate_block_days(const char *buf)
     char *substr=NULL, *str, *saveptr;
     char *save;
     int i, j, is_string_days = 0;
-    int bitmap = 0, rc = 0;
-    char strVal[BUF_MAX_SIZE] = {'\0'};
+    int rc = 0;
     size_t len = 0;
     errno_t rc1 =-1;
     int ind = -1;
@@ -807,9 +812,11 @@ int handleFwPortFilter(
     netsnmp_agent_request_info    *reqinfo,
     netsnmp_request_info          *requests)
 {
+    UNREFERENCED_PARAMETER(handler);
+    UNREFERENCED_PARAMETER(reginfo);
     netsnmp_request_info     *request = NULL;
     netsnmp_variable_list    *vb = NULL;
-    int                      ins, rowstatus;
+    int                      ins = 0, rowstatus;
     oid                      subid = 0;
     PCCSP_TABLE_ENTRY        pEntry;
     char                     dmStr[BUFF_MAX_SIZE] = {'\0'};
@@ -862,13 +869,13 @@ int handleFwPortFilter(
         case MODE_SET_RESERVE1:
             if (subid == saRgFwPortFilterBlockStarttime_lastOid ||
                 subid == saRgFwPortFilterBlockEndtime_lastOid) {
-                if(validate_block_time(vb->val.string) < 0) {
+                if(validate_block_time((char *)vb->val.string) < 0) {
                     netsnmp_set_request_error(reqinfo, request, SNMP_ERR_WRONGVALUE);
 
                     request->processed = 1;
                 }
             }else if (subid == saRgFwPortFilterBlockDays_lastOid) {
-                if(validate_block_days(vb->val.string) < 0){
+                if(validate_block_days((const char *)vb->val.string) < 0){
                     netsnmp_set_request_error(reqinfo, request, SNMP_ERR_WRONGVALUE);
 
                     request->processed = 1;
@@ -879,7 +886,7 @@ int handleFwPortFilter(
 
         case MODE_SET_RESERVE2:
             if(subid == saRgFwPortFilterBlockDays_lastOid) {
-                if(strlen(vb->val.string) == 1) { // hex format: one octet
+                if(strlen((const char *)vb->val.string) == 1) { // hex format: one octet
                   rc =  sprintf_s(dmStr, sizeof(dmStr), PORT_FILTER_BLOCK_DAYS_DM, ins);
                   if(rc < EOK)
                  {
@@ -888,7 +895,7 @@ int handleFwPortFilter(
                        continue;
                    }
 
-                    if(set_block_days(dmStr, vb->val.string) < 0) {
+                    if(set_block_days(dmStr, (char *)vb->val.string) < 0) {
                         CcspTraceError(("%s set failed.\n", dmStr));
                         netsnmp_request_set_error(request, SNMP_ERR_GENERR);
                     }
@@ -917,9 +924,11 @@ int handleFwMacFilter(
     netsnmp_agent_request_info    *reqinfo,
     netsnmp_request_info          *requests)
 {
+    UNREFERENCED_PARAMETER(handler);
+    UNREFERENCED_PARAMETER(reginfo);
     netsnmp_request_info     *request = NULL;
     netsnmp_variable_list    *vb = NULL;
-    int                      ins, rowstatus;
+    int                      ins = 0, rowstatus;
     oid                      subid = 0;
     PCCSP_TABLE_ENTRY        pEntry;
     char                     dmStr[BUFF_MAX_SIZE] = {'\0'};
@@ -1011,13 +1020,13 @@ int handleFwMacFilter(
         case MODE_SET_RESERVE1:
             if (subid == saRgFwMacFilterBlockStarttime_lastOid ||
                 subid == saRgFwMacFilterBlockEndtime_lastOid) {
-                if(validate_block_time(vb->val.string) < 0) {
+                if(validate_block_time((char *)vb->val.string) < 0) {
                     netsnmp_set_request_error(reqinfo, request, SNMP_ERR_WRONGVALUE);
 
                     request->processed = 1;
                 }
             }else if (subid == saRgFwMacFilterBlockDays_lastOid) {
-                if(validate_block_days(vb->val.string) < 0){
+                if(validate_block_days((const char *)vb->val.string) < 0){
                     netsnmp_set_request_error(reqinfo, request, SNMP_ERR_WRONGVALUE);
 
                     request->processed = 1;
@@ -1028,7 +1037,7 @@ int handleFwMacFilter(
 
         case MODE_SET_RESERVE2:
             if(subid == saRgFwMacFilterBlockDays_lastOid) {
-                if(strlen(vb->val.string) == 1) { // hex format: one octet
+                if((int)strlen((const char *)vb->val.string) == 1) { // hex format: one octet
                  rc =  sprintf_s(dmStr, sizeof(dmStr), MAC_FILTER_BLOCK_DAYS_DM, ins);
                  if(rc < EOK)
                   {
@@ -1037,7 +1046,7 @@ int handleFwMacFilter(
                           return SNMP_ERR_GENERR;
                    }
 
-                    if(set_block_days(dmStr, vb->val.string) < 0) {
+                    if(set_block_days(dmStr, (char *)vb->val.string) < 0) {
                         CcspTraceError(("%s set failed.\n", dmStr));
                         netsnmp_request_set_error(request, SNMP_ERR_GENERR);
                     }
@@ -1077,7 +1086,7 @@ int handleFwMacFilter(
                           return SNMP_ERR_GENERR;
                       }
 
-                        if(set_dm_value(typeDm, filterMode[snmpFilterMode].type, strlen(filterMode[snmpFilterMode].type))) 
+                        if(set_dm_value(typeDm, (char *)filterMode[snmpFilterMode].type, strlen(filterMode[snmpFilterMode].type))) 
                             CcspTraceError(("%s(%d) %s set failed.\n", __func__, __LINE__, typeDm));
                     }
                 }
@@ -1105,9 +1114,11 @@ int handleFwUrlKeywordFilter(
     netsnmp_agent_request_info    *reqinfo,
     netsnmp_request_info          *requests)
 {
+    UNREFERENCED_PARAMETER(handler);
+    UNREFERENCED_PARAMETER(reginfo);
     netsnmp_request_info     *request = NULL;
     netsnmp_variable_list    *vb = NULL;
-    int                      ins, rowstatus;
+    int                      ins = 0, rowstatus;
     oid                      subid = 0;
     PCCSP_TABLE_ENTRY        pEntry;
     char                     dmStr[BUFF_MAX_SIZE] = {'\0'};
@@ -1163,13 +1174,13 @@ int handleFwUrlKeywordFilter(
         case MODE_SET_RESERVE1:
             if (subid == saRgFwUrlFilterBlockStarttime_lastOid ||
                 subid == saRgFwUrlFilterBlockEndtime_lastOid) {
-                if(validate_block_time(vb->val.string) < 0) {
+                if(validate_block_time((char *)vb->val.string) < 0) {
                     netsnmp_set_request_error(reqinfo, request, SNMP_ERR_WRONGVALUE);
 
                     request->processed = 1;
                 }
             }else if (subid == saRgFwUrlFilterBlockDays_lastOid) {
-                if(validate_block_days(vb->val.string) < 0){
+                if(validate_block_days((const char *)vb->val.string) < 0){
                     netsnmp_set_request_error(reqinfo, request, SNMP_ERR_WRONGVALUE);
 
                     request->processed = 1;
@@ -1180,7 +1191,7 @@ int handleFwUrlKeywordFilter(
 
         case MODE_SET_RESERVE2:
             if(subid == saRgFwUrlFilterBlockDays_lastOid) {
-                if(strlen(vb->val.string) == 1) { // hex format: one octet
+                if((int)strlen((const char *)vb->val.string) == 1) { // hex format: one octet
                  rc =    sprintf_s(dmStr, sizeof(dmStr), URL_FILTER_BLOCK_DAYS_DM, ins);
                    if(rc < EOK)
                   {
@@ -1189,7 +1200,7 @@ int handleFwUrlKeywordFilter(
                       return SNMP_ERR_GENERR;
                    }
 
-                    if(set_block_days(dmStr, vb->val.string) < 0) {
+                    if(set_block_days(dmStr, (char *)vb->val.string) < 0) {
                         CcspTraceError(("%s set failed.\n", dmStr));
                         netsnmp_request_set_error(request, SNMP_ERR_GENERR);
                     }
@@ -1248,6 +1259,8 @@ int handleFirewallRules(
     netsnmp_agent_request_info    *reqinfo,
     netsnmp_request_info          *requests)
 {
+    UNREFERENCED_PARAMETER(handler);
+    UNREFERENCED_PARAMETER(reginfo);
     netsnmp_request_info     *request = NULL;
     netsnmp_variable_list    *vb = NULL;
     int                      subid, mode=SNMP_BLOCK;
@@ -1334,12 +1347,12 @@ struct trusted_user_entry {
     enum policy_e policy;
 };
 
-const static char* policy[] = {
+static const char* policy[] = {
     [URLKEYWORD] = "ManagedSites",
     [PORT]       = "ManagedServices"
 };
 
-const static char* trust[] = {
+static const char* trust[] = {
     [BLOCK] = "false",
     [PERMIT] = "true"
 };
@@ -1520,7 +1533,7 @@ commit_trusted_user_entry(struct trusted_user_entry *pUserEntry, const char *ip)
 
         pValueArray[i].parameterName = AnscCloneString(dm);
         pValueArray[i].type = ccsp_string;
-        pValueArray[i].parameterValue = AnscCloneString(ip);
+        pValueArray[i].parameterValue = AnscCloneString((char *)ip);
     }
 
     if(pUserEntry->trust == BLOCK) {
@@ -1534,7 +1547,7 @@ commit_trusted_user_entry(struct trusted_user_entry *pUserEntry, const char *ip)
 
             pValueArray[i].parameterName = AnscCloneString(dm);
             pValueArray[i].type = ccsp_boolean;
-            pValueArray[i].parameterValue = trust[BLOCK];
+            pValueArray[i].parameterValue = (char *)trust[BLOCK];
         }
     }else{ // add trusted user
         if(pUserEntry->policy == PORT) {
@@ -1547,7 +1560,7 @@ commit_trusted_user_entry(struct trusted_user_entry *pUserEntry, const char *ip)
 
             pValueArray[2].parameterName = AnscCloneString(dm);
             pValueArray[2].type = ccsp_boolean;
-            pValueArray[2].parameterValue = trust[BLOCK];
+            pValueArray[2].parameterValue = (char *)trust[BLOCK];
 
           rc =   sprintf_s(dm, sizeof(dm), TRUSTED_USER_TRUST, policy[PORT], pUserEntry->ins[PORT-1]);
            if(rc < EOK)
@@ -1558,7 +1571,7 @@ commit_trusted_user_entry(struct trusted_user_entry *pUserEntry, const char *ip)
 
             pValueArray[3].parameterName = AnscCloneString(dm);
             pValueArray[3].type = ccsp_boolean;
-            pValueArray[3].parameterValue = trust[PERMIT];
+            pValueArray[3].parameterValue = (char *)trust[PERMIT];
 
         }else if(pUserEntry->policy == URLKEYWORD){
           rc =   sprintf_s(dm, sizeof(dm), TRUSTED_USER_TRUST, policy[URLKEYWORD], pUserEntry->ins[URLKEYWORD-1]);
@@ -1570,7 +1583,7 @@ commit_trusted_user_entry(struct trusted_user_entry *pUserEntry, const char *ip)
 
             pValueArray[2].parameterName = AnscCloneString(dm);
             pValueArray[2].type = ccsp_boolean;
-            pValueArray[2].parameterValue = trust[PERMIT];
+            pValueArray[2].parameterValue = (char *)trust[PERMIT];
 
            rc =  sprintf_s(dm, sizeof(dm), TRUSTED_USER_TRUST, policy[PORT], pUserEntry->ins[PORT-1]);
             if(rc < EOK)
@@ -1581,7 +1594,7 @@ commit_trusted_user_entry(struct trusted_user_entry *pUserEntry, const char *ip)
 
             pValueArray[3].parameterName = AnscCloneString(dm);
             pValueArray[3].type = ccsp_boolean;
-            pValueArray[3].parameterValue = trust[BLOCK];
+            pValueArray[3].parameterValue = (char *)trust[BLOCK];
         }else {
             for(i=PORT; i<4; i++) {
                 rc = sprintf_s(dm, sizeof(dm), TRUSTED_USER_TRUST, policy[i-PORT+1], pUserEntry->ins[i-PORT]);
@@ -1593,7 +1606,7 @@ commit_trusted_user_entry(struct trusted_user_entry *pUserEntry, const char *ip)
 
                 pValueArray[i].parameterName = AnscCloneString(dm);
                 pValueArray[i].type = ccsp_boolean;
-                pValueArray[i].parameterValue = trust[PERMIT];
+                pValueArray[i].parameterValue = (char *)trust[PERMIT];
             }
         }
     }
@@ -1702,6 +1715,7 @@ static int set_trusted_user_entry(netsnmp_request_info *requests)
 
 static int load_trusted_user_entry(netsnmp_tdata *table)
 {
+    UNREFERENCED_PARAMETER(table);
     unsigned int *insArray = NULL;
     unsigned int insCount = 0;
     char pTemp[256] = {'\0'};
@@ -1733,7 +1747,7 @@ static int load_trusted_user_entry(netsnmp_tdata *table)
         if(Cosa_GetInstanceNums(dstComp, dstPath, pTemp, &insArray, &insCount)){
             AnscTraceWarning(("%s(%d): %s insCount %d.\n", __func__, __LINE__, pTemp, insCount));
 
-            for(j=0; j<insCount; j++) {
+            for(j=0; j< (int)insCount; j++) {
              rc =  sprintf_s(pTemp, sizeof(pTemp), TRUSTED_USER_IPADDR, policy[i], insArray[j]);
              if(rc < EOK)
              {
@@ -1814,9 +1828,11 @@ int handleFwIpFilterRequests(netsnmp_mib_handler *handler,
                              netsnmp_agent_request_info *reqinfo,
                              netsnmp_request_info *requests)
 {
+    UNREFERENCED_PARAMETER(handler);
+    UNREFERENCED_PARAMETER(reginfo);
     netsnmp_request_info     *request = NULL;
     netsnmp_variable_list    *vb = NULL;
-    int                      ins, rowstatus;
+    int                      ins;
     oid                      subid = 0;
     PCCSP_TABLE_ENTRY        pEntry;
     struct trusted_user_entry   *pIpFilter = NULL;
@@ -1824,7 +1840,6 @@ int handleFwIpFilterRequests(netsnmp_mib_handler *handler,
     char                     dm[BUFF_MAX_SIZE] = {'\0'};
     int                      lastIndex = -1;
     int                      index;
-    int                      reqCount = 0;
     errno_t rc =-1;
 
     AnscTraceWarning(("%s(%d): Entering with mode %d.\n", __func__, __LINE__, reqinfo->mode));
