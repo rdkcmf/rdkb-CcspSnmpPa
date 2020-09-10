@@ -49,7 +49,7 @@ static oid saRgIpMgmtLanAddrInterface_oid = 9;
 static char *dhcpdstComp = NULL, *dhcpdstPath = NULL; /* cache */
 
 #define IPMGNT_DM_OBJ "Device.DHCPv4."
-#define IPMGMTLANADDRINTERFACE_DM_PAT "Device.DHCPv4.Server.Pool.%d.Client.%d.X_CISCO_COM_Interface"
+#define IPMGMTLANADDRINTERFACE_DM_PAT "Device.DHCPv4.Server.Pool.%lu.Client.%lu.X_CISCO_COM_Interface"
 #define MAX_VAL 10
 #define NUM_INTEREFACE_TABLE  (sizeof(interface_pair_table) / sizeof(interface_pair_table[0]))
 
@@ -88,6 +88,8 @@ int handleIpMgmtRequests(
     netsnmp_agent_request_info    *reqinfo,
     netsnmp_request_info          *requests)
 {
+    UNREFERENCED_PARAMETER(handler);
+    UNREFERENCED_PARAMETER(reginfo);
     netsnmp_request_info     *request      = NULL;
     netsnmp_variable_list    *requestvb    = NULL;
     int                      ret;
@@ -147,7 +149,7 @@ static void getInterface(PCCSP_TABLE_ENTRY entry, char* interface ){
     int nval = -1;
     char str[80];
     char * name = (char*) str;
-    int i = 0;
+    unsigned int i = 0;
     errno_t rc =-1;
     
     if(FALSE == FindIpMgntDestComp())
@@ -208,10 +210,11 @@ handlerIpMgntLanAddrTable(
     netsnmp_request_info		 	*requests
 )
 {
+    UNREFERENCED_PARAMETER(handler);
+    UNREFERENCED_PARAMETER(reginfo);
     netsnmp_request_info* req;
     int subid;
     char strval[MAX_VAL];
-    int retval=SNMP_ERR_NOERROR;
     PCCSP_TABLE_ENTRY entry = NULL;
     netsnmp_variable_list *vb = NULL;
     for (req = requests; req != NULL; req = req->next)
@@ -225,7 +228,7 @@ handlerIpMgntLanAddrTable(
         }
         switch (reqinfo->mode) {
             case MODE_GET:
-                if (subid == saRgIpMgmtLanAddrInterface_oid ) {
+                if (subid == (int)saRgIpMgmtLanAddrInterface_oid ) {
                     getInterface(entry, strval);
                     snmp_set_var_typed_value(req->requestvb, (u_char)ASN_OCTET_STR, (u_char *)&strval, strlen(strval));
                     req->processed = 1;

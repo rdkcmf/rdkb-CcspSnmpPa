@@ -50,7 +50,6 @@ static int getRgIpMgmtWanDns(int *value, oid lastOid)
 {
     char dmStr[256]={0};
     char retStrVal[256]={0};
-    int status;
     errno_t rc =-1;
 
     if (value == NULL)
@@ -104,7 +103,6 @@ static int setRgIpMgmtWanDns(int value, oid lastOid)
 {
     char dmStr[256] = {0};
     char strVal[256] = {0};
-    int status;
     errno_t rc =-1;
     
 
@@ -211,13 +209,13 @@ handleWanDnsRequest(
     netsnmp_request_info		 	*requests
 )
 {
+    UNREFERENCED_PARAMETER(handler);
+    UNREFERENCED_PARAMETER(reginfo);
     netsnmp_request_info   *request     = NULL;
     netsnmp_variable_list  *requestvb   = NULL;
     oid                     subid       = 0;
     int                     value       = 0;
     int                     ret;
-    char *pDestComponentName = NULL;
-    char *pDestPath = NULL;
     
     for (request = requests; request != NULL; request = request->next) {
 
@@ -278,7 +276,7 @@ handleWanDnsRequest(
     return SNMP_ERR_NOERROR;
 }
 
-#define DNSSERVER_DM "Device.DNS.Client.Server.%d.DNSServer"
+#define DNSSERVER_DM "Device.DNS.Client.Server.%lu.DNSServer"
 #define DnsServerIpv4_lastoid 3
 #define DnsServerIpv6_lastoid 4
 
@@ -316,6 +314,8 @@ handleDnsServer(
     netsnmp_request_info		*requests
 )
 {
+    UNREFERENCED_PARAMETER(handler);
+    UNREFERENCED_PARAMETER(reginfo);
     netsnmp_request_info   *request     = NULL;
     netsnmp_variable_list  *requestvb   = NULL;
     oid                     subid       = 0;

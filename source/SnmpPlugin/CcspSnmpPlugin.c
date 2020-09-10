@@ -84,7 +84,7 @@ static void
 set_debug_level(void)
 {
     char *ccspDbg;
-    int i;
+    UINT i;
     errno_t     rc =  -1;
     int ind = -1;
     struct {
@@ -131,7 +131,6 @@ init_ccsp_snmp_plugin(void)
 {
     ANSC_HANDLE                     pFileHandle        = NULL;
     char*                           pXMLContent        = NULL;
-    ULONG                           uXMLLength         = 0;
     ULONG                           uFileLength        = 0;
     ULONG                           uBufferSize        = 0;
     PANSC_XML_DOM_NODE_OBJECT       pRootNode          = (PANSC_XML_DOM_NODE_OBJECT)NULL;

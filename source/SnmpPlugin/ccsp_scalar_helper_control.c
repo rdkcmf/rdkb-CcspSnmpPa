@@ -324,6 +324,7 @@ handleScalarGroupRequest
 int
 scalarGroupCacheLoad(netsnmp_cache * cache, void *magic)
 {
+        UNREFERENCED_PARAMETER(cache);
 	PCCSP_SCALAR_HELPER_OBJECT      pThisObject        = (PCCSP_SCALAR_HELPER_OBJECT)magic;
 
 	return pThisObject->RefreshCache(magic);
@@ -332,6 +333,7 @@ scalarGroupCacheLoad(netsnmp_cache * cache, void *magic)
 void
 scalarGroupCacheFree(netsnmp_cache * cache, void *magic)
 {
+        UNREFERENCED_PARAMETER(cache);
 	PCCSP_SCALAR_HELPER_OBJECT      pThisObject        = (PCCSP_SCALAR_HELPER_OBJECT)magic;
 
     //RDKB-28307: Adding Preventive check for the clearcache function ptr.
@@ -355,7 +357,6 @@ CcspScalarHelperRegisterMibHandler
 	netsnmp_handler_registration*   reginfo_stats      = NULL;
     netsnmp_mib_handler*			mibHandler  	   = NULL;
     netsnmp_cache*                  cache			   = NULL;
-    int                             oidIndex           = 0;
     oid                             oidReg[MAXI_CCSP_OID_LENGTH] = {0};
     errno_t rc = -1;
 

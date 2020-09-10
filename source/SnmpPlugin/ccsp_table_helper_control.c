@@ -462,8 +462,8 @@ handleTableGroupRequest
 int
 tableGroupCacheLoad(netsnmp_cache * cache, void *magic)
 {
+	UNREFERENCED_PARAMETER(cache);
 	PCCSP_MIB_TABLE_MAGIC      pMagic             = (PCCSP_MIB_TABLE_MAGIC)magic;
-	netsnmp_tdata*			   pTable             = (netsnmp_tdata*)pMagic->pTableData;
 	PCCSP_TABLE_HELPER_OBJECT  pThisObject        = (PCCSP_TABLE_HELPER_OBJECT)pMagic->pMibHandler;
 
 	AnscTraceInfo(("Enter 'tableGroupCacheLoad' of table '%s'\n", pThisObject->MibName));
@@ -473,6 +473,7 @@ tableGroupCacheLoad(netsnmp_cache * cache, void *magic)
 void
 tableGroupCacheFree(netsnmp_cache * cache, void *magic)
 {
+        UNREFERENCED_PARAMETER(cache);
 	PCCSP_MIB_TABLE_MAGIC      pMagic             = (PCCSP_MIB_TABLE_MAGIC)magic;
 	netsnmp_tdata*			   pTable             = (netsnmp_tdata*)pMagic->pTableData;
 	PCCSP_TABLE_HELPER_OBJECT  pThisObject        = (PCCSP_TABLE_HELPER_OBJECT)pMagic->pMibHandler;
@@ -496,10 +497,8 @@ CcspTableHelperRegisterMibHandler
 	netsnmp_handler_registration*   reg                = NULL;
     netsnmp_mib_handler*		    mibHandler  	   = NULL;
     netsnmp_cache*                  cache			   = NULL;
-	PCCSP_TABLE_ENTRY				entry			   = NULL;
     netsnmp_tdata                   *table_data;
     netsnmp_table_registration_info *table_info;
-    netsnmp_tdata_row               *row;
 
 	if( pThisObject->uMinOid == 0 || pThisObject->uMaxOid == 0)
 	{

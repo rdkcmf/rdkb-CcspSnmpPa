@@ -208,6 +208,8 @@ int NtpServer_HandleRequest(netsnmp_mib_handler *handler,
         netsnmp_agent_request_info *reqinfo,
         netsnmp_request_info *requests)
 {
+    UNREFERENCED_PARAMETER(handler);
+    UNREFERENCED_PARAMETER(reginfo);
     netsnmp_request_info        *req;
     struct NTPServer            *ntpServ;
     int                         ret, ncp;
@@ -274,7 +276,7 @@ int NtpServer_HandleRequest(netsnmp_mib_handler *handler,
             ERR_CHK(rc);
             ncp = req->requestvb->val_len > sizeof(ntpServ->server) - 1 ?
                 sizeof(ntpServ->server) - 1 : req->requestvb->val_len;
-           rc =  strncpy_s(ntpServ->server,sizeof(ntpServ->server), (char *)req->requestvb->val.string,ncp);
+           rc =  strncpy_s(ntpServ->server,sizeof(ntpServ->server), (char *)req->requestvb->val.string,(unsigned int)ncp);
            if(rc != EOK)
            {
                  ERR_CHK(rc);
@@ -468,6 +470,8 @@ int LanPortMode_HandleRequest(netsnmp_mib_handler *handler,
         netsnmp_agent_request_info *reqinfo,
         netsnmp_request_info *requests)
 {
+    UNREFERENCED_PARAMETER(handler);
+    UNREFERENCED_PARAMETER(reginfo);
     netsnmp_request_info        *req;
     struct PortMode            *portMode;
     int                         ret;

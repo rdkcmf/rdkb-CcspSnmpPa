@@ -105,8 +105,7 @@ static int is_iana_addr(int index)
 static int iapd_handler(int lastOid, int insNum, iapd_t *pIapd)
 {
     char dm_str[64] = {'\0'}, prefix[64] = {'\0'};
-    char *pLen, *saveptr, *pVal;
-    int i=0;
+    char *pLen, *pVal;
     char *ptr = NULL;
     size_t len = 0;
     
@@ -185,16 +184,13 @@ handleIanaTable(
     netsnmp_request_info            *requests
 )
 {
+    UNREFERENCED_PARAMETER(handler);
+    UNREFERENCED_PARAMETER(reginfo);
     netsnmp_request_info* req;
-    int subid;
-    int intval, status;
-    int retval=SNMP_ERR_NOERROR;
     PCCSP_TABLE_ENTRY entry = NULL; 
-    netsnmp_variable_list *vb = NULL;
     int index;
 
     for (req = requests; req != NULL; req = req->next) {
-        vb = req->requestvb;
         entry = (PCCSP_TABLE_ENTRY)netsnmp_tdata_extract_entry(req);
         if (entry == NULL) {
             netsnmp_request_set_error(req, SNMP_NOSUCHINSTANCE);
@@ -232,13 +228,14 @@ handleIapdTable(
     netsnmp_request_info            *requests
 )
 {
+    UNREFERENCED_PARAMETER(handler);
+    UNREFERENCED_PARAMETER(reginfo);
     netsnmp_request_info* req;
-    int subid, intval, status;
-    int retval=SNMP_ERR_NOERROR;
+    int subid;
     PCCSP_TABLE_ENTRY entry = NULL; 
     netsnmp_variable_list *vb = NULL;
     int index;
-    iapd_t iapd = {0};
+    iapd_t iapd = {{0}};
 
 
 
@@ -474,11 +471,11 @@ int handleDeviceMgmtParam(
     netsnmp_request_info            *requests
 )
 {
+    UNREFERENCED_PARAMETER(handler);
+    UNREFERENCED_PARAMETER(reginfo);
     netsnmp_request_info* request;
     netsnmp_variable_list *requestvb    = NULL;
     int subid, ret;
-    int retval=SNMP_ERR_NOERROR;
-    netsnmp_variable_list *vb = NULL;
     int value = 0;
 
     for (request = requests; request != NULL; request = request->next) {
@@ -597,11 +594,11 @@ handleDeviceConfig(
     netsnmp_request_info            *requests
 )
 {
+    UNREFERENCED_PARAMETER(handler);
+    UNREFERENCED_PARAMETER(reginfo);
     netsnmp_request_info* request;
     netsnmp_variable_list *requestvb    = NULL;
     int subid, ret;
-    int retval=SNMP_ERR_NOERROR;
-    netsnmp_variable_list *vb = NULL;
     unsigned char octet = 0;
     
     for (request = requests; request != NULL; request = request->next) {
@@ -633,7 +630,7 @@ handleDeviceConfig(
 
         case MODE_SET_RESERVE2:
             if(subid == SnmpEnable_lastoid) {
-                if(set_snmp_enable(requestvb->val.string) != TRUE) {
+                if(set_snmp_enable((const char *)requestvb->val.string) != TRUE) {
                     CcspTraceError(("%s set failed.\n", SNMPENABLE_DM));
                     netsnmp_request_set_error(request, SNMP_ERR_GENERR);
                 }
@@ -657,11 +654,10 @@ handleDeviceConfig(
     return SNMP_ERR_NOERROR;
 } /* saRgDeviceConfigSnmpEnable end */
 
-#define CONNECTEDCLIENT_DM_INTERFACE "Device.Hosts.Host.%d.Layer1Interface"
+#define CONNECTEDCLIENT_DM_INTERFACE "Device.Hosts.Host.%lu.Layer1Interface"
 int getInterface(PCCSP_TABLE_ENTRY pEntry, char *interface)
 {
     char dmStr[128] = {'\0'};
-	int ret ;
 	char index;	
 	int iface;
         errno_t rc = -1;        
@@ -676,7 +672,7 @@ int getInterface(PCCSP_TABLE_ENTRY pEntry, char *interface)
         return -1;
      }
     
-    ret = get_dm_value(dmStr, interface, 50);
+    get_dm_value(dmStr, interface, 50);
 	if(strstr(interface,"WiFi")) {
 		index = interface[strlen(interface)-1];
 		iface = index - '0';
@@ -721,13 +717,12 @@ handleConnectedDevices(
     netsnmp_request_info            *requests
 )
 {
+    UNREFERENCED_PARAMETER(handler);
+    UNREFERENCED_PARAMETER(reginfo);
     netsnmp_request_info* req;
     int subid;
-    int intval, status;
-    int retval=SNMP_ERR_NOERROR;
     PCCSP_TABLE_ENTRY entry = NULL; 
     netsnmp_variable_list *vb = NULL;
-    int index;
 	char interface[MAX_INTERFACE_VAL] = {'\0'};
 
     for (req = requests; req != NULL; req = req->next) {

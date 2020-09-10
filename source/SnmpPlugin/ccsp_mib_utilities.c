@@ -167,44 +167,44 @@ typedef struct
 
 GET_SNMPA_TYPE getSnmpaType[] = 
 {
-	"Boolean",			1,	ASN_BOOLEAN,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,    0,	SNMPA_TYPE_BOOLEAN,	ASSIGN_UTYPE_ONLY,
-	"INTEGER",			1,	ASN_INTEGER,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	SNMPA_TYPE_INTEGER,	ASSIGN_UTYPE_ONLY,
-	"Integer32",			0,	ASN_INTEGER,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	SNMPA_TYPE_INTEGER32,	ASSIGN_UTYPE_ONLY,
-	"TimeInterval",			1,	ASN_INTEGER,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	TIMEINTERVAL,		ASSIGN_UTYPE_ONLY,
-	"Timeout",			1,	ASN_INTEGER,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	TIMEOUT,		ASSIGN_UTYPE_ONLY,
-	"TestAndIncr",			0,	ASN_INTEGER,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	TESTANDINCR,		ASSIGN_UTYPE_ONLY,
-	"InterfaceIndexOrZero",		0,	ASN_INTEGER,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	INTERFACEINDEXORZERO,	ASSIGN_UTYPE_ONLY,
-	"InterfaceIndex",		0,	ASN_INTEGER,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	INTERFACEINDEX,		ASSIGN_UTYPE_ONLY,
-	"TruthValue",			1,	ASN_INTEGER,	1,    2,	CCSP_MIB_LIMIT_BOTH,	   0,	TRUTHVALUE,		UNCONDITIONALLY_ASSIGN_LIMITS,
-	"Counter32",			0,	ASN_COUNTER,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	COUNTER32,		ASSIGN_UTYPE_ONLY,
-	"Opaque",			0,	ASN_OPAQUE,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	OPAQUE,			ASSIGN_UTYPE_ONLY,
-	"Gauge32",			0,	ASN_UNSIGNED,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	GAUGE32,		ASSIGN_UTYPE_ONLY,
-	"Unsigned32",			1,	ASN_UNSIGNED,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	UNSIGNED32,		ASSIGN_UTYPE_ONLY,
-	"InetZoneIndex",		0,	ASN_UNSIGNED,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	INETZONEINDEX,		ASSIGN_UTYPE_ONLY,
-	"Unsigned",			0,	ASN_UNSIGNED,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,    0,	UNSIGNED,		ASSIGN_UTYPE_ONLY,
-	"RowStatus",			0,	ASN_INTEGER,	1,    6,	CCSP_MIB_LIMIT_BOTH,	   1,	ROWSTATUS,		CONDITIONALY_ASSIGN_LIMITS,
-	"InetPortNumber",		0,	ASN_UNSIGNED,	0,   65535,	CCSP_MIB_LIMIT_BOTH,	   0,	INETPORTNUMBER,		CONDITIONALY_ASSIGN_LIMITS,
-	"BitField",			1,	ASN_BIT_STR,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,    0,	BITFIELD,	        ASSIGN_UTYPE_ONLY,
-	"BitString",			0,	ASN_BIT_STR,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	BITSTRING,		ASSIGN_UTYPE_ONLY,
-	"BITS",				1,	ASN_OCTET_STR,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	BITS,			ASSIGN_UTYPE_ONLY,
-	"SaRgUserChangedFlag",		1,	ASN_OCTET_STR,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	SARGUSERCHANGEDFLAG,	ASSIGN_UTYPE_ONLY,
-	"IpAddress",			1,	ASN_IPADDRESS,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	IPADDRESS,		ASSIGN_UTYPE_ONLY,
-	"DisplayString",		0,	ASN_OCTET_STR,	0,   255,	CCSP_MIB_LIMIT_BOTH,	   0,	DISPLAYSTRING,		CONDITIONALY_ASSIGN_LIMITS,
-	"SnmpAdminString",		0,	ASN_OCTET_STR,	0,   255,	CCSP_MIB_LIMIT_BOTH,	   0,	SNMPADMINSTRING,	CONDITIONALY_ASSIGN_LIMITS,
-	"OwnerString",			0,	ASN_OCTET_STR,	0,   255,	CCSP_MIB_LIMIT_BOTH,	   0,	OWNERSTRING,		CONDITIONALY_ASSIGN_LIMITS,
-	"InetAddress",			0,	ASN_OCTET_STR,	0,   255,	CCSP_MIB_LIMIT_BOTH,	   0,	INETADDRESS,		CONDITIONALY_ASSIGN_LIMITS,
-	"TimeTicks",			1,	ASN_TIMETICKS,	0,   0,		CCSP_MIB_DEFAULT_LIMIT,	   0,	TIMETICKS,		ASSIGN_UTYPE_ONLY,
-	"TimeStamp",			1,	ASN_TIMETICKS,	0,   0,		CCSP_MIB_DEFAULT_LIMIT,	   0,	TIMESTAMP,		ASSIGN_UTYPE_ONLY,
-	"InetAddressType",		0,	ASN_INTEGER,	0,   16,	CCSP_MIB_LIMIT_BOTH,	   0,	INETADDRESSTYPE,	CONDITIONALY_ASSIGN_LIMITS,
-	"TransportAddressType",		0,	ASN_INTEGER,	0,   16,	CCSP_MIB_LIMIT_BOTH,	   0,	TRANSPORTADDRESSTYPE,	CONDITIONALY_ASSIGN_LIMITS,
-	"InetVersion",			0,	ASN_INTEGER,	0,   2,		CCSP_MIB_LIMIT_BOTH,	   0,	INETVERSION,		CONDITIONALY_ASSIGN_LIMITS,
-	"Counter64",			1,	ASN_COUNTER64,	0,   0,		CCSP_MIB_DEFAULT_LIMIT,	   0,	COUNTER64,		ASSIGN_UTYPE_ONLY,
-	"CounterBasedGauge64",		1,	ASN_COUNTER64,	0,   0,		CCSP_MIB_DEFAULT_LIMIT,	   0,	COUNTERBASEDGAUGE64,	ASSIGN_UTYPE_ONLY,
-	"ZeroBasedCounter64",		1,	ASN_COUNTER64,	0,   0,		CCSP_MIB_DEFAULT_LIMIT,	   0,	ZEROBASEDCOUNTER64,	ASSIGN_UTYPE_ONLY,
-	"OCTET STRING",			1,	ASN_OCTET_STR,	0,   0,		CCSP_MIB_DEFAULT_LIMIT,	   0,	OCTET_STRING,		ASSIGN_UTYPE_ONLY,
-	"MacAddress",			1,	ASN_OCTET_STR,	6,   6,		CCSP_MIB_LIMIT_BOTH,	   0,	MACADDRESS,		UNCONDITIONALLY_ASSIGN_LIMITS,
-	"PhysAddress",			1,	ASN_OCTET_STR,	6,   6,		CCSP_MIB_LIMIT_BOTH,	   0,	PHYSADDRESS,		UNCONDITIONALLY_ASSIGN_LIMITS,
-	"DateAndTime",			1,	ASN_OCTET_STR,	8,   11,	CCSP_MIB_LIMIT_BOTH,	   0,	DATEANDTIME,		UNCONDITIONALLY_ASSIGN_LIMITS
+	{"Boolean",			1,	ASN_BOOLEAN,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,    0,	SNMPA_TYPE_BOOLEAN,	ASSIGN_UTYPE_ONLY},
+	{"INTEGER",			1,	ASN_INTEGER,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	SNMPA_TYPE_INTEGER,	ASSIGN_UTYPE_ONLY},
+	{"Integer32",			0,	ASN_INTEGER,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	SNMPA_TYPE_INTEGER32,	ASSIGN_UTYPE_ONLY},
+	{"TimeInterval",			1,	ASN_INTEGER,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	TIMEINTERVAL,		ASSIGN_UTYPE_ONLY},
+	{"Timeout",			1,	ASN_INTEGER,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	TIMEOUT,		ASSIGN_UTYPE_ONLY},
+	{"TestAndIncr",			0,	ASN_INTEGER,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	TESTANDINCR,		ASSIGN_UTYPE_ONLY},
+	{"InterfaceIndexOrZero",		0,	ASN_INTEGER,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	INTERFACEINDEXORZERO,	ASSIGN_UTYPE_ONLY},
+	{"InterfaceIndex",		0,	ASN_INTEGER,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	INTERFACEINDEX,		ASSIGN_UTYPE_ONLY},
+	{"TruthValue",			1,	ASN_INTEGER,	1,    2,	CCSP_MIB_LIMIT_BOTH,	   0,	TRUTHVALUE,		UNCONDITIONALLY_ASSIGN_LIMITS},
+	{"Counter32",			0,	ASN_COUNTER,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	COUNTER32,		ASSIGN_UTYPE_ONLY},
+	{"Opaque",			0,	ASN_OPAQUE,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	OPAQUE,			ASSIGN_UTYPE_ONLY},
+	{"Gauge32",			0,	ASN_UNSIGNED,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	GAUGE32,		ASSIGN_UTYPE_ONLY},
+	{"Unsigned32",			1,	ASN_UNSIGNED,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	UNSIGNED32,		ASSIGN_UTYPE_ONLY},
+	{"InetZoneIndex",		0,	ASN_UNSIGNED,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	INETZONEINDEX,		ASSIGN_UTYPE_ONLY},
+	{"Unsigned",			0,	ASN_UNSIGNED,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,    0,	UNSIGNED,		ASSIGN_UTYPE_ONLY},
+	{"RowStatus",			0,	ASN_INTEGER,	1,    6,	CCSP_MIB_LIMIT_BOTH,	   1,	ROWSTATUS,		CONDITIONALY_ASSIGN_LIMITS},
+	{"InetPortNumber",		0,	ASN_UNSIGNED,	0,   65535,	CCSP_MIB_LIMIT_BOTH,	   0,	INETPORTNUMBER,		CONDITIONALY_ASSIGN_LIMITS},
+	{"BitField",			1,	ASN_BIT_STR,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,    0,	BITFIELD,	        ASSIGN_UTYPE_ONLY},
+	{"BitString",			0,	ASN_BIT_STR,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	BITSTRING,		ASSIGN_UTYPE_ONLY},
+	{"BITS",				1,	ASN_OCTET_STR,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	BITS,			ASSIGN_UTYPE_ONLY},
+	{"SaRgUserChangedFlag",		1,	ASN_OCTET_STR,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	SARGUSERCHANGEDFLAG,	ASSIGN_UTYPE_ONLY},
+	{"IpAddress",			1,	ASN_IPADDRESS,	0,    0,	CCSP_MIB_DEFAULT_LIMIT,	   0,	IPADDRESS,		ASSIGN_UTYPE_ONLY},
+	{"DisplayString",		0,	ASN_OCTET_STR,	0,   255,	CCSP_MIB_LIMIT_BOTH,	   0,	DISPLAYSTRING,		CONDITIONALY_ASSIGN_LIMITS},
+	{"SnmpAdminString",		0,	ASN_OCTET_STR,	0,   255,	CCSP_MIB_LIMIT_BOTH,	   0,	SNMPADMINSTRING,	CONDITIONALY_ASSIGN_LIMITS},
+	{"OwnerString",			0,	ASN_OCTET_STR,	0,   255,	CCSP_MIB_LIMIT_BOTH,	   0,	OWNERSTRING,		CONDITIONALY_ASSIGN_LIMITS},
+	{"InetAddress",			0,	ASN_OCTET_STR,	0,   255,	CCSP_MIB_LIMIT_BOTH,	   0,	INETADDRESS,		CONDITIONALY_ASSIGN_LIMITS},
+	{"TimeTicks",			1,	ASN_TIMETICKS,	0,   0,		CCSP_MIB_DEFAULT_LIMIT,	   0,	TIMETICKS,		ASSIGN_UTYPE_ONLY},
+	{"TimeStamp",			1,	ASN_TIMETICKS,	0,   0,		CCSP_MIB_DEFAULT_LIMIT,	   0,	TIMESTAMP,		ASSIGN_UTYPE_ONLY},
+	{"InetAddressType",		0,	ASN_INTEGER,	0,   16,	CCSP_MIB_LIMIT_BOTH,	   0,	INETADDRESSTYPE,	CONDITIONALY_ASSIGN_LIMITS},
+	{"TransportAddressType",		0,	ASN_INTEGER,	0,   16,	CCSP_MIB_LIMIT_BOTH,	   0,	TRANSPORTADDRESSTYPE,	CONDITIONALY_ASSIGN_LIMITS},
+	{"InetVersion",			0,	ASN_INTEGER,	0,   2,		CCSP_MIB_LIMIT_BOTH,	   0,	INETVERSION,		CONDITIONALY_ASSIGN_LIMITS},
+	{"Counter64",			1,	ASN_COUNTER64,	0,   0,		CCSP_MIB_DEFAULT_LIMIT,	   0,	COUNTER64,		ASSIGN_UTYPE_ONLY},
+	{"CounterBasedGauge64",		1,	ASN_COUNTER64,	0,   0,		CCSP_MIB_DEFAULT_LIMIT,	   0,	COUNTERBASEDGAUGE64,	ASSIGN_UTYPE_ONLY},
+	{"ZeroBasedCounter64",		1,	ASN_COUNTER64,	0,   0,		CCSP_MIB_DEFAULT_LIMIT,	   0,	ZEROBASEDCOUNTER64,	ASSIGN_UTYPE_ONLY},
+	{"OCTET STRING",			1,	ASN_OCTET_STR,	0,   0,		CCSP_MIB_DEFAULT_LIMIT,	   0,	OCTET_STRING,		ASSIGN_UTYPE_ONLY},
+	{"MacAddress",			1,	ASN_OCTET_STR,	6,   6,		CCSP_MIB_LIMIT_BOTH,	   0,	MACADDRESS,		UNCONDITIONALLY_ASSIGN_LIMITS},
+	{"PhysAddress",			1,	ASN_OCTET_STR,	6,   6,		CCSP_MIB_LIMIT_BOTH,	   0,	PHYSADDRESS,		UNCONDITIONALLY_ASSIGN_LIMITS},
+	{"DateAndTime",			1,	ASN_OCTET_STR,	8,   11,	CCSP_MIB_LIMIT_BOTH,	   0,	DATEANDTIME,		UNCONDITIONALLY_ASSIGN_LIMITS}
 };
 
 
@@ -213,7 +213,7 @@ int GetSnmpaType(char *name , eSnmpaType *type_ptr, PCCSP_MIB_INFO pInfo)
     errno_t rc       = -1;
     int     ind      = -1;
     int strlength;
-    int i;
+    unsigned int i;
     int found = 0;
 
     if( (name == NULL) || (type_ptr == NULL) || ( pInfo == NULL ) )
@@ -302,7 +302,7 @@ int tr69_string_to_datatype(char *name, int *type_ptr)
 {
   int rc = -1;
   int ind = -1;
-  int i = 0;
+  unsigned int i = 0;
   if((name == NULL) || (type_ptr == NULL))
      return 0;
   int length = strlen(name);
@@ -629,7 +629,6 @@ CcspUtilParseOidValueString
     PANSC_TOKEN_CHAIN               pTokenChainEnums = NULL;
     PANSC_STRING_TOKEN              pTokenEnumCode   = NULL;
     ULONG                           ulTokenCount     = 0;
-    ULONG                           ulCharOffset     = 0;
     ULONG                           i                = 0;
 	ULONG							uSize            = 0;
 
@@ -659,12 +658,12 @@ CcspUtilParseOidValueString
 
     for ( i = 0; i < ulTokenCount; i++ )
     {
-        ulCharOffset     = 0;
         pTokenEnumCode   = AnscTcUnlinkToken(pTokenChainEnums);
         /* CID: 52963 Dereference null return value*/
         if (!pTokenEnumCode)
-                return FALSE;
-
+        {
+	    return FALSE;
+        }
 		pArray[uSize] = _ansc_atoi(pTokenEnumCode->Name);
 		uSize ++;
 
@@ -743,6 +742,7 @@ CcspUtilMIBStringToDataType
         char*						pBuffer
     )
 {
+	UNREFERENCED_PARAMETER(pBuffer);
 	/* it's replaced by "checkMibDataType" */
 	return 0;
 }
@@ -778,6 +778,8 @@ CcspUtilTR69DataTypeToString
         char*						pBuffer
     )
 {
+UNREFERENCED_PARAMETER(uDataType);
+UNREFERENCED_PARAMETER(pBuffer);
 	/* we don't need it for now */
 }
 
@@ -983,7 +985,7 @@ CcspUtilLoadMibInfo
                        }
                        if ( (rc == EOK) && (!ind) )
                        {
-                           pChildNode3->GetDataLong(pChildNode3, NULL, (ULONG*)&pInfo->nMax);
+                           pChildNode3->GetDataLong(pChildNode3, NULL, (PLONG)&pInfo->nMax);
 
                        }
                        else                                               
@@ -1049,8 +1051,6 @@ CcspUtilLoadDMMappingInfo
 {
     PANSC_XML_DOM_NODE_OBJECT       pRootNode          = (PANSC_XML_DOM_NODE_OBJECT)hXmlHandle;
     PANSC_XML_DOM_NODE_OBJECT       pChildNode         = (PANSC_XML_DOM_NODE_OBJECT)NULL;
-    PANSC_XML_DOM_NODE_OBJECT       pChildNode2        = (PANSC_XML_DOM_NODE_OBJECT)NULL;
-    PANSC_XML_DOM_NODE_OBJECT       pChildNode3        = (PANSC_XML_DOM_NODE_OBJECT)NULL;
 	char							buffer[256]        = { 0 };
 	ULONG							uSize              = MAXI_DM_NAME_LENGTH;
 
@@ -1159,7 +1159,6 @@ CcspUtilLoadIndexMappingInfo
     PANSC_XML_DOM_NODE_OBJECT       pChildNode         = (PANSC_XML_DOM_NODE_OBJECT)NULL;
     PANSC_XML_DOM_NODE_OBJECT       pChildNode2        = (PANSC_XML_DOM_NODE_OBJECT)NULL;
     PANSC_XML_DOM_NODE_OBJECT       pChildNode3        = (PANSC_XML_DOM_NODE_OBJECT)NULL;
-	char							buffer[256]        = { 0 };
 	ULONG							uSize              = MAXI_DM_NAME_LENGTH;
 	PCCSP_INS_NUMBER_MAP			pNewMap            = (PCCSP_INS_NUMBER_MAP)NULL;
 	ULONG							uFrom              = 0;
@@ -1261,9 +1260,9 @@ CcspUtilLoadSubDMIndexMappingInfo
 		ANSC_HANDLE					        hXmlHandle
 	)
 {
+    UNREFERENCED_PARAMETER(pQueue);
     PANSC_XML_DOM_NODE_OBJECT       pRootNode          = (PANSC_XML_DOM_NODE_OBJECT)hXmlHandle;
     PANSC_XML_DOM_NODE_OBJECT       pChildNode         = (PANSC_XML_DOM_NODE_OBJECT)NULL;
-	char							buffer[256]        = { 0 };
 	ULONG							uSize              = MAXI_DM_NAME_LENGTH;
 
 	/* get the mapped TR Table Obj name */
@@ -1492,8 +1491,6 @@ CcspUtilParseEnumString
     )
 {
 	PCCSP_INT_STRING_MAP			pMap   = (PCCSP_INT_STRING_MAP)NULL;
-	char*							pTemp  = pEnumString;
-	ULONG							ulSize = 0;
     PANSC_TOKEN_CHAIN               pTokenChainEnums = NULL;
     PANSC_STRING_TOKEN              pTokenEnumString = NULL;
     PANSC_STRING_TOKEN              pTokenEnumCode   = NULL;
@@ -1600,7 +1597,7 @@ CcspUtilTraceOid
 	char*							pTemp       = buffer;
         int buf_len = sizeof(buffer);
         errno_t    rc = -1;
-	rc = strcpy_s(buffer,buf_len, "Oid:[");
+	rc = strcpy_s(buffer,(unsigned int)buf_len, "Oid:[");
          if(rc != EOK)
          {
             ERR_CHK(rc);
@@ -1609,7 +1606,7 @@ CcspUtilTraceOid
        
 	pTemp = (char*)(buffer + AnscSizeOfString(buffer));
 
-	for( i = 0; i < uLength; i ++)
+	for( i = 0; i < (int)uLength; i ++)
 	{
 		if( i == 0)
 		{
@@ -2016,7 +2013,6 @@ CcspUtilDMFilterToNamespace
 	unsigned int*				    insArray     = NULL;
 	unsigned int					insCount     = 32;
 	ULONG							i			 = 0;
-	ULONG							j			 = 0;
 	char							pName[256]   = { 0 };
 	char							pName1[256]  = { 0 };
 	char							pValue[64]   = { 0 };
@@ -2577,7 +2573,8 @@ CcspUtilDMValueToMIB
             {
                 struct in6_addr *addr6;
 
-                pMibValue->Value.puBuffer = addr6 = AnscAllocateMemory(sizeof(struct in6_addr));
+                addr6 = AnscAllocateMemory(sizeof(struct in6_addr));
+                pMibValue->Value.puBuffer = (UCHAR*)addr6;
                 if (addr6) {
                     inet_pton(AF_INET6, pValue, addr6);
                     pMibValue->uSize = sizeof(struct in6_addr);
@@ -2749,7 +2746,6 @@ utilBitsToDMString
 	PCCSP_INT_STRING_MAP			pStrMap        = NULL;
 	ULONG							i              = 0;
 	ULONG							j			   = 0;
-	u_char							charByte       = 0x01;
 	ULONG							uValueBit      = 0;
         errno_t     rc =  -1;
 
@@ -2760,7 +2756,7 @@ utilBitsToDMString
 		for( j = 0 ; j < 8; j ++ )
 		{
                         /* TODO CID: 63306 Expression with no effect*/
-			uValueBit << 1;
+			/*uValueBit << 1;*/
 
 			if( pArray[i] && uValueBit)
 			{
@@ -3247,7 +3243,6 @@ CcspUtilDeleteCosaEntry
 {
 	PCCSP_TABLE_HELPER_OBJECT       pThisObject     = (PCCSP_TABLE_HELPER_OBJECT)hTableHelper;
     PSINGLE_LINK_ENTRY              pSLinkEntry		= (PSINGLE_LINK_ENTRY)NULL;
-	ULONG							i				= 0;
 	PCCSP_INDEX_MAPPING				pIndexMap       = (PCCSP_INDEX_MAPPING)NULL;
 	char							pObjName[256]   = { 0 };
 	char							pTmpName[256]   = { 0 };
@@ -3423,7 +3418,7 @@ CcspUtilCreateCosaEntry
 
 		if( i == 0)
 		{
-	           rc =	strcpy_s(pTmp,pTmplen, pIndexMap->Mapping.IndexMappingInfo.pTableObj);
+	           rc =	strcpy_s(pTmp,(unsigned int)pTmplen, pIndexMap->Mapping.IndexMappingInfo.pTableObj);
                    if(rc != EOK)
                    {
 	              ERR_CHK(rc);

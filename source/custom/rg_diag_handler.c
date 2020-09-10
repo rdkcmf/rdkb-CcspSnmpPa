@@ -55,13 +55,13 @@ int handleipv4PingServerList(
     netsnmp_agent_request_info    *reqinfo,
     netsnmp_request_info          *requests)
 {
+    UNREFERENCED_PARAMETER(handler);
+    UNREFERENCED_PARAMETER(reginfo);
     netsnmp_request_info     *request = NULL;
     netsnmp_variable_list    *vb = NULL;
-    int                      ins, rowstatus;
+    int                      rowstatus;
     oid                      subid = 0;
     PCCSP_TABLE_ENTRY        pEntry;
-    char                     dmStr[128] = {'\0'};
-    unsigned char            octet = 0;
     
     printf(" ******** handleipv4PingServerList ************ \n");
 
@@ -69,9 +69,9 @@ int handleipv4PingServerList(
         vb = request->requestvb;
         subid = vb->name[vb->name_length - 2];
         
-        printf(" **** handleipv4PingServerList subid is %d ************ \n",subid);
+        printf(" **** handleipv4PingServerList subid is %lu ************ \n",subid);
         
-        printf(" **** handleipv4PingServerList req is %d ************ \n",*(vb->val.integer));
+        printf(" **** handleipv4PingServerList req is %ld ************ \n",*(vb->val.integer));
 
         if(subid == saRgSelfHealIpv4PingServerRowstatus_lastOid &&
            (*(vb->val.integer) == 4 || *(vb->val.integer) == 5)){
@@ -83,7 +83,6 @@ int handleipv4PingServerList(
                 CcspTraceWarning(("Entry not found for ipv4 server list\n"));
                 continue;
             }
-            ins = pEntry->IndexValue[0].Value.iValue;
         }
 
         switch (reqinfo->mode) {
@@ -124,13 +123,13 @@ int handleipv6PingServerList(
     netsnmp_agent_request_info    *reqinfo,
     netsnmp_request_info          *requests)
 {
+    UNREFERENCED_PARAMETER(handler);
+    UNREFERENCED_PARAMETER(reginfo);
     netsnmp_request_info     *request = NULL;
     netsnmp_variable_list    *vb = NULL;
-    int                      ins, rowstatus;
+    int                      rowstatus;
     oid                      subid = 0;
     PCCSP_TABLE_ENTRY        pEntry;
-    char                     dmStr[128] = {'\0'};
-    unsigned char            octet = 0;
 
     for (request = requests; request != NULL; request = request->next){
         vb = request->requestvb;
@@ -146,7 +145,6 @@ int handleipv6PingServerList(
                 CcspTraceWarning(("Entry not found for ipv6 server list\n"));
                 continue;
             }
-            ins = pEntry->IndexValue[0].Value.iValue;
         }
 
         switch (reqinfo->mode) {

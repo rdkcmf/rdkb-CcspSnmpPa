@@ -41,6 +41,8 @@
 #include "CcspSnmpPlugin.h"
 #include "sysevent/sysevent.h"
 #include "utapi/utapi.h"
+#include "syscfg.h"
+#include "ansc_platform.h"
 
 #include "safec_lib_common.h"
 
@@ -72,6 +74,7 @@ static int openCommonSyseventConnection() {
 static void
 stop_server(int signo) 
 {
+    UNREFERENCED_PARAMETER(signo);
     keep_running = 0;
 }
 

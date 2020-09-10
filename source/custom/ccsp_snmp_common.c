@@ -95,11 +95,11 @@ int get_dm_value(const char *param, char *val, size_t len)
  */
 int set_dm_value(const char *param, char *val, size_t vlen)
 {
+    UNREFERENCED_PARAMETER(vlen);
     char                    *ppDestComponentName = NULL;
     char                    *ppDestPath = NULL;
     parameterValStruct_t    **structGet = NULL;
     parameterValStruct_t    structSet[1];
-    char                    *paramNames[1];
     /* Coverity Fix CID:59340 UnInit var */
     int                     valNum = 0;
     errno_t rc =-1;
@@ -117,7 +117,6 @@ int set_dm_value(const char *param, char *val, size_t vlen)
     }
     
     /* get values for it's type */
-    paramNames[0] = (char *)param;
     if (!Cosa_GetParamValues(ppDestComponentName,
              ppDestPath,
              (char **)&param,
