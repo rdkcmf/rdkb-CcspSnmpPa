@@ -326,8 +326,16 @@ void
 scalarGroupCacheFree(netsnmp_cache * cache, void *magic)
 {
 	PCCSP_SCALAR_HELPER_OBJECT      pThisObject        = (PCCSP_SCALAR_HELPER_OBJECT)magic;
-	if(pThisObject)
+
+    //RDKB-28307: Adding Preventive check for the clearcache function ptr.
+	if(pThisObject && pThisObject->ClearCache)
+    {
 		pThisObject->ClearCache(magic);
+    }
+    else
+    {
+		AnscTraceWarning(("pThisObject/ClearCache is NULL!!.\n"));
+    }
 }
 
 void
