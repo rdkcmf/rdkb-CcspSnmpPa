@@ -41,6 +41,7 @@
 #include "CcspSnmpPlugin.h"
 #include "syscfg.h"
 #include "ansc_platform.h"
+#include "print_uptime.h"
 
 #include "safec_lib_common.h"
 
@@ -229,7 +230,7 @@ main(int argc, char *argv[])
         {
             if (access("/tmp/snmp_subagent_v2_initialized", F_OK) != 0)
             {
-                system("print_uptime \"boot_to_snmp_subagent_v2_uptime\"");
+                print_uptime("boot_to_snmp_subagent_v2_uptime",NULL);
             }
             system("touch /tmp/snmp_subagent_v2_initialized");
         }
@@ -248,7 +249,7 @@ main(int argc, char *argv[])
         {
             if (access("/tmp/snmp_subagent_v3_initialized", F_OK) != 0)
             {
-                system("print_uptime \"boot_to_snmp_subagent_v3_uptime\"");
+                print_uptime("boot_to_snmp_subagent_v3_uptime",NULL);
             }
             system("touch /tmp/snmp_subagent_v3_initialized");
         }
@@ -262,7 +263,7 @@ main(int argc, char *argv[])
     {
         if (access("/tmp/snmp_subagent_v3_initialized", F_OK) != 0)
         {
-            system("print_uptime \"boot_to_snmp_subagent_v3_uptime\"");
+            print_uptime("boot_to_snmp_subagent_v3_uptime", NULL);
         }
         system("touch /tmp/snmp_subagent_v3_initialized");
     }
@@ -270,7 +271,7 @@ main(int argc, char *argv[])
     {
         if (access("/tmp/snmp_subagent_v2_initialized", F_OK) != 0)
         {
-            system("print_uptime \"boot_to_snmp_subagent_v2_uptime\"");
+            print_uptime("boot_to_snmp_subagent_v2_uptime", NULL);
         }
         system("touch /tmp/snmp_subagent_v2_initialized");
     }
