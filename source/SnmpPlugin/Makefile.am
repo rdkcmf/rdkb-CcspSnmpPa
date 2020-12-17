@@ -44,7 +44,7 @@ snmp_subagent_LDADD = libsnmp_plugin.la
 
 
 libsnmp_plugin_la_CPPFLAGS= -D_ANSC_LINUX -D_ANSC_USER -D_ANSC_LITTLE_ENDIAN_ -I$(top_srcdir)/source/SnmpPlugin -I$(top_srcdir)/source/include
-libsnmp_plugin_la_LDFLAGS= -lccsp_common -lnetsnmpmibs -ldl -lnetsnmpagent -lnetsnmp -lm -lprint_uptime
+libsnmp_plugin_la_LDFLAGS= -lccsp_common -lnetsnmpmibs -ldl -lnetsnmpagent -lnetsnmp -lm -lprint_uptime -lsysevent -lutapi -lutctx
 
 libsnmp_plugin_la_SOURCES= \
 	ccsp_mib_utilities.c \
