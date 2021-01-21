@@ -305,7 +305,7 @@ limitations under the License.
                          On set make WEP-128 the default and when the key length is set it will fix and change to WEP-64 or WEP-128
                          For GA 1.2 do not support WPA-Enterprise(4), WPA2-Enterprise(5), and WPA-WPA2-Enterprise(8)
                     -->
-                    <enumeration>None(0),WEP-128(1),WEP-64(1),WPA-Personal(2),WPA2-Personal(3),WPA2-Enterprise(5),WPA-WPA2-Personal(7),WPA-WPA2-Enterprise(8)</enumeration>
+                    <enumeration>None(0),WEP-128(1),WEP-64(1),WPA2-Personal(3),WPA2-Enterprise(5),WPA-WPA2-Personal(7),WPA-WPA2-Enterprise(8)</enumeration>
                 </dm>
             </mapping>
             <mapping>
@@ -836,7 +836,7 @@ limitations under the License.
                     <!-- fill in DM param and type -->
                     <paramName>Device.WiFi.AccessPoint.%d.Security.ModeEnabled</paramName>
                     <dataType>string</dataType>
-                    <enumeration>WEP-64(0),WEP-128(1),None(1),WPA-Personal(1),WPA2-Personal(1),WPA-WPA2-Personal(1),WPA-Enterprise(1),WPA2-Enterprise(1),WPA-WPA2-Enterprise(1)</enumeration>
+                    <enumeration>WEP-64(0),WEP-128(1),None(1),WPA2-Personal(1),WPA-WPA2-Personal(1),WPA-Enterprise(1),WPA2-Enterprise(1),WPA-WPA2-Enterprise(1)</enumeration>
                 </dm>
             </mapping>
             <mapping>
