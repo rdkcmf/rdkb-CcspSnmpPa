@@ -39,8 +39,6 @@
 #include <net-snmp/agent/net-snmp-agent-includes.h>
 #include <unistd.h>
 #include "CcspSnmpPlugin.h"
-#include "sysevent/sysevent.h"
-#include "utapi/utapi.h"
 #include "syscfg.h"
 #include "ansc_platform.h"
 
@@ -60,16 +58,6 @@ static int keep_running;
 static char *xagent_addr = DEF_MASTER_ADDR;
 static char *debug_pat = NULL;
 static int  instance_number = DEF_MASTER_INSTANCE;
-
-int commonSyseventFd = -1;
-token_t commonSyseventToken;
-
-static int openCommonSyseventConnection() {
-    if (commonSyseventFd == -1) {
-        commonSyseventFd = s_sysevent_connect(&commonSyseventToken);
-    }
-    return 0;
-}
 
 static void
 stop_server(int signo) 
@@ -226,8 +214,8 @@ main(int argc, char *argv[])
     }
 
     snmp_log(LOG_INFO,"%s is up and running.\n", AGNT_NAME);
-    openCommonSyseventConnection();
-    sysevent_set(commonSyseventFd, commonSyseventToken, "snmp_subagent-status","started",0);
+    system("sysevent set snmp_subagent-status started");
+
 #if defined(_XF3_PRODUCT_REQ_) || defined(_CBR_PRODUCT_REQ_) || ( (defined(_XB6_PRODUCT_REQ_) || defined (_XB7_PRODUCT_REQ_)) && defined (_COSA_BCM_ARM_))
     char buff[10] = {0};
     int rc = 0;
@@ -297,7 +285,7 @@ main(int argc, char *argv[])
     remove_ccsp_snmp_plugin();
 
     snmp_shutdown(AGNT_NAME);
-    sysevent_set(commonSyseventFd, commonSyseventToken, "snmp_subagent-status","stopped",0);
+    system("sysevent set snmp_subagent-status stopped");
     SOCK_CLEANUP;
 
     return 0;
