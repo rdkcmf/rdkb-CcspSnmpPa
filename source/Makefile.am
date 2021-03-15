@@ -17,3 +17,7 @@
 # limitations under the License.
 ##########################################################################
 SUBDIRS = SnmpPlugin custom
+
+if WITH_GTEST_SUPPORT
+SUBDIRS += test
+endif
