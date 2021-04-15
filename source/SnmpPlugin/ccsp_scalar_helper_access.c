@@ -681,11 +681,9 @@ CcspScalarHelperRefreshCache
                                            ERR_CHK(rc);
                                         }
 
-                                        if ( (rc == EOK) && (ind) )  
-
-    
+                                        if ( (rc == EOK) && (ind) )
 					{
-						AnscTraceError(("Different Ccsp Component '%s' for DM namespace '%s', Error!\n", pDestComp, pMibMap->Mapping.pDMName));
+                                        	CcspTraceDebug(("Different Ccsp Component '%s' for DM namespace '%s' \n", pDestComp, pMibMap->Mapping.pDMName));
 					}
 					else
 					{

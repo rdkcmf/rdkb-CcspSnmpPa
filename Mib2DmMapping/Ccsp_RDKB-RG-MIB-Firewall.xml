@@ -229,11 +229,11 @@ limitations under the License.
                         <min>1</min><max>2</max>
                     </range>
                 </mib>
-                <dm>
+                <!--<dm>-->
                     <!-- fill in DM param and type -->
                     <!--<paramName>Device.X_CISCO_COM_Security.Firewall.FilterAnonymousInternetRequests</paramName>
                     <dataType>boolean</dataType>-->
-                </dm>
+                <!--</dm>-->
             </mapping>
         </scalarGroup>
         <scalarGroup>
@@ -459,11 +459,11 @@ limitations under the License.
                         <min>1</min><max>2</max>
                     </range>
                 </mib>
-                <dm>
+                <!--<dm>-->
                     <!-- fill in DM param and type -->
                     <!--<paramName>Device.X_CISCO_COM_Security.Firewall.FilterHTTP</paramName>
                     <dataType>boolean</dataType>-->
-                </dm>
+                <!--</dm>-->
             </mapping>
             <mapping>
                 <mib>
@@ -475,11 +475,11 @@ limitations under the License.
                         <min>1</min><max>2</max>
                     </range>
                 </mib>
-                <dm>
+                <!--<dm>-->
                     <!-- fill in DM param and type -->
                     <!--<paramName>Device.X_CISCO_COM_Security.Firewall.FilterP2P</paramName>
                     <dataType>boolean</dataType>-->
-                </dm>
+                <!--</dm>-->
             </mapping>
             <mapping>
                 <mib>
@@ -491,11 +491,11 @@ limitations under the License.
                         <min>1</min><max>2</max>
                     </range>
                 </mib>
-                <dm>
+                <!--<dm>-->
                     <!-- fill in DM param and type -->
                     <!--<paramName>Device.X_CISCO_COM_Security.Firewall.FilterP2P</paramName>
                     <dataType>boolean</dataType>-->
-                </dm>
+                <!--</dm>-->
             </mapping>
             <mapping>
                 <mib>
@@ -507,11 +507,11 @@ limitations under the License.
                         <min>1</min><max>2</max>
                     </range>
                 </mib>
-                <dm>
+                <!--<dm>-->
                     <!-- fill in DM param and type -->
                     <!--<paramName>Device.X_CISCO_COM_Security.Firewall.FilterP2P</paramName>
                     <dataType>boolean</dataType>-->
-                </dm>
+                <!--</dm>-->
             </mapping>
             <mapping>
                 <mib>
@@ -523,11 +523,11 @@ limitations under the License.
                         <min>1</min><max>2</max>
                     </range>
                 </mib>
-                <dm>
+                <!--<dm>-->
                     <!-- fill in DM param and type -->
                     <!--<paramName>Device.X_CISCO_COM_Security.Firewall.FilterP2P</paramName>
                     <dataType>boolean</dataType>-->
-                </dm>
+                <!--</dm>-->
             </mapping>
             <mapping>
                 <mib>
