@@ -63,8 +63,8 @@ static char *xagent_addr = DEF_MASTER_ADDR;
 static char *debug_pat = NULL;
 static int  instance_number = DEF_MASTER_INSTANCE;
 
-int commonSyseventFd = -1;
-token_t commonSyseventToken;
+static int commonSyseventFd = -1;
+static token_t commonSyseventToken;
 
 static int openCommonSyseventConnection() {
     if (commonSyseventFd == -1) {
