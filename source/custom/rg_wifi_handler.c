@@ -97,7 +97,6 @@ dmValue_PAIR dmValue_type_table[] = {
   { "None",  0 },
   { "WEP-128",   1},
   { "WEP-64", 1},
-  { "WPA-Personal",   2},
   { "WPA2-Personal",  3},
   { "WPA2-Enterprise", 5  },
    { "WPA-WPA2-Personal", 7  },
@@ -1518,13 +1517,24 @@ static int setBssSecurityMode(PCCSP_TABLE_ENTRY pEntry, int mode)
 
    if (mode >= 0 && mode <= 8)
    {
-        rc = strcpy_s(modeStr, sizeof(modeStr), dmValue_type_table[mode].name);
-        
-        if (rc != EOK) {
-            ERR_CHK(rc);
-            return -1;
+        if (mode == 2 || mode == 4 || mode == 6)
+            return 0; //do nothing
+
+        unsigned int i = 0;
+        for (i = 0 ; i < NUM_DMVALUE_TYPES ; ++i)
+        {
+            if ( dmValue_type_table[i].level == mode )
+            {
+                rc = strcpy_s(modeStr, sizeof(modeStr), dmValue_type_table[i].name);
+
+                if (rc != EOK) {
+                    ERR_CHK(rc);
+                    return -1;
+                }
+                break;
+            }
         }
-    }
+   }
     else
        return 0;   //TODO: do nothing
       
