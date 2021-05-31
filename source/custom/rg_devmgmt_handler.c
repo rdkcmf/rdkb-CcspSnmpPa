@@ -49,6 +49,7 @@
 
 #define IANA_ORIGIN_DM "Device.IP.Interface.1.IPv6Address.%d.Origin"
 #define IANA_ORIGIN_DHCPv6 "DHCPv6"
+#define IANA_ORIGIN_AUTO   "AutoConfigured"
 
 #define IAPD_PREFIXLENGTH_SUBID 4
 #define IAPD_PREFIXVALUE_SUBID 5
@@ -91,6 +92,12 @@ static int is_iana_addr(int index)
     }
 
     rc = strcmp_s(IANA_ORIGIN_DHCPv6,strlen(IANA_ORIGIN_DHCPv6) ,iana_origin, &ind);
+	/* XF3-6151: Adding check for Autoconfgured ip mode */
+    if (ind)
+    {
+		rc = strcmp_s(IANA_ORIGIN_AUTO, strlen(IANA_ORIGIN_AUTO) ,iana_origin, &ind);
+    }
+
     ERR_CHK(rc);
      if((ind) && (rc == EOK)) 
      {
