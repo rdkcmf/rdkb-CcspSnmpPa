@@ -243,7 +243,7 @@ main(int argc, char *argv[])
         {
             if (access("/tmp/snmp_subagent_v2_initialized", F_OK) != 0)
             {
-                print_uptime("boot_to_snmp_subagent_v2_uptime",NULL);
+                print_uptime("boot_to_snmp_subagent_v2_uptime",NULL, NULL);
             }
             system("touch /tmp/snmp_subagent_v2_initialized");
         }
@@ -262,7 +262,7 @@ main(int argc, char *argv[])
         {
             if (access("/tmp/snmp_subagent_v3_initialized", F_OK) != 0)
             {
-                print_uptime("boot_to_snmp_subagent_v3_uptime",NULL);
+                print_uptime("boot_to_snmp_subagent_v3_uptime",NULL, NULL);
             }
             system("touch /tmp/snmp_subagent_v3_initialized");
         }
@@ -276,7 +276,7 @@ main(int argc, char *argv[])
     {
         if (access("/tmp/snmp_subagent_v3_initialized", F_OK) != 0)
         {
-            print_uptime("boot_to_snmp_subagent_v3_uptime", NULL);
+            print_uptime("boot_to_snmp_subagent_v3_uptime", NULL, NULL);
         }
         system("touch /tmp/snmp_subagent_v3_initialized");
     }
@@ -284,7 +284,7 @@ main(int argc, char *argv[])
     {
         if (access("/tmp/snmp_subagent_v2_initialized", F_OK) != 0)
         {
-            print_uptime("boot_to_snmp_subagent_v2_uptime", NULL);
+            print_uptime("boot_to_snmp_subagent_v2_uptime", NULL, NULL);
         }
         system("touch /tmp/snmp_subagent_v2_initialized");
     }
