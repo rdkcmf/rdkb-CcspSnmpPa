@@ -53,8 +53,11 @@
 #define PORTMODE_DM_OBJ_NAME    "com.cisco.spvtg.ccsp.pam.Name"
 #define PORTMODE_DM_PARAM_PAT   "Device.X_CISCO_COM_DeviceControl.XHSEthernetPortEnable"
 
+typedef void (* CCSP_CLEAN_MIB_VAL_QUEUE_FUN_PTR)(void *);
+
 struct NTPServer 
 {
+	CCSP_CLEAN_MIB_VAL_QUEUE_FUN_PTR CleanMibValueQueueFunctionPtr;
     int     ins;            /* instance number */
     char    dmName[1024];   /* path name of DM param */
     char    server[64];     /* hostname or ipaddress */
@@ -180,6 +183,7 @@ static int LoadNtpServTable(netsnmp_tdata *table)
 
         rc = memset_s(ntpServ,sizeof(struct NTPServer), 0, sizeof(struct NTPServer));
         ERR_CHK(rc);
+        ntpServ->CleanMibValueQueueFunctionPtr = NULL;        
         ntpServ->ins = i + 1;
         rc = sprintf_s(ntpServ->dmName, sizeof(ntpServ->dmName), NTPSERV_DM_PARAM_PAT, ntpServ->ins);
          if(rc < EOK)
@@ -352,7 +356,7 @@ struct PortMode
 {
     int     ins;            /* instance number */
     long    bValue;      /*Value for XHS mode*/
-
+    CCSP_CLEAN_MIB_VAL_QUEUE_FUN_PTR CleanMibValueQueueFunctionPtr;
     /* for extension */
 };
 
@@ -607,6 +611,9 @@ static int LoadPortModeTable(netsnmp_tdata *table)
 
        rc =  memset_s(portMode,sizeof(struct PortMode), 0, sizeof(struct PortMode));
        ERR_CHK(rc );
+
+        portMode->CleanMibValueQueueFunctionPtr = NULL;
+
         portMode->ins = i + 1;
 
         if ((row = netsnmp_tdata_create_row()) == NULL)

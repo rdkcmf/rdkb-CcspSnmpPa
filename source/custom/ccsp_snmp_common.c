@@ -51,7 +51,6 @@ int get_dm_value(const char *param, char *val, size_t len)
     int                     size = 0;
     parameterValStruct_t ** parameterVal = NULL;
     int                     iReturn = 0;
-    errno_t rc =-1;
     
     //check for NULL string
     if( NULL == param || val == NULL)
@@ -60,7 +59,7 @@ int get_dm_value(const char *param, char *val, size_t len)
     //Get Destination component 
     if(!Cosa_FindDestComp((char *)param, &ppDestComponentName, &ppDestPath)){
         AnscTraceWarning(("Failed to find the CCSP component who supports '%s'\n", param));
-        return -1;
+        goto get_negative_result;
     }
     
     //Get Parameter Values from ccsp
@@ -73,20 +72,24 @@ int get_dm_value(const char *param, char *val, size_t len)
     
      if (!iReturn){
         AnscTraceWarning(("Failed to get parameter value for '%s'\n", param));
-        return -1; 
+        goto get_negative_result;
      }
     
      if(size >= 1){
-       rc =  sprintf_s(val, len, "%s", parameterVal[0]->parameterValue);
-       if(rc < EOK)
-        {
-               ERR_CHK(rc);
-               return -1;
-         }
+        snprintf(val, len, "%s", parameterVal[0]->parameterValue);
         Cosa_FreeParamValues(size, parameterVal);
      }
      
+     if( ppDestComponentName){   AnscFreeMemory(ppDestComponentName); ppDestComponentName = NULL;}
+     if( ppDestPath){   AnscFreeMemory(ppDestPath); ppDestPath = NULL;}
+
      return 0;
+
+get_negative_result:
+     if( ppDestComponentName){   AnscFreeMemory(ppDestComponentName); ppDestComponentName = NULL;}
+     if( ppDestPath){   AnscFreeMemory(ppDestPath); ppDestPath = NULL;}
+
+     return -1;
 }
 
 /* 
@@ -100,12 +103,8 @@ int set_dm_value(const char *param, char *val, size_t vlen)
     char                    *ppDestPath = NULL;
     parameterValStruct_t    **structGet = NULL;
     parameterValStruct_t    structSet[1];
-    /* Coverity Fix CID:59340 UnInit var */
-    int                     valNum = 0;
-    errno_t rc =-1;
-    int ind =-1;
- 
-    int ret = 0;
+    int                     valNum;
+    
     if (!param || !val){
         AnscTraceWarning(("%s: bad parameters\n", __FUNCTION__));
         return -1;
@@ -113,7 +112,8 @@ int set_dm_value(const char *param, char *val, size_t vlen)
     
     if (!Cosa_FindDestComp((char *)param, &ppDestComponentName, &ppDestPath)){
         AnscTraceWarning(("Failed to find the CCSP component who supports '%s'\n", param));
-        return -1;
+
+        goto set_negative_result;
     }
     
     /* get values for it's type */
@@ -124,30 +124,16 @@ int set_dm_value(const char *param, char *val, size_t vlen)
              &valNum ,
              &structGet)){
         AnscTraceWarning(("Failed to get parameter value for '%s'\n", param));
-        return -1;
-    }
-     
-    if ( valNum != 1 )
-    {
-       ret = 1;
-    }
-    
-    else
-    {
-       rc = strcmp_s(structGet[0]->parameterName,strlen(structGet[0]->parameterName),param,&ind);
-       ERR_CHK(rc);
 
-       if( ( rc ==EOK ) && ( ind ))
-      {
-             ret = 1;
-      }
-   }
+        goto set_negative_result;
+    }
     
-    if( ret == 1 )
+    if (valNum != 1 || strcmp(structGet[0]->parameterName, param) != 0)
     {
         AnscTraceWarning(("%s: miss match\n", __FUNCTION__));
         Cosa_FreeParamValues(valNum, structGet);
-        return -1;
+
+        goto set_negative_result;
     }
     
     structSet[0].parameterName = (char *)param;
@@ -156,22 +142,32 @@ int set_dm_value(const char *param, char *val, size_t vlen)
 
     if(!Cosa_SetParamValuesNoCommit(
 		    ppDestComponentName,
-			ppDestPath,
+ 			ppDestPath,
 			structSet,
 			1)){
-        return -1;	    	
+
+        goto set_negative_result;
     }
 
 #if 0
     /* No need to commit. Generic handler will commit */
     if (!Cosa_SetCommit(ppDestComponentName, ppDestPath, TRUE)){
         AnscTraceWarning(("%s commit failed\n", ppDestPath));
-        return -1;
+        goto set_negative_result;
     }
 #endif
 
     Cosa_FreeParamValues(valNum, structGet);
 
+    if( ppDestComponentName){   AnscFreeMemory(ppDestComponentName); ppDestComponentName = NULL;}
+    if( ppDestPath){   AnscFreeMemory(ppDestPath); ppDestPath = NULL;}
+
     return 0;
+
+set_negative_result:
+    if( ppDestComponentName){   AnscFreeMemory(ppDestComponentName); ppDestComponentName = NULL;}
+    if( ppDestPath){   AnscFreeMemory(ppDestPath); ppDestPath = NULL;}
+
+    return -1;
 }
 

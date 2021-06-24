@@ -3115,6 +3115,7 @@ CcspUtilCreateMibEntry
     }
 
 	row->data = entry;
+	entry->CleanMibValueQueueFunctionPtr = (CCSP_CLEAN_MIB_VAL_QUEUE_FUN_PTR)CcspUtilCleanMibValueQueue;
 
 	for( i = 0; i < uCount; i ++)
 	{
@@ -3184,17 +3185,21 @@ CcspUtilRemoveMibEntry
 
 	if(entry)
 	{
-		CcspUtilCleanMibValueQueue(&entry->MibValueQueue);
-
+		if(entry->CleanMibValueQueueFunctionPtr != NULL){
+			entry->CleanMibValueQueueFunctionPtr(&entry->MibValueQueue);
+		}
 		AnscFreeMemory(entry);
                 row->data = NULL;
+                entry = NULL;
 	}
 
-    if (table_data)
-        netsnmp_tdata_remove_and_delete_row(table_data, row);
-    else
-        netsnmp_tdata_delete_row(row);
 
+    if (table_data){
+		netsnmp_tdata_remove_and_delete_row(table_data, row);
+	}
+    else{
+		netsnmp_tdata_delete_row(row);
+	}
 }
 
 

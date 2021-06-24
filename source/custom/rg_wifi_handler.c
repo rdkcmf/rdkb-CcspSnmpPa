@@ -1800,12 +1800,14 @@ find_retry:
                                goto ret;
                    }
 
+	pEntry->CleanMibValueQueueFunctionPtr = NULL;
+
         // save back-end instance number
         pEntry->IndexValue[0].Value.uValue = dmIns;
         pEntry->IndexCount = 1;
 
-        row->data = pEntry;
 
+        row->data = pEntry;
         mibIndex = gDot11Info[dmIns].mib_index;
         netsnmp_tdata_row_add_index(row, ASN_UNSIGNED, &mibIndex, 4);
 
