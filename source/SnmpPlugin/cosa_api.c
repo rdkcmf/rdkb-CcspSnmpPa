@@ -37,6 +37,7 @@
 #include "ansc_platform.h"
 #include "cosa_api.h"
 #include "safec_lib_common.h"
+#include "dslh_definitions_database.h"
 
 /* Cosa specific stuff */
 #ifdef _COSA_SIM_
@@ -195,7 +196,7 @@ BOOL Cosa_SetParamValuesNoCommit
 					bus_handle, 
 					pDestComp, 
 					pDestPath,
-					0, CCSP_COMPONENT_ID_SNMP,   /* session id and write id */
+					0, DSLH_MPA_ACCESS_CONTROL_SNMP,   /* session id and write id */
 					val, 
 					size, 
 					FALSE,   /* no commit */
@@ -233,7 +234,7 @@ BOOL Cosa_SetCommit
 			pDestComp,
 			pDestPath,
 			0,
-			CCSP_COMPONENT_ID_SNMP,
+			DSLH_MPA_ACCESS_CONTROL_SNMP,
 			bSet
 		);
 
