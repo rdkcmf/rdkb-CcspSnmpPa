@@ -45,7 +45,7 @@
 #include "sysevent/sysevent.h"
 #include "utapi/utapi.h"
 #include "utapi/utapi_util.h"
-
+#include <sys/stat.h>
 #include "safec_lib_common.h"
 
 #ifdef USE_PCD_API_EXCEPTION_HANDLING
@@ -245,7 +245,7 @@ main(int argc, char *argv[])
             {
                 print_uptime("boot_to_snmp_subagent_v2_uptime",NULL, NULL);
             }
-            system("touch /tmp/snmp_subagent_v2_initialized");
+            creat("/tmp/snmp_subagent_v2_initialized",S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
         }
     }
     else
@@ -264,7 +264,7 @@ main(int argc, char *argv[])
             {
                 print_uptime("boot_to_snmp_subagent_v3_uptime",NULL, NULL);
             }
-            system("touch /tmp/snmp_subagent_v3_initialized");
+            creat("/tmp/snmp_subagent_v3_initialized",S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
         }
     }  
     else
@@ -278,7 +278,7 @@ main(int argc, char *argv[])
         {
             print_uptime("boot_to_snmp_subagent_v3_uptime", NULL, NULL);
         }
-        system("touch /tmp/snmp_subagent_v3_initialized");
+        creat("/tmp/snmp_subagent_v3_initialized",S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
     }
     else
     {
@@ -286,7 +286,7 @@ main(int argc, char *argv[])
         {
             print_uptime("boot_to_snmp_subagent_v2_uptime", NULL, NULL);
         }
-        system("touch /tmp/snmp_subagent_v2_initialized");
+        creat("/tmp/snmp_subagent_v2_initialized",S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
     }
 #endif
 
