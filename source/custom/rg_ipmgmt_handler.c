@@ -166,7 +166,7 @@ static void getInterface(PCCSP_TABLE_ENTRY entry, char* interface ){
 
     if (!Cosa_GetParamValues(dhcpdstComp, dhcpdstPath, &name, 1, &nval, &valStr))
     {
-        CcspTraceError(("%s: fail to get: %s \n", __FUNCTION__, name[0]));
+        CcspTraceError(("%s: fail to get: %c \n", __FUNCTION__, name[0]));
         goto ERR;
     }
     if(nval < 1){

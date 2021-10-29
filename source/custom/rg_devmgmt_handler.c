@@ -265,7 +265,7 @@ handleIapdTable(
             if ((subid == IAPD_PREFIXLENGTH_SUBID) || 
                 (subid == IAPD_PREFIXVALUE_SUBID)) {
                 if(iapd_handler(subid, index, &iapd) != TRUE) {
-                    CcspTraceError(("%s iapd_handler failed.\n"));
+                    CcspTraceError(("iapd_handler failed.\n"));
                     netsnmp_set_request_error(reqinfo, req, SNMP_ERR_GENERR);
                     break;
                 }

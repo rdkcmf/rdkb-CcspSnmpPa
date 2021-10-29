@@ -1899,7 +1899,7 @@ int handleFwIpFilterRequests(netsnmp_mib_handler *handler,
             vb = request->requestvb;
             subid = vb->name[vb->name_length - 2];
 
-            CcspTraceInfo(("%s(%d): mode %d subid %d.\n", __func__, __LINE__, reqinfo->mode, subid));
+            CcspTraceInfo(("%s(%d): mode %d subid %lu.\n", __func__, __LINE__, reqinfo->mode, subid));
 
             // Per Comcast webui: READ-ONLY fields
             if(subid == FILTER_ROWSTATUS ||

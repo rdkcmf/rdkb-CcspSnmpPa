@@ -688,7 +688,7 @@ handleL2ogreBase(
     for (req = requests; req != NULL; req = req->next) {
         vb = req->requestvb;
         subid = vb->name[vb->name_length -2];
-        CcspTraceInfo(("handleL2ogreBase last 4: %d.%d.%d.%d\n", vb->name[vb->name_length-4],vb->name[vb->name_length-3],vb->name[vb->name_length-2],vb->name[vb->name_length-1]));
+        CcspTraceInfo(("handleL2ogreBase last 4: %lu.%lu.%lu.%lu\n", vb->name[vb->name_length-4],vb->name[vb->name_length-3],vb->name[vb->name_length-2],vb->name[vb->name_length-1]));
         
         switch (reqinfo->mode) {
             case MODE_GET:
@@ -790,7 +790,7 @@ handleHotspotIf(
     for (req = requests; req != NULL; req = req->next) {
         vb = req->requestvb;
         subid = vb->name[vb->name_length -2];
-        CcspTraceInfo(("HotspotIf last 4: %d.%d.%d.%d\n", vb->name[vb->name_length-4],vb->name[vb->name_length-3],vb->name[vb->name_length-2],vb->name[vb->name_length-1]));
+        CcspTraceInfo(("HotspotIf last 4: %lu.%lu.%lu.%lu\n", vb->name[vb->name_length-4],vb->name[vb->name_length-3],vb->name[vb->name_length-2],vb->name[vb->name_length-1]));
         entry = (PCCSP_TABLE_ENTRY)netsnmp_tdata_extract_entry(req);
         if (entry == NULL) {
             netsnmp_request_set_error(req, SNMP_NOSUCHINSTANCE);
@@ -898,7 +898,7 @@ handleL2ogreSourceIf(
     for (req = requests; req != NULL; req = req->next) {
         vb = req->requestvb;
         subid = vb->name[vb->name_length -2];
-        CcspTraceInfo(("L2ogreSourceIf last 4: %d.%d.%d.%d\n", vb->name[vb->name_length-4],vb->name[vb->name_length-3],vb->name[vb->name_length-2],vb->name[vb->name_length-1]));
+        CcspTraceInfo(("L2ogreSourceIf last 4: %lu.%lu.%lu.%lu\n", vb->name[vb->name_length-4],vb->name[vb->name_length-3],vb->name[vb->name_length-2],vb->name[vb->name_length-1]));
         entry = (PCCSP_TABLE_ENTRY)netsnmp_tdata_extract_entry(req);
         if (entry == NULL) {
             netsnmp_request_set_error(req, SNMP_NOSUCHINSTANCE);
@@ -1035,7 +1035,7 @@ handleWifiAssocatedDevice(
 
     for (req = requests; req != NULL; req = req->next) {
         vb = req->requestvb;
-        CcspTraceInfo(("WifiAssociatedDevice last 4: %d.%d.%d.%d!\n", vb->name[vb->name_length-4],vb->name[vb->name_length-3],vb->name[vb->name_length-2],vb->name[vb->name_length-1]));
+        CcspTraceInfo(("WifiAssociatedDevice last 4: %lu.%lu.%lu.%lu!\n", vb->name[vb->name_length-4],vb->name[vb->name_length-3],vb->name[vb->name_length-2],vb->name[vb->name_length-1]));
         entry = (PCCSP_TABLE_ENTRY)netsnmp_tdata_extract_entry(req);
         if (entry == NULL) {
             netsnmp_request_set_error(req, SNMP_NOSUCHINSTANCE);

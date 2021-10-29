@@ -426,14 +426,14 @@ for (req = requests; req != NULL; req = req->next)
                 if ((retval=netsnmp_check_vb_type(req->requestvb, ASN_INTEGER))!=SNMP_ERR_NOERROR){
                     netsnmp_set_request_error(reqinfo, req, retval);
 
-                    CcspTraceError(("MODE_SET_RESERVE1: incorrect type for value: %d\n", *(vb->val.integer)));
+                    CcspTraceError(("MODE_SET_RESERVE1: incorrect type for value: %lu\n", *(vb->val.integer)));
                     CcspTraceWarning(("MODE_SET_RESERVE1: should be ASN_INTEGER\n"));
 
                 } else if ( *(vb->val.integer) > 10 || *(vb->val.integer) < 0) {
                     netsnmp_set_request_error(reqinfo, req, SNMP_ERR_BADVALUE);
                     retval = SNMP_ERR_BADVALUE;
 
-                    CcspTraceError(("MODE_SET_RESERVE1: incorrect range for value: %d\n", *(vb->val.integer)));
+                    CcspTraceError(("MODE_SET_RESERVE1: incorrect range for value: %lu\n", *(vb->val.integer)));
                     CcspTraceWarning(("MODE_SET_RESERVE1: valid range is 0 - 10\n"));
                 }
                 
@@ -444,14 +444,14 @@ for (req = requests; req != NULL; req = req->next)
                 if ((retval=netsnmp_check_vb_type(req->requestvb, ASN_INTEGER))!=SNMP_ERR_NOERROR){
                     netsnmp_set_request_error(reqinfo, req, retval);
 
-                    CcspTraceError(("MODE_SET_RESERVE1: incorrect type for value: %d\n", *(vb->val.integer)));
+                    CcspTraceError(("MODE_SET_RESERVE1: incorrect type for value: %lu\n", *(vb->val.integer)));
                     CcspTraceWarning(("MODE_SET_RESERVE1: should be ASN_INTEGER\n"));
 
                 } else if ( *(vb->val.integer) > 235 || *(vb->val.integer) < 0) {
                     netsnmp_set_request_error(reqinfo, req, SNMP_ERR_BADVALUE);
                     retval = SNMP_ERR_BADVALUE;
 
-                    CcspTraceError(("MODE_SET_RESERVE1: incorrect range for value: %d\n", *(vb->val.integer)));
+                    CcspTraceError(("MODE_SET_RESERVE1: incorrect range for value: %lu\n", *(vb->val.integer)));
                     CcspTraceWarning(("MODE_SET_RESERVE1: valid range is 0 - 235\n"));
                 }
                 
@@ -462,14 +462,14 @@ for (req = requests; req != NULL; req = req->next)
                 if ((retval=netsnmp_check_vb_type(req->requestvb, ASN_INTEGER))!=SNMP_ERR_NOERROR){
                     netsnmp_set_request_error(reqinfo, req, retval);
 
-                    CcspTraceError(("MODE_SET_RESERVE1: incorrect type for value: %d\n", *(vb->val.integer)));
+                    CcspTraceError(("MODE_SET_RESERVE1: incorrect type for value: %lu\n", *(vb->val.integer)));
                     CcspTraceWarning(("MODE_SET_RESERVE1: should be ASN_INTEGER\n"));
 
                 } else if ( *(vb->val.integer) > 0 || *(vb->val.integer) < -9) {
                     netsnmp_set_request_error(reqinfo, req, SNMP_ERR_BADVALUE);
                     retval = SNMP_ERR_BADVALUE;
 
-                    CcspTraceError(("MODE_SET_RESERVE1: incorrect range for value: %d\n", *(vb->val.integer)));
+                    CcspTraceError(("MODE_SET_RESERVE1: incorrect range for value: %lu\n", *(vb->val.integer)));
                     CcspTraceWarning(("MODE_SET_RESERVE1: valid values are 0, -3, -6, -9\n"));
                 }
                 

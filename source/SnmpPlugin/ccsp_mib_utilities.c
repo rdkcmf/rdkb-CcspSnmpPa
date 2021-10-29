@@ -3041,7 +3041,7 @@ CcspUtilMIBValueToDM
 			}
 			else
 			{
-				AnscTraceError(("MIB type = %d while DM type = %d. Don't know how to translate the value.\n", uType, pValue->type));
+				AnscTraceError(("MIB type = %lu while DM type = %d. Don't know how to translate the value.\n", uType, pValue->type));
 			}
 		}
 		else
@@ -3052,7 +3052,7 @@ CcspUtilMIBValueToDM
 	}
 	else
 	{
-		AnscTraceWarning(("Unsupported MIB type: %d. Failed to transfer value.\n", uType));
+		AnscTraceWarning(("Unsupported MIB type: %lu. Failed to transfer value.\n", uType));
 	}
       }
 	return TRUE;
@@ -3262,7 +3262,7 @@ CcspUtilDeleteCosaEntry
 
 	if( pSLinkEntry == NULL)
 	{
-		AnscTraceError(("Failed to get the last index. uIndexCount = %d\n", uIndexCount));
+		AnscTraceError(("Failed to get the last index. uIndexCount = %lu\n", uIndexCount));
 		return FALSE;
 	}
 

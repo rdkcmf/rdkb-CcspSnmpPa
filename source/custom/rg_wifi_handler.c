@@ -715,7 +715,7 @@ static int getBssEnable(PCCSP_TABLE_ENTRY entry) {
     char* name = (char *)mystring;
     errno_t rc =-1;
     
-    CcspTraceInfo(("getBssEnable called on entry: %d (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
+    CcspTraceInfo(("getBssEnable called on entry: %lu (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
     retval = FindWifiDestComp();
 	
@@ -826,7 +826,7 @@ static int getBssAccessMode(PCCSP_TABLE_ENTRY entry) {
     char* name[2] = {(char*) str[0], (char*) str[1]};
     errno_t rc =-1;
     
-    CcspTraceInfo(("getBssAccessMode called on entry: %d\n", entry->IndexValue[0].Value.uValue));
+    CcspTraceInfo(("getBssAccessMode called on entry: %lu\n", entry->IndexValue[0].Value.uValue));
     
     retval = FindWifiDestComp();
 	
@@ -973,7 +973,7 @@ static int getBssClosedNetwork(PCCSP_TABLE_ENTRY entry) {
     char* name = (char *)mystring;
     errno_t rc =-1;
     
-    CcspTraceInfo(("getBssClosedNetwork called on entry: %d (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
+    CcspTraceInfo(("getBssClosedNetwork called on entry: %lu (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
     retval = FindWifiDestComp();
 	
@@ -1074,7 +1074,7 @@ static int getBssHotSpot(PCCSP_TABLE_ENTRY entry) {
          return -1;
      }
 
-    CcspTraceInfo(("%s: called on entry: %d %s(%d)\n", __func__, entry->IndexValue[0].Value.uValue, mystring, sizeof(mystring)));
+    CcspTraceInfo(("%s: called on entry: %lu %s(%d)\n", __func__, entry->IndexValue[0].Value.uValue, mystring, sizeof(mystring)));
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
         CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
@@ -1160,7 +1160,7 @@ static int getBssIsolationEnable(PCCSP_TABLE_ENTRY entry) {
      }
 
 
-    CcspTraceInfo(("%s: called on entry: %d %s(%d)\n", __func__, entry->IndexValue[0].Value.uValue, mystring, sizeof(mystring)));
+    CcspTraceInfo(("%s: called on entry: %lu %s(%d)\n", __func__, entry->IndexValue[0].Value.uValue, mystring, sizeof(mystring)));
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
         CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
@@ -1813,7 +1813,7 @@ for (req = requests; req != NULL; req = req->next)
 
     vb = req->requestvb;
     subid = vb->name[vb->name_length -2];
-    CcspTraceInfo(("BssTable last 4: %d.%d.%d.%d\n", vb->name[vb->name_length-4],vb->name[vb->name_length-3],vb->name[vb->name_length-2],vb->name[vb->name_length-1]));
+    CcspTraceInfo(("BssTable last 4: %lu.%lu.%lu.%lu\n", vb->name[vb->name_length-4],vb->name[vb->name_length-3],vb->name[vb->name_length-2],vb->name[vb->name_length-1]));
     entry = (PCCSP_TABLE_ENTRY)netsnmp_tdata_extract_entry(req);
     if (entry == NULL) {
         netsnmp_request_set_error(req, SNMP_NOSUCHINSTANCE);
@@ -2183,7 +2183,7 @@ static int getWmm(PCCSP_TABLE_ENTRY entry) {
     errno_t rc =-1;
     int ind =-1;
     
-    CcspTraceInfo(("getWmm called on entry: %d (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
+    CcspTraceInfo(("getWmm called on entry: %lu (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
     retval = FindWifiDestComp(); 
 	
@@ -2228,7 +2228,7 @@ static int getWmmNoAck(PCCSP_TABLE_ENTRY entry){
     char* name = (char *)mystring;
     errno_t rc =-1;
     
-    CcspTraceInfo(("getWmmNoAck called on entry: %d (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
+    CcspTraceInfo(("getWmmNoAck called on entry: %lu (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
     retval = FindWifiDestComp(); 
 	
@@ -2271,7 +2271,7 @@ static int getMcastRate(PCCSP_TABLE_ENTRY entry){
     char* name = (char *)mystring;
     errno_t rc =-1;
     
-    CcspTraceInfo(("getMcastRate called on entry: %d (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
+    CcspTraceInfo(("getMcastRate called on entry: %lu (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
     retval = FindWifiDestComp(); 
 	
@@ -2315,7 +2315,7 @@ static int getCountry(PCCSP_TABLE_ENTRY entry){
     char* name = (char *)mystring;
     errno_t rc =-1;
 
-    CcspTraceInfo(("%s called on entry: %d (%d)\n", __FUNCTION__, entry->IndexValue[0].Value.uValue, sizeof(mystring)));
+    CcspTraceInfo(("%s called on entry: %lu (%d)\n", __FUNCTION__, entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
     retval = FindWifiDestComp(); 
 	
@@ -2362,7 +2362,7 @@ static int getMbssUserControl(PCCSP_TABLE_ENTRY entry)
     char* name = (char *)mystring;
     errno_t rc =-1;
 
-    CcspTraceInfo(("%s called on entry: %d (%d)\n", __FUNCTION__, entry->IndexValue[0].Value.uValue, sizeof(mystring)));
+    CcspTraceInfo(("%s called on entry: %lu (%d)\n", __FUNCTION__, entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
     retval = FindWifiDestComp(); 
 	
@@ -2407,7 +2407,7 @@ static int getMbssAdminControl(PCCSP_TABLE_ENTRY entry)
     char* name = (char *)mystring;
     errno_t rc =-1;
     
-    CcspTraceInfo(("%s called on entry: %d (%d)\n", __FUNCTION__, entry->IndexValue[0].Value.uValue, sizeof(mystring)));
+    CcspTraceInfo(("%s called on entry: %lu (%d)\n", __FUNCTION__, entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
     retval = FindWifiDestComp(); 
 	
@@ -2530,7 +2530,7 @@ static int setCurrentChannel(PCCSP_TABLE_ENTRY entry, int val){
       }
 
 	//Log will be printed inside SNMP.txt in rdklogs//RDKB-23380
-	CcspTraceInfo(("RDKB_SNMP : Autochannel is Enabled through SNMP for Radio %u\n",entry->IndexValue[0].Value.uValue));
+	CcspTraceInfo(("RDKB_SNMP : Autochannel is Enabled through SNMP for Radio %lu\n",entry->IndexValue[0].Value.uValue));
     } else {
         /*Explicitly set the channel*/
         rc = sprintf_s(valStr[0].parameterValue,MAX_VAL_LEVEL, "%s", "false");
@@ -2558,7 +2558,7 @@ static int setCurrentChannel(PCCSP_TABLE_ENTRY entry, int val){
 
 	//Log will be printed inside SNMP.txt in rdklogs//RDKB-23380
 	CcspTraceInfo(("RDKB_SNMP : Autochannel is Disabled through SNMP\n"));
-	CcspTraceInfo(("RDKB_SNMP : Channel is Modified for Radio %u and channel selected is %u \n",entry->IndexValue[0].Value.uValue,val));
+	CcspTraceInfo(("RDKB_SNMP : Channel is Modified for Radio %lu and channel selected is %u \n",entry->IndexValue[0].Value.uValue,val));
     }
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, valCnt))
