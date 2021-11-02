@@ -720,11 +720,15 @@ CcspTableHelperSetMibValues
 						{
 							case RS_CREATEANDGO:
 								pEntry->valid = 1;
+                                                                if( pMibValueObj) pMibValueObj->Value.uValue = RS_ACTIVE;
+								break;
 							case RS_ACTIVE:
 								if( pMibValueObj) pMibValueObj->Value.uValue = RS_ACTIVE;
 									break;
 							case RS_CREATEANDWAIT:
 								pEntry->valid = 1;
+                                                                if( pMibValueObj) pMibValueObj->Value.uValue = RS_NOTINSERVICE;
+								break;
 							case RS_NOTINSERVICE:
 								if( pMibValueObj) pMibValueObj->Value.uValue = RS_NOTINSERVICE;
 								break;
