@@ -461,7 +461,7 @@ Call appropriate DML parameter based on the reset case
     		}
 		break;
         case 3 :
-		if (set_dm_value(FACTORY_RESET_DM_WIFI, "1,2;1,2", strlen("1,2;1,2"))){
+		if (set_dm_value(FACTORY_RESET_DM, "Wifi", strlen("Wifi"))){
        			return -1;
     		}
 		break;
