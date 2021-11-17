@@ -112,6 +112,14 @@ BOOL Cosa_FindDestComp(char* pObjName,char** ppDestComponentName, char** ppDestP
 	int                         size = 0;
 	componentStruct_t **        ppComponents = NULL;
 
+        /*RDKB-37824: The wifi parameter name(For Ex. Device.WiFi.AccessPoint.)and wifi event provider elements name(Device.WiFi.AccessPoint.{i}) are same,
+        because of that while discovering the component name using the namespace, we are end up in getting both "WifiEventProvider" and
+        "eRT.com.cisco.spvtg.ccsp.wifi" components. As a temporary mitigation, pObjName name is assigned as "com.cisco.spvtg.ccsp.wifi.Name"
+        when the initial string of the pObjName is "Device.WiFi.". Actual issue is being addressed as part of SCODE-94 jira ticket */
+        if(strncmp("Device.WiFi.", pObjName, 12)==0)
+        {
+                pObjName = "com.cisco.spvtg.ccsp.wifi.Name";
+        }
 	ret = CcspBaseIf_discComponentSupportingNamespace(bus_handle,
 				dst_pathname_cr,
 				pObjName,
