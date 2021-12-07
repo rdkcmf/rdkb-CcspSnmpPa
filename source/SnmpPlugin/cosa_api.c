@@ -365,7 +365,7 @@ static void* commitThread(void* arg) {
     PCOMMIT_PARAMS params = (PCOMMIT_PARAMS) arg;
     ret = Cosa_SetCommit(params->pDestComp, params->pDestPath, params->bSet);
     free(arg);
-    return (void*)ret;
+    return (void *) (intptr_t) ret;
 }
 
 void Cosa_BackgroundCommit
