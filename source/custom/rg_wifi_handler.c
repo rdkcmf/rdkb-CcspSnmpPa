@@ -3702,9 +3702,6 @@ handleDot11WpaTable(
     errno_t rc=-1;
     int ind =-1;
 
-    //Initializing syscfg here
-    syscfg_init();
-
     for (req = requests; req != NULL; req = req->next)
     {
         vb = req->requestvb;

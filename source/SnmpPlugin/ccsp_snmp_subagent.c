@@ -233,7 +233,7 @@ main(int argc, char *argv[])
 #if defined(_XF3_PRODUCT_REQ_) || defined(_CBR_PRODUCT_REQ_) || ( (defined(_XB6_PRODUCT_REQ_) || defined (_XB7_PRODUCT_REQ_)) && defined (_COSA_BCM_ARM_))
     char buff[10] = {0};
     int rc = 0;
-    syscfg_init();
+    
     rc = syscfg_get(NULL, "V2Support", buff, 10);
     if (!rc)
     {
