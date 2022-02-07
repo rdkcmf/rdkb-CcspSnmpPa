@@ -954,7 +954,7 @@ for (req = requests; req != NULL; req = req->next)
             if(subid == saMocaDevChannelMask_subid) {
 
                 CcspTraceInfo(("val.string %s\n", req->requestvb->val.string));
-                CcspTraceInfo(("val_len %d\n", req->requestvb->val_len));
+                CcspTraceInfo(("val_len %zu\n", req->requestvb->val_len));
 
                 if(req->requestvb->val_len < kMax_FreqIndex) {
                     intval = setFreqCurrentMaskSetting((char *)req->requestvb->val.string, 
@@ -965,7 +965,7 @@ for (req = requests; req != NULL; req = req->next)
 
                 } else {
 
-                    CcspTraceWarning(("val_len %d exceeds max: %d\n", 
+                    CcspTraceWarning(("val_len %zu exceeds max: %d\n", 
                                       req->requestvb->val_len, kMax_FreqIndex-1));
 
                     netsnmp_request_set_error(req, SNMP_ERR_GENERR);
@@ -976,7 +976,7 @@ for (req = requests; req != NULL; req = req->next)
             } else if (subid == saMocaDevChannelScanMask_subid) {
 
                 CcspTraceInfo(("val.string %s\n", req->requestvb->val.string));
-                CcspTraceInfo(("val_len %d\n", req->requestvb->val_len));
+                CcspTraceInfo(("val_len %zu\n", req->requestvb->val_len));
 
                 if(req->requestvb->val_len < kMax_FreqIndex) {
                     intval = setX_CISCO_COM_ChannelScanMask((char *)req->requestvb->val.string, 
@@ -987,7 +987,7 @@ for (req = requests; req != NULL; req = req->next)
 
                 } else {
 
-                    CcspTraceWarning(("val_len %d exceeds max: %d\n", 
+                    CcspTraceWarning(("val_len %zu exceeds max: %d\n", 
                                       req->requestvb->val_len, kMax_FreqIndex-1));
 
                     netsnmp_request_set_error(req, SNMP_ERR_GENERR);
@@ -1220,7 +1220,7 @@ for (req = requests; req != NULL; req = req->next)
             if(subid == saMocaDevTabooMask_subid) {
 
                 CcspTraceInfo(("val.string %s\n", req->requestvb->val.string));
-                CcspTraceInfo(("val_len %d\n", req->requestvb->val_len));
+                CcspTraceInfo(("val_len %zu\n", req->requestvb->val_len));
 
                 if(req->requestvb->val_len < kMax_FreqIndex) {
                     intval = setTabooMaskSetting((char *)req->requestvb->val.string, 
@@ -1231,7 +1231,7 @@ for (req = requests; req != NULL; req = req->next)
 
                 } else {
 
-                    CcspTraceWarning(("val_len %d exceeds max: %d\n", 
+                    CcspTraceWarning(("val_len %zu exceeds max: %d\n", 
                                       req->requestvb->val_len, kMax_FreqIndex-1));
 
                     netsnmp_request_set_error(req, SNMP_ERR_GENERR);

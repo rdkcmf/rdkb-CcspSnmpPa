@@ -2961,7 +2961,7 @@ CcspUtilMIBValueToDM
 			}
 			else
 			{
-				AnscTraceError(("Buffer Not Large Enough: Failed to Transfer Value. Buffer Size: %d, Value Size: %d\n", MAX_OCTET_BUFFER_SIZE, pVb->val_len));
+				AnscTraceError(("Buffer Not Large Enough: Failed to Transfer Value. Buffer Size: %d, Value Size: %zu\n", MAX_OCTET_BUFFER_SIZE, pVb->val_len));
 			}
 		}
           }

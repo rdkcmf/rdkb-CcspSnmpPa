@@ -715,7 +715,7 @@ static int getBssEnable(PCCSP_TABLE_ENTRY entry) {
     char* name = (char *)mystring;
     errno_t rc =-1;
     
-    CcspTraceInfo(("getBssEnable called on entry: %lu (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
+    CcspTraceInfo(("getBssEnable called on entry: %lu (%zu)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
     retval = FindWifiDestComp();
 	
@@ -973,7 +973,7 @@ static int getBssClosedNetwork(PCCSP_TABLE_ENTRY entry) {
     char* name = (char *)mystring;
     errno_t rc =-1;
     
-    CcspTraceInfo(("getBssClosedNetwork called on entry: %lu (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
+    CcspTraceInfo(("getBssClosedNetwork called on entry: %lu (%zu)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
     retval = FindWifiDestComp();
 	
@@ -1074,7 +1074,7 @@ static int getBssHotSpot(PCCSP_TABLE_ENTRY entry) {
          return -1;
      }
 
-    CcspTraceInfo(("%s: called on entry: %lu %s(%d)\n", __func__, entry->IndexValue[0].Value.uValue, mystring, sizeof(mystring)));
+    CcspTraceInfo(("%s: called on entry: %lu %s(%zu)\n", __func__, entry->IndexValue[0].Value.uValue, mystring, sizeof(mystring)));
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
         CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
@@ -1160,7 +1160,7 @@ static int getBssIsolationEnable(PCCSP_TABLE_ENTRY entry) {
      }
 
 
-    CcspTraceInfo(("%s: called on entry: %lu %s(%d)\n", __func__, entry->IndexValue[0].Value.uValue, mystring, sizeof(mystring)));
+    CcspTraceInfo(("%s: called on entry: %lu %s(%zu)\n", __func__, entry->IndexValue[0].Value.uValue, mystring, sizeof(mystring)));
     if (!Cosa_GetParamValues(dstComp, dstPath, &name, 1, &nval, &valStr))
     {
         CcspTraceError(("%s: fail to get: %s\n", __FUNCTION__, name));
@@ -2183,7 +2183,7 @@ static int getWmm(PCCSP_TABLE_ENTRY entry) {
     errno_t rc =-1;
     int ind =-1;
     
-    CcspTraceInfo(("getWmm called on entry: %lu (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
+    CcspTraceInfo(("getWmm called on entry: %lu (%zu)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
     retval = FindWifiDestComp(); 
 	
@@ -2228,7 +2228,7 @@ static int getWmmNoAck(PCCSP_TABLE_ENTRY entry){
     char* name = (char *)mystring;
     errno_t rc =-1;
     
-    CcspTraceInfo(("getWmmNoAck called on entry: %lu (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
+    CcspTraceInfo(("getWmmNoAck called on entry: %lu (%zu)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
     retval = FindWifiDestComp(); 
 	
@@ -2271,7 +2271,7 @@ static int getMcastRate(PCCSP_TABLE_ENTRY entry){
     char* name = (char *)mystring;
     errno_t rc =-1;
     
-    CcspTraceInfo(("getMcastRate called on entry: %lu (%d)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
+    CcspTraceInfo(("getMcastRate called on entry: %lu (%zu)\n", entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
     retval = FindWifiDestComp(); 
 	
@@ -2315,7 +2315,7 @@ static int getCountry(PCCSP_TABLE_ENTRY entry){
     char* name = (char *)mystring;
     errno_t rc =-1;
 
-    CcspTraceInfo(("%s called on entry: %lu (%d)\n", __FUNCTION__, entry->IndexValue[0].Value.uValue, sizeof(mystring)));
+    CcspTraceInfo(("%s called on entry: %lu (%zu)\n", __FUNCTION__, entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
     retval = FindWifiDestComp(); 
 	
@@ -2362,7 +2362,7 @@ static int getMbssUserControl(PCCSP_TABLE_ENTRY entry)
     char* name = (char *)mystring;
     errno_t rc =-1;
 
-    CcspTraceInfo(("%s called on entry: %lu (%d)\n", __FUNCTION__, entry->IndexValue[0].Value.uValue, sizeof(mystring)));
+    CcspTraceInfo(("%s called on entry: %lu (%zu)\n", __FUNCTION__, entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
     retval = FindWifiDestComp(); 
 	
@@ -2407,7 +2407,7 @@ static int getMbssAdminControl(PCCSP_TABLE_ENTRY entry)
     char* name = (char *)mystring;
     errno_t rc =-1;
     
-    CcspTraceInfo(("%s called on entry: %lu (%d)\n", __FUNCTION__, entry->IndexValue[0].Value.uValue, sizeof(mystring)));
+    CcspTraceInfo(("%s called on entry: %lu (%zu)\n", __FUNCTION__, entry->IndexValue[0].Value.uValue, sizeof(mystring)));
     
     retval = FindWifiDestComp(); 
 	
