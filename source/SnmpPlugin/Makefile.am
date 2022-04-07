@@ -16,9 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ##########################################################################
-AM_CFLAGS = -D_ANSC_LINUX
-AM_CFLAGS += -D_ANSC_USER
-AM_CFLAGS += -D_ANSC_LITTLE_ENDIAN_
+AM_CFLAGS =
 AM_CFLAGS += -DRDKB_MIB
 
 ACLOCAL_AMFLAGS = -I m4
@@ -30,8 +28,9 @@ bin_PROGRAMS = snmp_subagent
 snmp_subagent_CPPFLAGS = -I$(top_srcdir)/source/SnmpPlugin -I$(top_srcdir)/source/include
 snmp_subagent_SOURCES = ccsp_snmp_subagent.c
 snmp_subagent_LDADD = libsnmp_plugin.la
+snmp_subagent_LDFLAGS = -lccsp_common -lnetsnmpmibs -ldl -lnetsnmpagent -lnetsnmp -lm -lprint_uptime
 
-libsnmp_plugin_la_CPPFLAGS = -D_ANSC_LINUX -D_ANSC_USER -D_ANSC_LITTLE_ENDIAN_ -I$(top_srcdir)/source/SnmpPlugin -I$(top_srcdir)/source/include
+libsnmp_plugin_la_CPPFLAGS = -I$(top_srcdir)/source/SnmpPlugin -I$(top_srcdir)/source/include
 libsnmp_plugin_la_LDFLAGS = -lccsp_common -lnetsnmpmibs -ldl -lnetsnmpagent -lnetsnmp -lm -lprint_uptime -lsysevent -lutapi -lutctx -lsecure_wrapper
 
 libsnmp_plugin_la_SOURCES = \
