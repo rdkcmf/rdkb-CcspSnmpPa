@@ -39,7 +39,7 @@
 #include <net-snmp/agent/net-snmp-agent-includes.h>
 #include <unistd.h>
 #include "CcspSnmpPlugin.h"
-#include "syscfg.h"
+#include <syscfg/syscfg.h>
 #include "ansc_platform.h"
 #include "print_uptime.h"
 #include "sysevent/sysevent.h"

@@ -45,7 +45,7 @@
 #include "ccsp_mib_definitions.h"
 #include <time.h>
 #include "safec_lib_common.h"
-#include "syscfg.h"
+#include <syscfg/syscfg.h>
 
 #define WIFI_DM_OBJ          "Device.WiFi."
 #define WIFI_DM_OBJ_NAME     "com.cisco.spvtg.ccsp.wifi.Name"

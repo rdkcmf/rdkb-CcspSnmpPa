@@ -28,7 +28,7 @@ bin_PROGRAMS = snmp_subagent
 snmp_subagent_CPPFLAGS = -I$(top_srcdir)/source/SnmpPlugin -I$(top_srcdir)/source/include
 snmp_subagent_SOURCES = ccsp_snmp_subagent.c
 snmp_subagent_LDADD = libsnmp_plugin.la
-snmp_subagent_LDFLAGS = -lccsp_common -lnetsnmpmibs -ldl -lnetsnmpagent -lnetsnmp -lm -lprint_uptime
+snmp_subagent_LDFLAGS = -lccsp_common -lsyscfg -lnetsnmpmibs -ldl -lnetsnmpagent -lnetsnmp -lm -lprint_uptime
 
 libsnmp_plugin_la_CPPFLAGS = -I$(top_srcdir)/source/SnmpPlugin -I$(top_srcdir)/source/include
 libsnmp_plugin_la_LDFLAGS = -lccsp_common -lnetsnmpmibs -ldl -lnetsnmpagent -lnetsnmp -lm -lprint_uptime -lsysevent -lutapi -lutctx -lsecure_wrapper
