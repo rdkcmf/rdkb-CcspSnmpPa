@@ -2746,19 +2746,13 @@ utilBitsToDMString
 	PCCSP_INT_STRING_MAP			pStrMap        = NULL;
 	ULONG							i              = 0;
 	ULONG							j			   = 0;
-	ULONG							uValueBit      = 0;
         errno_t     rc =  -1;
 
 	for( i = 0; i < uLength; i ++)
 	{
-		uValueBit = 0x01;
-
 		for( j = 0 ; j < 8; j ++ )
 		{
-                        /* TODO CID: 63306 Expression with no effect*/
-			/*uValueBit << 1;*/
-
-			if( pArray[i] && uValueBit)
+			if( pArray[i] )
 			{
 				pStrMap = CcspUtilLookforEnumMapping(&pMibMapping->MapQueue, (uLength - i - 1) * 8 + j);
 

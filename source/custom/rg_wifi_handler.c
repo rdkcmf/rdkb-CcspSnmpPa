@@ -577,15 +577,13 @@ netsnmp_request_info* req;
 
     case MODE_SET_RESERVE1:
         /* sanity check */
-        /* TODO CID: 69343 Structurally dead code - due to break*/
-        for (req = requests; req != NULL; req = req->next)
+        req = requests;
+        if (req != NULL)
         {
             ret = netsnmp_check_vb_type(req->requestvb, ASN_INTEGER);
             if (ret != SNMP_ERR_NOERROR)
                 netsnmp_set_request_error(reqinfo, req, ret);
             req->processed = 1;     /* request->processed will be reset in every step by netsnmp_call_handlers */
-            break;
-            
         }
         break;
 
