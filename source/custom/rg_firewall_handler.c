@@ -74,6 +74,7 @@ struct block_day {
 #define saRgFwUrlFilterBlockDays_lastOid 8
 #define saRgFwUrlFilterRowstatus_lastOid 2
 
+#define FW_DM_OBJ_NAME      "com.cisco.spvtg.ccsp.pam.Name"
 #define FW_FACTORY_RESET_DM "Device.X_CISCO_COM_DeviceControl.FactoryReset"
 #define FW_LEVEL_DM         "Device.X_CISCO_COM_Security.Firewall.FirewallLevel"
 #define FW_HTTP_BLOCK_DM    "Device.X_CISCO_COM_Security.Firewall.FilterHTTP"
@@ -1372,7 +1373,7 @@ static int find_ccsp_comp_path(void)
         AnscFreeMemory(dstPath);
     dstComp = dstPath = NULL;
 
-    if (!Cosa_FindDestComp("Device.Time.", &dstComp, &dstPath)
+    if (!Cosa_FindDestComp(FW_DM_OBJ_NAME, &dstComp, &dstPath)
             || !dstComp || !dstPath)
     {
         CcspTraceError(("%s: fail to find dest comp\n", __FUNCTION__));

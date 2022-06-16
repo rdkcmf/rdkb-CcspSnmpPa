@@ -46,9 +46,11 @@
 #define NUM_ETHPORTS            4
 
 #define NTPSERV_DM_OBJ          "Device.Time."
+#define NTPSERV_DM_OBJ_NAME     "com.cisco.spvtg.ccsp.pam.Name"
 #define NTPSERV_DM_PARAM_PAT    "Device.Time.NTPServer%d"
 
 #define PORTMODE_DM_OBJ         "Device.X_CISCO_COM_DeviceControl."
+#define PORTMODE_DM_OBJ_NAME    "com.cisco.spvtg.ccsp.pam.Name"
 #define PORTMODE_DM_PARAM_PAT   "Device.X_CISCO_COM_DeviceControl.XHSEthernetPortEnable"
 
 struct NTPServer 
@@ -72,8 +74,8 @@ static BOOL FindNtpServerDestComp(void)
     if (dstPath)
         AnscFreeMemory(dstPath);
     dstComp = dstPath = NULL;
-
-    if (!Cosa_FindDestComp(NTPSERV_DM_OBJ, &dstComp, &dstPath)
+ 
+    if (!Cosa_FindDestComp(NTPSERV_DM_OBJ_NAME, &dstComp, &dstPath)
             || !dstComp || !dstPath)
     {
         CcspTraceError(("%s: fail to find dest comp\n", __FUNCTION__));
@@ -366,8 +368,8 @@ static BOOL FindPortModeDestComp(void)
     if (PMdstPath)
         AnscFreeMemory(PMdstPath);
     PMdstComp = PMdstPath = NULL;
-
-    if (!Cosa_FindDestComp(PORTMODE_DM_OBJ, &PMdstComp, &PMdstPath)
+    
+    if (!Cosa_FindDestComp(PORTMODE_DM_OBJ_NAME, &PMdstComp, &PMdstPath)
             || !PMdstComp || !PMdstPath)
     {
         CcspTraceError(("%s: fail to find dest comp\n", __FUNCTION__));

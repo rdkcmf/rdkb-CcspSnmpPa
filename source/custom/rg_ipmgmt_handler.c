@@ -49,6 +49,7 @@ static oid saRgIpMgmtLanAddrInterface_oid = 9;
 static char *dhcpdstComp = NULL, *dhcpdstPath = NULL; /* cache */
 
 #define IPMGNT_DM_OBJ "Device.DHCPv4."
+#define IPMGNT_DM_OBJ_NAME "com.cisco.spvtg.ccsp.wanmanager.Name"
 #define IPMGMTLANADDRINTERFACE_DM_PAT "Device.DHCPv4.Server.Pool.%lu.Client.%lu.X_CISCO_COM_Interface"
 #define MAX_VAL 10
 #define NUM_INTEREFACE_TABLE  (sizeof(interface_pair_table) / sizeof(interface_pair_table[0]))
@@ -72,7 +73,7 @@ static BOOL FindIpMgntDestComp(void)
         AnscFreeMemory(dhcpdstPath);
     dhcpdstComp = dhcpdstPath = NULL;
 
-    if (!Cosa_FindDestComp(IPMGNT_DM_OBJ, &dhcpdstComp, &dhcpdstPath)
+    if (!Cosa_FindDestComp(IPMGNT_DM_OBJ_NAME, &dhcpdstComp, &dhcpdstPath)
             || !dhcpdstComp || !dhcpdstPath)
     {
         CcspTraceError(("%s: fail to find dest comp\n", __FUNCTION__));

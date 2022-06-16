@@ -653,6 +653,7 @@ CcspScalarHelperRefreshCache
 		}
 		else
 		{
+
 			if( !Cosa_FindDestComp(pDMString, &pThisObject->pCcspComp, &pThisObject->pCcspPath) )
 			{
 				AnscTraceWarning(("Failed to find the CCSP component who supports '%s'\n", pDMString));

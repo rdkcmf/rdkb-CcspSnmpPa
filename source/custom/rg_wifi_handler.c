@@ -48,6 +48,7 @@
 #include "syscfg.h"
 
 #define WIFI_DM_OBJ          "Device.WiFi."
+#define WIFI_DM_OBJ_NAME     "com.cisco.spvtg.ccsp.wifi.Name"
 #define WIFI_DM_BSSENABLE    "Device.WiFi.SSID.%lu.Enable"
 #define WIFI_DM_APPLY        "Device.WiFi.Radio.%d.X_CISCO_COM_ApplySetting"
 #define WIFI_DM_MACF_ENABLE  "Device.WiFi.AccessPoint.%lu.X_CISCO_COM_MACFilter.Enable"
@@ -283,7 +284,7 @@ static BOOL FindWifiDestComp(void)
         AnscFreeMemory(dstPath);
     dstComp = dstPath = NULL;
 
-    if (!Cosa_FindDestComp(WIFI_DM_OBJ, &dstComp, &dstPath)
+    if (!Cosa_FindDestComp(WIFI_DM_OBJ_NAME, &dstComp, &dstPath)
             || !dstComp || !dstPath)
     {
         CcspTraceError(("%s: fail to find dest comp\n", __FUNCTION__));

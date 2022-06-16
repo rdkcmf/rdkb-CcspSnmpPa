@@ -46,6 +46,7 @@
 #include "safec_lib_common.h"
 
 // Power
+#define MOCA_DM_OBJ_NAME                        "com.cisco.spvtg.ccsp.moca.Name"
 #define MOCA_DM_OBJ                             "Device.MoCA.Interface."
 #define MOCA_DM_TxPowerLimit                    "Device.MoCA.Interface.1.TxPowerLimit"
 #define MOCA_DM_BeaconPowerLimit                "Device.MoCA.Interface.1.BeaconPowerLimit"
@@ -115,7 +116,7 @@ static BOOL FindMoCADestComp(void)
         AnscFreeMemory(dstPath);
     dstComp = dstPath = NULL;
 
-    if (!Cosa_FindDestComp(MOCA_DM_OBJ, &dstComp, &dstPath)
+    if (!Cosa_FindDestComp(MOCA_DM_OBJ_NAME, &dstComp, &dstPath)
             || !dstComp || !dstPath)
     {
         CcspTraceError(("%s: fail to find dest comp\n", __FUNCTION__));
