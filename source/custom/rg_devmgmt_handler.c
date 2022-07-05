@@ -36,7 +36,7 @@
 #include <net-snmp/net-snmp-config.h>
 #include <net-snmp/net-snmp-includes.h>
 #include <net-snmp/agent/net-snmp-agent-includes.h>
-
+#include "rg_devmgmt_handler.h"
 #include "ansc_platform.h"
 #include "cosa_api.h"
 #include "ccsp_snmp_common.h"
@@ -611,7 +611,7 @@ handleDeviceConfig(
     for (request = requests; request != NULL; request = request->next) {
         requestvb = request->requestvb;
         subid = requestvb->name[requestvb->name_length - 2];
-
+		
         switch(reqinfo->mode){
         case MODE_GET:
             if(subid == SnmpEnable_lastoid) {
@@ -619,9 +619,9 @@ handleDeviceConfig(
                     snmp_set_var_typed_value(requestvb, (u_char)ASN_OCTET_STR, (u_char *)&octet, sizeof(octet));
                 else
                     netsnmp_set_request_error(reqinfo, request, SNMP_ERR_GENERR);
-
                 request->processed = 1;
             }
+            doSnmpGet(request, reqinfo);
             break;
 
         case MODE_SET_RESERVE1:
@@ -633,8 +633,8 @@ handleDeviceConfig(
                     netsnmp_set_request_error(reqinfo, request, SNMP_ERR_WRONGVALUE);
                 request->processed = 1;     /* request->processed will be reset in every step by netsnmp_call_handlers */
             }
+            doSnmpTypeCheck(request, reqinfo);
             break;
-
         case MODE_SET_RESERVE2:
             if(subid == SnmpEnable_lastoid) {
                 if(set_snmp_enable((const char *)requestvb->val.string) != TRUE) {
@@ -643,8 +643,8 @@ handleDeviceConfig(
                 }
                 request->processed = 1;
             }
-            break;
-                    
+            doSnmpSet(request, reqinfo);
+            break;                    
         case MODE_SET_ACTION:
             break;
                     
@@ -758,4 +758,250 @@ handleConnectedDevices(
 		}
     }
     return SNMP_ERR_NOERROR;
+}
+
+#define SIZE_OF_OID_MAP_TABLE  sizeof(oidMapTable)/sizeof(oidMapTable[0])
+
+oidMap_t oidMapTable[] =
+{
+#ifdef FEATURE_RDKB_WAN_MANAGER
+    {"1.3.6.1.4.1.17270.50.2.1.4.2.0", "Device.X_CISCO_COM_DeviceControl.DeviceConfigStatus", ASN_INTEGER},
+    {"1.3.6.1.4.1.17270.50.2.1.4.3.0", "Device.X_CISCO_COM_DeviceControl.UserChangedFlags", ASN_OCTET_STR},
+    {"1.3.6.1.4.1.17270.50.2.1.4.5.0", "Device.X_CISCO_COM_DeviceControl.DeviceConfigIgnore", ASN_INTEGER},
+    {"1.3.6.1.4.1.17270.50.2.1.4.6.0", "Device.X_CISCO_COM_TrueStaticIP.IPAddress", ASN_OCTET_STR},
+    {"1.3.6.1.4.1.17270.50.2.1.4.7.0", "Device.IP.Interface.1.IPv6Prefix.1.Prefix", ASN_OCTET_STR},
+#else
+    {"", "", ASN_NULL},
+#endif
+};
+
+int
+getOid
+    (
+        netsnmp_request_info    *request,
+        char                    *retOidBuf,
+        size_t                  retBufSize
+    )
+{
+    char retVal[MAX_PARAM_NAME_LENGTH];
+    int n=0, m=0, rc;
+    netsnmp_variable_list *requestvb    = NULL;
+	requestvb = request->requestvb;
+
+    memset(retVal, 0, sizeof(retVal));
+    int oid_length = requestvb->name_length;
+
+    for (int i=0; i<oid_length; i++) {
+        if(i != (oid_length-1)) {
+            m = snprintf (&retVal[n], sizeof(retVal)-n ,"%ld.", requestvb->name[i]);
+        }
+        else {
+            m = snprintf (&retVal[n], sizeof(retVal)-n, "%ld", requestvb->name[i]);
+        }
+
+        if (m < 1) {
+            CcspTraceError(("%s: failed to generate oid\n", __func__));
+            return -1;
+        }
+        else {
+            n += m;
+        }
+    }
+    rc = strcpy_s(retOidBuf, retBufSize, retVal);
+    if(rc != EOK)
+    {
+        ERR_CHK(rc);
+        return -1;
+    }
+    return 0;
+}
+
+int 
+getParamNameFromMapTable
+    (
+        char*   oid, 
+        char*   paramName,
+        size_t  retBufSize
+    )
+{
+    unsigned int i = 0;
+    int rc, ind=-1;
+    while(i < SIZE_OF_OID_MAP_TABLE) {
+        rc =strcmp_s(oid, strlen(oid), oidMapTable[i].oid, &ind);
+        ERR_CHK(rc);
+        if((!ind) && (rc == EOK))
+        {
+            rc = strcpy_s(paramName, retBufSize, oidMapTable[i].paramName);
+            if(rc != EOK)
+            {
+                ERR_CHK(rc);
+                return -1;
+            }
+            return 0;
+        }
+        i++;
+    }
+    return -1;
+}
+
+u_char 
+getParamTypeFromMapTable
+    (
+        char*       oid
+    )
+{
+    unsigned int i = 0;
+    int rc, ind=-1;
+    while(i < SIZE_OF_OID_MAP_TABLE) {
+        rc =strcmp_s(oid, strlen(oid), oidMapTable[i].oid, &ind);
+        ERR_CHK(rc);
+        if((!ind) && (rc == EOK))
+        {
+            return oidMapTable[i].type;
+        }
+        i++;
+    }
+    CcspTraceError(("%s: failed to get param type\n", __func__));
+    return ASN_NULL;
+}
+
+int doSnmpGet
+    (
+        netsnmp_request_info* request,
+        netsnmp_agent_request_info* reqinfo
+    )
+{
+    char paramOid[MAX_PARAM_NAME_LENGTH] = {'\0'};
+    char paramName[MAX_PARAM_NAME_LENGTH] = {'\0'};
+    char dmValue[MAX_PARAM_NAME_LENGTH] = {'\0'};
+    bool req_processed = false;
+    u_char type;
+
+    // fetch oid of param
+    if (0 != getOid(request, paramOid, sizeof(paramOid))) {
+        CcspTraceError(("%s: Failed to fetch the oid.\n", __func__));
+        return 1;
+    }
+
+    // get param name from the oid mapping table
+    if (0 != getParamNameFromMapTable(paramOid, paramName, sizeof(paramName))) {
+        CcspTraceWarning(("%s: Requesting for param not in the map\n", __func__));
+        return 1;
+    }
+
+    // get param type from the oid mapping table
+    type = getParamTypeFromMapTable(paramOid);
+    if (ASN_NULL == type) {
+        CcspTraceError(("%s: failed to get param type\n", __func__));
+        return 1;
+    }
+
+    get_dm_value(paramName, dmValue, sizeof(dmValue));
+
+    switch (type)
+    {
+        case ASN_INTEGER:
+            {
+                int dmIntValue = atoi(dmValue);
+                snmp_set_var_typed_value(request->requestvb, (u_char)ASN_INTEGER, (u_char *)&dmIntValue, sizeof(int));
+                req_processed = true;
+            }         
+            break;
+
+        case ASN_OCTET_STR:
+            {
+                snmp_set_var_typed_value(request->requestvb, (u_char)ASN_OCTET_STR, (u_char *)dmValue, strlen(dmValue));
+                req_processed = true;
+            }
+            break;
+
+        case ASN_UNSIGNED:
+            {
+                unsigned int dmUintValue = (unsigned int) atoi(dmValue);
+                snmp_set_var_typed_value(request->requestvb, (u_char)ASN_UNSIGNED, (u_char *)&dmUintValue, sizeof(dmUintValue));
+                req_processed = true;
+            }
+            break;
+
+        default:
+            netsnmp_set_request_error(reqinfo, request, SNMP_ERR_GENERR);
+            CcspTraceError(("%s failed to process snmp request '%s': Invalid u_char type\n", __func__, paramName));
+            break;
+    }
+
+    if (req_processed) {
+        request->processed = 1;
+        CcspTraceWarning(("%s snmp request processed for '%s'\n", __func__, paramName));
+        return 0;
+    }
+    else {
+        CcspTraceError(("%s failed to process snmp request '%s'\n", __func__, paramName));
+        return 1;
+    }
+    
+    return 1;
+}
+
+int doSnmpTypeCheck
+    (
+		netsnmp_request_info* request,
+        netsnmp_agent_request_info* reqinfo
+    )
+{
+	int ret;
+    char paramOid[MAX_PARAM_NAME_LENGTH] = {'\0'};
+	netsnmp_variable_list *requestvb    = NULL;
+	requestvb = request->requestvb;
+	
+    // fetch oid of param
+    if (0 != getOid(request, paramOid, sizeof(paramOid))) {
+        CcspTraceError(("%s: Failed to fetch the oid.\n", __func__));
+        return 1;
+    }
+
+    // get param type from the oid mapping table
+    u_char type = getParamTypeFromMapTable(paramOid);
+    if (ASN_NULL == type) {
+        CcspTraceWarning(("%s: Requesting for param not in the map\n", __func__));
+        return 1;
+    }
+
+	ret = netsnmp_check_vb_type(requestvb, type);
+	if (ret != SNMP_ERR_NOERROR)
+		netsnmp_set_request_error(reqinfo, request, ret);
+	request->processed = 1;
+	return ret;
+}
+
+int doSnmpSet
+    (
+        netsnmp_request_info* request,
+        netsnmp_agent_request_info* reqinfo
+    )
+{
+    char paramOid[MAX_PARAM_NAME_LENGTH] = {'\0'};
+    char paramName[MAX_PARAM_NAME_LENGTH] = {'\0'};
+    netsnmp_variable_list *requestvb    = NULL;
+    
+    requestvb = request->requestvb;
+
+    // fetch oid of param
+    if (0 != getOid(request, paramOid, sizeof(paramOid))) {
+        CcspTraceError(("%s: Failed to fetch the oid.\n", __func__));
+        return 1;
+    }
+
+    // get param name from the oid mapping table
+    if (0 != getParamNameFromMapTable(paramOid, paramName, sizeof(paramName))) {
+        CcspTraceWarning(("%s: Requesting for param not in the map\n", __func__));
+        return 1;
+    }
+
+    if (set_dm_value(paramName, (char*)requestvb->val.string, strlen((char*)requestvb->val.string))){
+        CcspTraceError(("%s: failed for '%s'\n", __func__, paramName));
+        netsnmp_set_request_error(reqinfo, request, 1);
+        return 1;
+    }
+    request->processed = 1;
+    return 0;
 }
