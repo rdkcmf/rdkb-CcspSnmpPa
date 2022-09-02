@@ -50,7 +50,12 @@
 #define WIFI_DM_OBJ          "Device.WiFi."
 #define WIFI_DM_OBJ_NAME     "com.cisco.spvtg.ccsp.wifi.Name"
 #define WIFI_DM_BSSENABLE    "Device.WiFi.SSID.%lu.Enable"
+#ifdef RDK_ONEWIFI
+#define WIFI_DM_APPLY        "Device.WiFi.ApplyRadioSettings"
+#define WIFI_DM_APPLY_ACCESSPOINT "Device.WiFi.ApplyAccessPointSettings"
+#else
 #define WIFI_DM_APPLY        "Device.WiFi.Radio.%d.X_CISCO_COM_ApplySetting"
+#endif
 #define WIFI_DM_MACF_ENABLE  "Device.WiFi.AccessPoint.%lu.X_CISCO_COM_MACFilter.Enable"
 #define WIFI_DM_MACF_ASBL    "Device.WiFi.AccessPoint.%lu.X_CISCO_COM_MACFilter.FilterAsBlackList"
 #define WIFI_DM_CHANNEL      "Device.WiFi.Radio.%lu.Channel"
@@ -295,28 +300,61 @@ static BOOL FindWifiDestComp(void)
 }
 
 static int applyDot11Settings(int val) {
-	int retval = 0;
-	
+        int retval = 0;
+
     parameterValStruct_t valStr[2];
-    
+
     char str[4][MAX_VAL_SET];
     valStr[0].parameterName=str[0];
     valStr[0].parameterValue=str[1];
     valStr[1].parameterName=str[2];
     valStr[1].parameterValue=str[3];
-    
+
     retval = FindWifiDestComp();
     errno_t rc =-1;
- 
-	
-	CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
+
+
+        CcspTraceInfo(("%s: FindWifiDestComp returned %s\n", __func__, (retval == TRUE) ? "True" : "False"));
     if (retval != TRUE) {
        return -1;
     }
-    
+
     if (val != 1)
         val = 0;
 
+#ifdef RDK_ONEWIFI
+    rc =  sprintf_s(valStr[0].parameterName,MAX_VAL_SET, WIFI_DM_APPLY);
+    if(rc < EOK)
+    {
+         ERR_CHK(rc);
+         return -1;
+     }
+    rc =  sprintf_s(valStr[0].parameterValue,MAX_VAL_SET, "%s", val ? "true" : "false");
+    if(rc < EOK)
+    {
+         ERR_CHK(rc);
+         return -1;
+     }
+
+    valStr[0].type = ccsp_boolean;
+
+    rc = sprintf_s(valStr[1].parameterName,MAX_VAL_SET, WIFI_DM_APPLY_ACCESSPOINT);
+    if(rc < EOK)
+    {
+         ERR_CHK(rc);
+         return -1;
+     }
+
+    rc = sprintf_s(valStr[1].parameterValue,MAX_VAL_SET, "%s", val ? "true" : "false");
+    if(rc < EOK)
+    {
+         ERR_CHK(rc);
+         return -1;
+    }
+
+    valStr[1].type = ccsp_boolean;
+
+#else
     rc =  sprintf_s(valStr[0].parameterName,MAX_VAL_SET, WIFI_DM_APPLY, 1);
     if(rc < EOK)
     {
@@ -344,9 +382,11 @@ static int applyDot11Settings(int val) {
     {
          ERR_CHK(rc);
          return -1;
-     }
+    }
 
     valStr[1].type = ccsp_boolean;
+	
+#endif
 
     if (!Cosa_SetParamValuesNoCommit(dstComp, dstPath, valStr, 2))
     {
@@ -356,6 +396,7 @@ static int applyDot11Settings(int val) {
 
     return 0;
 }
+
 
 static void* wifiCommitThread(void* arg) {
     UNREFERENCED_PARAMETER(arg);
@@ -3911,5 +3952,3 @@ handleDot11WpaTable(
 
 */
 }
-
-
