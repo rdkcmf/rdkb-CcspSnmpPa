@@ -152,6 +152,7 @@ static const int saRgDot11ExtMulticastRate_subid = 22;
 static const int saRgDot11nExtMode_subid = 1;
 static const int saRgDot11nExtPhyRate_subid = 2;
 static const int saRgDot11WpaPreSharedKey_subid = 2;
+static const int saRgDot11WpaPassPhrase_subid = 3;
 static const int saRgDot11BSSDefaultSSID_subid = 16;
 static const int saRgDot11WpaDefaultPreSharedKey_subid = 4;
 
@@ -3753,7 +3754,7 @@ handleDot11WpaTable(
         }
         switch (reqinfo->mode) {
             case MODE_GET:
-                if (subid == saRgDot11WpaPreSharedKey_subid) {
+                if (subid == saRgDot11WpaPreSharedKey_subid || subid == saRgDot11WpaPassPhrase_subid) {
                     /*SNMP set or get should not be re-enabled for XH, xfinity-open and xfinity-secure WiFi password even via RFC*/
                     if((entry->IndexValue[0].Value.uValue == 3) || 
                        (entry->IndexValue[0].Value.uValue == 4) ||
@@ -3808,7 +3809,7 @@ handleDot11WpaTable(
 
             case MODE_SET_RESERVE1:
                 /* sanity check */
-                if (subid == saRgDot11WpaPreSharedKey_subid) {
+                if (subid == saRgDot11WpaPreSharedKey_subid || subid == saRgDot11WpaPassPhrase_subid) {
                     /*SNMP set or get should not be re-enabled for XH, xfinity-open and xfinity-secure WiFi password even via RFC*/
                     if((entry->IndexValue[0].Value.uValue == 3) || 
                        (entry->IndexValue[0].Value.uValue == 4) ||
@@ -3859,7 +3860,7 @@ handleDot11WpaTable(
             case MODE_SET_RESERVE2:
                 /* set value to backend with no commit */
                 intval = NOT_IMPLEMENTED;
-                if (subid == saRgDot11WpaPreSharedKey_subid) {
+                if (subid == saRgDot11WpaPreSharedKey_subid || subid == saRgDot11WpaPassPhrase_subid) {
                     /*SNMP set or get should not be re-enabled for XH, xfinity-open and xfinity-secure WiFi password even via RFC*/
                     if((entry->IndexValue[0].Value.uValue == 3) ||
                        (entry->IndexValue[0].Value.uValue == 4) ||

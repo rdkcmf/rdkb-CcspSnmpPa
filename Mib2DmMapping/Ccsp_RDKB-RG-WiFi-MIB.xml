@@ -776,7 +776,7 @@ limitations under the License.
             <!-- Add filters in the table -->
             <!-- <mapToEntries>Device.RoutingTable.%d.type=static</mapToEntries> -->
             <callbacks>
-                <!-- <handleRequests>sampleHelperHandleRequests</handleRequests> -->
+                <handleRequests>handleDot11WpaTable</handleRequests>
             </callbacks>
             <index>
                 <mib>
